@@ -4,6 +4,8 @@ from Giants import get_giants_json
 from Upgrades import get_upgrades_json
 from Conversion import convert_standard_to_exponential
 from StoneofActivity import get_soa_bow_bonus
+from RandomBoxes import random_box_upgrades, get_random_box_time
+from EvolutionDiscounts import evolution_discounts
 
 import copy
 
@@ -86,7 +88,15 @@ def calculate_pattern_spawn(coins, enemies):
     return (60 / (total / 100 + 1) + 90 / (total / 100 + 1)) / 2
 
 
-def calculate_bonus(coins, upgrade):
+def calculate_additive_bonus(coins, upgrade):
+    total = 0
+    for upgrade, stats in upgrade.items():
+        if stats["Cost"] < coins:
+            total += stats["Benefit"]
+    return total
+
+
+def calculate_multiplicative_bonus(coins, upgrade):
     total = 1
     for upgrade, stats in upgrade.items():
         if stats["Cost"] < coins:
@@ -102,8 +112,29 @@ def calculate_discount(coins, upgrade):
     return total
 
 
-def calculate_average_gains(average_patterns, current_enemies, current_giants, patterns_per_second, giants_per_second,
-                            bow_bonus, giant_bonus, rage_bonus):
+def calculate_average_bow_gains(average_patterns, current_enemies, current_giants, patterns_per_second,
+                                giants_per_second, bow_bonus, giant_bonus):
+    to_return = {}
+    for dimension, dimension_average in average_patterns.items():
+        giant_coins, giant_souls = 0, 0
+        for key in current_giants.values():
+            if dimension == key["Dimension"]:
+                giant_coins = key["Coins"] * giants_per_second
+                giant_souls = key["Souls"] * giants_per_second * giant_bonus
+        coin_reward = 0
+        soul_reward = 0
+        for enemy, spawn in dimension_average.items():
+            coin_reward += current_enemies[enemy]["Coins"] * spawn["Average"]
+            soul_reward += current_enemies[enemy]["Souls"] * spawn["Average"] * bow_bonus
+        to_return[dimension] = {
+            "Coins": round(coin_reward * patterns_per_second + giant_coins, 2),
+            "Souls": round(soul_reward * patterns_per_second + giant_souls, 2)
+        }
+    return to_return
+
+
+def calculate_average_rage_gains(average_patterns, current_enemies, current_giants, patterns_per_second,
+                                 giants_per_second, giant_bonus, rage_bonus):
     to_return = {}
     for dimension, dimension_average in average_patterns.items():
         giant_coins, giant_souls = 0, 0
@@ -115,7 +146,7 @@ def calculate_average_gains(average_patterns, current_enemies, current_giants, p
         soul_reward = 0
         for enemy, spawn in dimension_average.items():
             coin_reward += current_enemies[enemy]["Coins"] * spawn["Average"]
-            soul_reward += current_enemies[enemy]["Souls"] * spawn["Average"] * bow_bonus
+            soul_reward += current_enemies[enemy]["Souls"] * spawn["Average"] * rage_bonus
         to_return[dimension] = {
             "Coins": round(coin_reward * patterns_per_second + giant_coins, 2),
             "Souls": round(soul_reward * patterns_per_second + giant_souls, 2)
@@ -143,24 +174,10 @@ if __name__ == '__main__':
             "Benefit": int(400)
         }
     }
-    evolution_discounts = {
-        "Cheap Darkness": {
-            "Cost": convert_standard_to_exponential("5 Qa"),
-            "Benefit": float(0.5)
-        },
-        "Embrace The Fear": {
-            "Cost": convert_standard_to_exponential("10 Oc"),
-            "Benefit": float(0.25)
-        },
-        "Generations": {
-            "Cost": convert_standard_to_exponential("10 Nd"),
-            "Benefit": float(0.001)
-        }
-    }
 
-    COINS = convert_standard_to_exponential("100 De")
-    USP = 0
-    RAGE_SOULS_MULTIPLIER = 1
+    COINS = convert_standard_to_exponential("5 Td")
+    USP = 5
+    RAGE_SOULS_MULTIPLIER = 110
     PLAYER_SPEED = 4
 
     SPAWN_LEVEL = set_spawn_level(COINS, pattern_upgrade_json)
@@ -168,12 +185,16 @@ if __name__ == '__main__':
     CURRENT_UPGRADE_DISCOUNT = calculate_discount(COINS, evolution_discounts)
     CURRENT_ENEMIES = adjust_evolutions(COINS, enemies_json, CURRENT_UPGRADE_DISCOUNT, USP)
     CURRENT_GIANTS = adjust_evolutions(COINS, giants_json, CURRENT_UPGRADE_DISCOUNT, USP)
-    CURRENT_BOW_BONUS = calculate_bonus(COINS, bow_upgrade_json) * get_soa_bow_bonus(USP)
-    CURRENT_GIANT_BONUS = calculate_bonus(COINS, giant_souls_json)
+    CURRENT_BOW_BONUS = calculate_multiplicative_bonus(COINS, bow_upgrade_json) * get_soa_bow_bonus(USP)
+    CURRENT_GIANT_BONUS = calculate_multiplicative_bonus(COINS, giant_souls_json)
+    CURRENT_RANDOM_BOX_TIMER = calculate_additive_bonus(COINS, random_box_upgrades)
     AVERAGE_PATTERNS = calculate_average_pattern(CURRENT_PATTERNS)
     GIANT_PER_SECOND = PLAYER_SPEED / calculate_giant_spawn(COINS, giant_upgrade_json)
     PATTERNS_PER_SECOND = PLAYER_SPEED / calculate_pattern_spawn(COINS, spawn_upgrade_json)
-    AVERAGE_GAINS_PER_SECOND = calculate_average_gains(AVERAGE_PATTERNS, CURRENT_ENEMIES, CURRENT_GIANTS,
-                                                       PATTERNS_PER_SECOND, GIANT_PER_SECOND, CURRENT_BOW_BONUS,
-                                                       CURRENT_GIANT_BONUS, RAGE_SOULS_MULTIPLIER)
+    AVERAGE_BOW_GAINS_PER_SECOND = calculate_average_bow_gains(AVERAGE_PATTERNS, CURRENT_ENEMIES, CURRENT_GIANTS,
+                                                               PATTERNS_PER_SECOND, GIANT_PER_SECOND, CURRENT_BOW_BONUS,
+                                                               CURRENT_GIANT_BONUS)
+    AVERAGE_RAGE_GAINS_PER_SECOND = calculate_average_rage_gains(AVERAGE_PATTERNS, CURRENT_ENEMIES, CURRENT_GIANTS,
+                                                                 PATTERNS_PER_SECOND, GIANT_PER_SECOND,
+                                                                 CURRENT_GIANT_BONUS, RAGE_SOULS_MULTIPLIER)
     print("test")

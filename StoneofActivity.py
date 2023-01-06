@@ -35,7 +35,9 @@ def get_soa_bow_bonus(USP):
     minimum = stoneOfActivity["Bow Souls"]["Minimum"]
     multiplier = 1
     if USP != 0:
-        multiplier = 2
+        multiplier *= 2
+    if USP > 25:
+        multiplier *= 2
     return multiplier * (calculate_bow_bonus(souls_per_USP, decrease_per_USP, minimum, USP, 0) / 100 + 1)
 
 
