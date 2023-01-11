@@ -180,15 +180,15 @@ if __name__ == '__main__':
     RAGE_SOULS_MULTIPLIER = 110
     PLAYER_SPEED = 4
 
-    SPAWN_LEVEL = set_spawn_level(COINS, pattern_upgrade_json)
-    CURRENT_PATTERNS = adjust_patterns(SPAWN_LEVEL, patterns_json)
-    CURRENT_UPGRADE_DISCOUNT = calculate_discount(COINS, evolution_discounts)
-    CURRENT_ENEMIES = adjust_evolutions(COINS, enemies_json, CURRENT_UPGRADE_DISCOUNT, USP)
-    CURRENT_GIANTS = adjust_evolutions(COINS, giants_json, CURRENT_UPGRADE_DISCOUNT, USP)
+    SPAWN_LEVEL = set_spawn_level(COINS, pattern_upgrade_json)  # done
+    CURRENT_PATTERNS = adjust_patterns(SPAWN_LEVEL, patterns_json)  # done
+    CURRENT_UPGRADE_DISCOUNT = calculate_discount(COINS, evolution_discounts)  # dont need
+    CURRENT_ENEMIES = adjust_evolutions(COINS, enemies_json, CURRENT_UPGRADE_DISCOUNT, USP)  # done
+    CURRENT_GIANTS = adjust_evolutions(COINS, giants_json, CURRENT_UPGRADE_DISCOUNT, USP)  # done
     CURRENT_BOW_BONUS = calculate_multiplicative_bonus(COINS, bow_upgrade_json) * get_soa_bow_bonus(USP)
     CURRENT_GIANT_BONUS = calculate_multiplicative_bonus(COINS, giant_souls_json)
     CURRENT_RANDOM_BOX_TIMER = calculate_additive_bonus(COINS, random_box_upgrades)
-    AVERAGE_PATTERNS = calculate_average_pattern(CURRENT_PATTERNS)
+    AVERAGE_PATTERNS = calculate_average_pattern(CURRENT_PATTERNS)  # done
     GIANT_PER_SECOND = PLAYER_SPEED / calculate_giant_spawn(COINS, giant_upgrade_json)
     PATTERNS_PER_SECOND = PLAYER_SPEED / calculate_pattern_spawn(COINS, spawn_upgrade_json)
     AVERAGE_BOW_GAINS_PER_SECOND = calculate_average_bow_gains(AVERAGE_PATTERNS, CURRENT_ENEMIES, CURRENT_GIANTS,

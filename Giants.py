@@ -57,14 +57,14 @@ def get_giants_json():
     for _, giant in giants_data.iterrows():
         dict[giant["Name"]] = {
             "Dimension": giant["Home Dimension"],
-            "HP": int(giant["HP"]),
+            # "HP": int(giant["HP"]),
             "Coins": int(giant["Coin Reward"]),
             "Souls": int(giant["Soul Reward"]),
             "Evolutions": {}
         }
     for __, evolution in evolutions_data.iterrows():
         dict[evolution["Evolved From"]]["Evolutions"][evolution["Name"]] = {
-            "HP": int(evolution["HP"]),
+            # "HP": int(evolution["HP"]),
             "Coins": int(evolution["Coin Reward"]),
             "Souls": int(evolution["Soul Reward"]),
             "Unlock Cost": float(evolution["Unlock Cost"])
