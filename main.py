@@ -46,7 +46,8 @@ def adjust_evolutions(coins, enemies, discount, USP):
         }
         for evolution, evolution_stats in stats["Evolutions"].items():
             if evolution:
-                if evolution_stats["Unlock Cost"] * discount < coins and not (evolution_stats["Type"] and USP == 0):
+                if evolution_stats["Unlock Cost"] * discount < coins:
+                    # if evolution_stats["Unlock Cost"] * discount < coins and not (evolution_stats["Type"] and USP == 0):
                     return_stats = {
                         "Dimension": stats["Dimension"],
                         "Coins": evolution_stats["Coins"],
@@ -158,6 +159,9 @@ if __name__ == '__main__':
     patterns_json = get_patterns_json()
     enemies_json = get_enemies_json()
     giants_json = get_giants_json()
+    enemies_json["Wasp"]["Evolutions"]["Dark Hornet"]["Souls"] *= 2.2
+    enemies_json["Carniplant"]["Evolutions"]["Dark Carniplant"]["Souls"] *= 2.2
+
     # giants_json["Hills' Giant"]["Evolutions"]["Jade Hills' Giants"]["Souls"] = 240
     bow_upgrade_json, pattern_upgrade_json, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
     giant_upgrade_json["Big Troubles"] = {
@@ -175,9 +179,9 @@ if __name__ == '__main__':
         }
     }
 
-    COINS = convert_standard_to_exponential("5 Td")
-    USP = 5
-    RAGE_SOULS_MULTIPLIER = 110
+    COINS = convert_standard_to_exponential("10 Nd")
+    USP = 30
+    RAGE_SOULS_MULTIPLIER = 170
     PLAYER_SPEED = 4
 
     SPAWN_LEVEL = set_spawn_level(COINS, pattern_upgrade_json)  # done

@@ -1,13 +1,20 @@
-from flask import Flask, render_template
-from Enemies import get_enemies_json
-from Upgrades import get_upgrades_json
-from Patterns import get_patterns_json
-from Giants import get_giants_json
-from main import calculate_average_pattern
-
 import copy
 
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS, cross_origin
+from Enemies import get_enemies_json
+from Giants import get_giants_json
+from Patterns import get_patterns_json
+from Upgrades import get_upgrades_json
+
 app = Flask(__name__)
+CORS(app, support_credentials=True)
+
+
+@app.route("/login")
+@cross_origin(supports_credentials=True)
+def login():
+    return jsonify({'success': 'ok'})
 
 
 def get_enemy_helper(enemies):
@@ -60,7 +67,7 @@ def get_enemy_stats(evolutions, unlocked_enemies):
     return current_enemies, current_coins
 
 
-def get_patterns(coins):
+def calculate_average_pattern(coins):
     patterns_cost = get_upgrades_json()[1]
     patterns = get_patterns_json()
     spawn_level = 0
@@ -79,6 +86,19 @@ def get_patterns(coins):
                 else:
                     spawn__.append(pattern[0])
             current_patterns[dimension][enemy] = spawn__
+
+    average_patterns = copy.deepcopy(current_patterns)
+    for dimension, dimension_pattern in average_patterns.items():
+        totals = []
+        total = 0
+        for enemy, spawn in dimension_pattern.items():
+            # spawn_ = spawn.copy()
+            totals.append((enemy, sum(spawn)))
+            total += len(spawn)
+        for enemy, sum_enemies in totals:
+            average_patterns[dimension][enemy] = {
+                "Average": sum_enemies / total
+            }
     return current_patterns
 
 
@@ -134,13 +154,49 @@ def home():
     return render_template('index.html')
 
 
-if __name__ == '__main__':
-    # app.run(debug=True)
+@app.route('/evolutionNames', methods=["GET"])
+def evolution_names():
     evolution_names, evolution_info = get_enemy_evolutions()
-    enemy_evolutions = ['Hornet', 'Black Hornet']
+    return [evolution_names, evolution_info]
+
+
+@app.route('/enemyStats', methods=["GET"])
+def enemy_stats():
+    headers = request.headers
+    enemy_evolutions = headers.get("ENEMY_EVOLUTIONS")
     current_enemies, current_coins = get_enemy_stats(get_enemies_json(), enemy_evolutions)
-    current_patterns = get_patterns(current_coins)
+    return [current_enemies, current_coins]
+
+
+@app.route('/averagePatterns', methods=["GET"])
+def average_patterns():
+    headers = request.headers
+    current_coins = float(headers.get("CURRENT_COINS"))
+    current_patterns = calculate_average_pattern(current_coins)
+    return current_patterns
+
+
+@app.route('/giantNames', methods=["GET"])
+def giant_names():
     giant_names, giant_info = get_giant_evolutions()
+    return [giant_names, giant_info]
+
+
+@app.route('/giantStats', methods=["GET"])
+def giant_stats():
+    headers = request.headers
+    giants_unlocked = headers.get("GIANTS_UNLOCKED")
+    current_giants, current_coins = get_giant_stats(get_giants_json(), giants_unlocked)
+    return [current_giants, current_coins]
+
+
+if __name__ == '__main__':
+    # app.run(host='0.0.0.0', port=5000, debug=True)
+    evolution_names, evolution_info = get_enemy_evolutions()  # done
+    enemy_evolutions = ['Hornet', 'Black Hornet']
+    current_enemies, current_coins = get_enemy_stats(get_enemies_json(), enemy_evolutions)  # done
+    # current_patterns = get_patterns(current_coins)  # done
+    giant_names, giant_info = get_giant_evolutions()  # done
     giants_unlocked = ["Hills' Giant", 'Adult Yeti', 'Anubis Warrior']
-    current_giants, _ = get_giant_stats(get_giants_json(), giants_unlocked)
-    average_patterns = calculate_average_pattern(current_patterns)
+    current_giants, _ = get_giant_stats(get_giants_json(), giants_unlocked)  # done
+    average_patterns = calculate_average_pattern(current_coins)  # done
