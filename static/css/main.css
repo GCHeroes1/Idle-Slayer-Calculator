@@ -1,15 +1,35 @@
 #mapValueEvolutionsList {
-    column-count: 2;
+    column-count: 3;
     list-style: none;
 }
 
 #mapValueGiantsList {
-    column-count: 2;
+    column-count: 3;
     list-style: none;
 }
 
-#mapValueSpawnRateList {
-    column-count: 2;
+#mapValueEnemySpawnRateList {
+    column-count: 3;
+    list-style: none;
+}
+
+#mapValueGiantSpawnRateList {
+    column-count: 3;
+    list-style: none;
+}
+
+#mapValueBowSouls {
+    column-count: 3;
+    list-style: none;
+}
+
+#mapValueGiantSouls {
+    column-count: 3;
+    list-style: none;
+}
+
+#mapValueRageSouls {
+    column-count: 3;
     list-style: none;
 }
 

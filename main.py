@@ -32,6 +32,8 @@ def adjust_patterns(spawn_level, patterns):
                     spawn_.remove(pattern)
                 else:
                     spawn__.append(pattern[0])
+            if len(spawn__) == 0:
+                spawn__.append(0)
             to_return[dimension][enemy] = spawn__
     return to_return
 
@@ -163,34 +165,23 @@ if __name__ == '__main__':
     enemies_json["Carniplant"]["Evolutions"]["Dark Carniplant"]["Souls"] *= 2.2
 
     # giants_json["Hills' Giant"]["Evolutions"]["Jade Hills' Giants"]["Souls"] = 240
-    bow_upgrade_json, pattern_upgrade_json, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
-    giant_upgrade_json["Big Troubles"] = {
-        "Cost": convert_standard_to_exponential("10 Td"),
-        "Benefit": int(15)
-    }
-    giant_souls_json = {
-        "Book of Agony": {
-            "Cost": float(2.00e40),
-            "Benefit": int(60)
-        },
-        "Wander's Path": {
-            "Cost": convert_standard_to_exponential("500 Sd"),
-            "Benefit": int(400)
-        }
-    }
+    bow_soul_upgrade_json, giant_soul_upgrade_json, pattern_upgrade_json, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
+    giant_upgrade_json["Big Troubles"]["Cost"] = convert_standard_to_exponential("10 Td")
+    giant_soul_upgrade_json["Wander's Path"]["Cost"] = convert_standard_to_exponential("500 Sd")
 
-    COINS = convert_standard_to_exponential("10 Nd")
+    COINS = 0
     USP = 30
     RAGE_SOULS_MULTIPLIER = 170
     PLAYER_SPEED = 4
 
     SPAWN_LEVEL = set_spawn_level(COINS, pattern_upgrade_json)  # done
+    COINS = 0
     CURRENT_PATTERNS = adjust_patterns(SPAWN_LEVEL, patterns_json)  # done
     CURRENT_UPGRADE_DISCOUNT = calculate_discount(COINS, evolution_discounts)  # dont need
     CURRENT_ENEMIES = adjust_evolutions(COINS, enemies_json, CURRENT_UPGRADE_DISCOUNT, USP)  # done
     CURRENT_GIANTS = adjust_evolutions(COINS, giants_json, CURRENT_UPGRADE_DISCOUNT, USP)  # done
-    CURRENT_BOW_BONUS = calculate_multiplicative_bonus(COINS, bow_upgrade_json) * get_soa_bow_bonus(USP)
-    CURRENT_GIANT_BONUS = calculate_multiplicative_bonus(COINS, giant_souls_json)
+    CURRENT_BOW_BONUS = calculate_multiplicative_bonus(COINS, bow_soul_upgrade_json) * get_soa_bow_bonus(USP)
+    CURRENT_GIANT_BONUS = calculate_multiplicative_bonus(COINS, giant_soul_upgrade_json)
     CURRENT_RANDOM_BOX_TIMER = calculate_additive_bonus(COINS, random_box_upgrades)
     AVERAGE_PATTERNS = calculate_average_pattern(CURRENT_PATTERNS)  # done
     GIANT_PER_SECOND = PLAYER_SPEED / calculate_giant_spawn(COINS, giant_upgrade_json)
