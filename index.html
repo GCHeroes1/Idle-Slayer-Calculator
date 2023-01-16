@@ -17,9 +17,6 @@
         gtag('config', 'G-HJ2E4V50Z5');
     </script>
 
-    <!--    <script src="./build/data/enemies.js"></script>-->
-    <!--    <script src="./build/data/maps.js"></script>-->
-    <!--    <script src="./build/data/giants.js"></script>-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="./calculator.js" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">
@@ -104,79 +101,117 @@
     <button id="unCheckAll">Uncheck all</button>
 </div>
 <div id="mapValueOptionsArea">
-    <label for="mapValueEnemySpawnRateList">Upgrades bought affecting enemy spawn rates:</label>
-    <ul id="mapValueEnemySpawnRateList" name="mapValueEnemySpawnRateList"></ul>
+    <!--    <label for="mapValueEnemySpawnRateList">Upgrades bought affecting enemy spawn rates:</label>-->
+    <!--    <ul id="mapValueEnemySpawnRateList" name="mapValueEnemySpawnRateList"></ul>-->
 
-    <label for="mapValueGiantSpawnRateList">Upgrades bought affecting giant spawn rates:</label>
-    <ul id="mapValueGiantSpawnRateList" name="mapValueGiantSpawnRateList"></ul>
+    <!--    <label for="mapValueGiantSpawnRateList">Upgrades bought affecting giant spawn rates:</label>-->
+    <!--    <ul id="mapValueGiantSpawnRateList" name="mapValueGiantSpawnRateList"></ul>-->
 
-    <label for="mapValueBowSouls">Upgrades bought affecting bow souls multiplier:</label>
-    <ul id="mapValueBowSouls" name="mapValueBowSouls"></ul>
+    <!--    <label for="mapValueBowSouls">Upgrades bought affecting bow souls multiplier:</label>-->
+    <!--    <ul id="mapValueBowSouls" name="mapValueBowSouls"></ul>-->
 
-    <label for="mapValueGiantSouls">Upgrades bought affecting giant souls multiplier:</label>
-    <ul id="mapValueGiantSouls" name="mapValueGiantSouls"></ul>
+    <!--    <label for="mapValueGiantSouls">Upgrades bought affecting giant souls multiplier:</label>-->
+    <!--    <ul id="mapValueGiantSouls" name="mapValueGiantSouls"></ul>-->
 
-    <label for="mapValueRageSouls">Upgrades bought affecting rage souls multiplier:</label>
-    <ul id="mapValueRageSouls" name="mapValueRageSouls"></ul>
+    <!--    <label for="mapValueRageSouls">Upgrades bought affecting rage souls multiplier:</label>-->
+    <!--    <ul id="mapValueRageSouls" name="mapValueRageSouls"></ul>-->
 
-    <label for="mapValueEvolutionsList">Check unlocked evolutions:</label>
-    <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>
+    <!--    <label for="mapValueEvolutionsList">Check unlocked evolutions:</label>-->
+    <!--    <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>-->
 
-    <!--    <button type="button" class="collapsible">Check unlocked evolutions</button>-->
-    <!--    <div class="content">-->
-    <!--        &lt;!&ndash;        <label for="mapValueEvolutionsList">Check unlocked evolutions:</label>&ndash;&gt;-->
-    <!--        <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>-->
-    <!--    </div>-->
+    <!--    <label for="mapValueGiantsList">Check unlocked Giants:</label>-->
+    <!--    <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>-->
 
-    <label for="mapValueGiantsList">Check unlocked Giants:</label>
-    <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>
+    <button type="button" class="collapsible">Check upgrades bought affecting enemy spawn rate</button>
+    <div class="content">
+        <ul id="mapValueEnemySpawnRateList" name="mapValueEnemySpawnRateList"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting giant spawn rate</button>
+    <div class="content">
+        <ul id="mapValueGiantSpawnRateList" name="mapValueGiantSpawnRateList"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting bow souls multiplier</button>
+    <div class="content">
+        <ul id="mapValueBowSouls" name="mapValueBowSouls"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting giant souls multiplier</button>
+    <div class="content">
+        <ul id="mapValueGiantSouls" name="mapValueGiantSouls"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting rage souls multiplier</button>
+    <div class="content">
+        <ul id="mapValueRageSouls" name="mapValueRageSouls"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check unlocked enemy evolutions</button>
+    <div class="content">
+        <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check unlocked giants and their evolutions</button>
+    <div class="content">
+        <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>
+    </div>
 </div>
 <h2>Active Play</h2>
 <p>This table shows you the base Coins/Souls per second for each Dimension. This assumes that you are not boosting, and
     that you are slaying all enemies. It also does not take into consideration any boosts to your Soul or Coin
     collection.</p>
-<table>
-    <thead>
-    <tr>
-        <th>Dimension</th>
-        <th class="sortable">Coins</th>
-        <th class="sortable">Souls</th>
-    </tr>
-    </thead>
-    <tbody id="mapValuesResultsTableActive">
+<button type="button" class="collapsible">View table</button>
+<div class="content">
+    <table>
+        <thead>
+        <tr>
+            <th>Dimension</th>
+            <th class="sortable">Coins</th>
+            <th class="sortable">Souls</th>
+        </tr>
+        </thead>
+        <tbody id="mapValuesResultsTableActive">
+        </tbody>
+    </table>
+</div>
 
-    </tbody>
-</table>
 <h2>Bow</h2>
 <p>This table shows you the base Coins/Souls per second for each Dimension when using bow. This assumes that you are not
-    boosting, and
-    that you are slaying all enemies.</p>
-<table>
-    <thead>
-    <tr>
-        <th>Dimension</th>
-        <th class="sortable">Coins</th>
-        <th class="sortable">Souls</th>
-    </tr>
-    </thead>
-    <tbody id="mapValuesResultsTableBow">
+    boosting, and that you are slaying all enemies. It also does not take into consideration any boosts to your Coin
+    collection.</p>
+<button type="button" class="collapsible">View table</button>
+<div class="content">
+    <table>
+        <thead>
+        <tr>
+            <th>Dimension</th>
+            <th class="sortable">Coins</th>
+            <th class="sortable">Souls</th>
+        </tr>
+        </thead>
+        <tbody id="mapValuesResultsTableBow">
+        </tbody>
+    </table>
+</div>
 
-    </tbody>
-</table>
 <h2>Rage Mode</h2>
-<p>This table shows the average Coins and Souls per second for each Dimension during Rage Mode. </p>
-<table>
-    <thead>
-    <tr>
-        <th>Dimension</th>
-        <th class="sortable">Coins</th>
-        <th class="sortable">Souls</th>
-    </tr>
-    </thead>
-    <tbody id="mapValuesResultsTableRage">
+<p>This table shows the average Coins and Souls per second for each Dimension during Rage Mode. It also does not take
+    into consideration any boosts to your Coin collection.</p>
+<button type="button" class="collapsible">View table</button>
+<div class="content">
+    <table>
+        <thead>
+        <tr>
+            <th>Dimension</th>
+            <th class="sortable">Coins</th>
+            <th class="sortable">Souls</th>
+        </tr>
+        </thead>
+        <tbody id="mapValuesResultsTableRage">
+        </tbody>
+    </table>
+</div>
 
-    </tbody>
-</table>
 </body>
-
 </html>

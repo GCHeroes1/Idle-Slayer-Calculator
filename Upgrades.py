@@ -108,8 +108,8 @@ def get_upgrades_json():
 
 
 if __name__ == '__main__':
-    bow_dict, pattern_dict, spawn_dict, giant_dict = get_upgrades_json()
+    bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict = get_upgrades_json()
 
-    print(json.dumps(bow_dict, indent=4))
+    print(json.dumps(bow_souls_dict, indent=4))
     print(json.dumps(pattern_dict, indent=4))
     print(json.dumps(spawn_dict, indent=4))
