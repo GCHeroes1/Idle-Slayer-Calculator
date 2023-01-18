@@ -8,6 +8,8 @@ from Giants import get_giants_json
 from Patterns import get_patterns_json
 from Upgrades import get_upgrades_json
 from Rage import get_rage_json
+from Armory import get_armory_info
+import numpy as np
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -49,6 +51,7 @@ def get_enemy_stats(evolutions, unlocked_enemies):
     for enemy, stats in evolutions.items():
         return_stats = {
             "Dimension": stats["Dimension"],
+            "Type": "",
             "Coins": stats["Coins"],
             "Souls": stats["Souls"]
         }
@@ -58,6 +61,7 @@ def get_enemy_stats(evolutions, unlocked_enemies):
                 if evolution in unlocked_enemies:
                     return_stats = {
                         "Dimension": stats["Dimension"],
+                        "Type": evolution_stats[-4],
                         "Coins": evolution_stats[-3],
                         "Souls": evolution_stats[-2]
                     }
@@ -93,7 +97,6 @@ def calculate_average_pattern(coins):
         totals = []
         total = 0
         for enemy, spawn in dimension_pattern.items():
-            # spawn_ = spawn.copy()
             totals.append((enemy, sum(spawn)))
             total += len(spawn)
         for enemy, sum_enemies in totals:
@@ -194,14 +197,6 @@ def souls_stat_helper(upgrades, unlocked_upgrades):
     return total
 
 
-def rage_stat_helper(upgrades, unlocked_upgrades):
-    total = 0
-    for upgrade in unlocked_upgrades:
-        if str(upgrade) in upgrades:
-            total += upgrades[upgrade]["Benefit"]
-    return total
-
-
 def get_soul_stats(unlocked_bow, unlocked_giant, unlocked_rage):
     bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
     rage_souls_json = get_rage_json()
@@ -209,6 +204,10 @@ def get_soul_stats(unlocked_bow, unlocked_giant, unlocked_rage):
     giant_souls_stat = souls_stat_helper(giant_soul_json, unlocked_giant)
     rage_souls_stat = upgrade_stat_helper(rage_souls_json, unlocked_rage)
     return bow_souls_stat, giant_souls_stat, rage_souls_stat
+
+
+def get_armory_souls(armory):
+    return
 
 
 def calculate_average_base_gains(average_patterns, current_enemies, current_giants, pattern_spawn, giant_spawn,
@@ -225,6 +224,7 @@ def calculate_average_base_gains(average_patterns, current_enemies, current_gian
                 giant_souls = key["Souls"] * giants_per_second * giant_bonus
         coin_reward, soul_reward = 0, 0
         for enemy, spawn in dimension_average.items():
+            ## TODO: check if the enemy has a type, and if so, apply the type multiplier to it, take those as parameters
             coin_reward += current_enemies[enemy]["Coins"] * spawn["Average"]
             soul_reward += current_enemies[enemy]["Souls"] * spawn["Average"]
         average_base_gains[dimension] = {
@@ -309,6 +309,13 @@ def giant_names():
 def upgrade_names():
     bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades = get_upgrade_names()
     return [bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades]
+
+
+@app.route('/armory', methods=["GET"])
+def armory():
+    armory_json, armory_types, armory_names, armory_options = get_armory_info()
+    armory_levels = list(range(0, 15))
+    return [armory_json, armory_types, armory_names, armory_options, armory_levels]
 
 
 @app.route('/calculateStats', methods=["GET"])

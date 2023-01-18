@@ -90,8 +90,6 @@ const checkCoins = (value) => {
         if (input.type === "checkbox" && input.checked === value) {
             if (+input.value > current_coins && input.value.includes("e")) {
                 current_coins = +input.value;
-            } else {
-                console.log(input.value + " is not a float");
             }
         }
     });
@@ -136,8 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
     void get_evolution_names();
     void get_giant_names();
     void get_upgrade_names();
-    // get_dimensions();
     void get_table_values();
+    void get_armory();
     const sortable_headers = document.querySelectorAll(".sortable");
     for (const header of sortable_headers) {
         header.addEventListener("click", change_table_sort);
@@ -146,12 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("checkAll").addEventListener("click", () => {
         setAllCheckboxes(true);
         void get_table_values();
-        // calculate_map_values();
     });
     document.getElementById("unCheckAll").addEventListener("click", () => {
         setAllCheckboxes(false);
         void get_table_values();
-        // calculate_map_values();
     });
 });
 
@@ -177,6 +173,11 @@ const rage_soul_options_area = document.getElementById("mapValueRageSouls");
 const giant_soul_options_area = document.getElementById("mapValueGiantSouls");
 const evolutions_list = document.getElementById("mapValueEvolutionsList");
 const giants_list = document.getElementById("mapValueGiantsList");
+const armory_names = document.getElementById("mapValueArmoryNames");
+const armory_list = document.getElementById("mapValueArmoryList");
+const armory_options = document.getElementById("mapValueArmoryOptions");
+const armory_levels = document.getElementById("mapValueArmoryLevels");
+const armory_excellent = document.getElementById("mapValueArmoryExcellent");
 const active_results_table = document.getElementById("mapValuesResultsTableActive");
 const bow_results_table = document.getElementById("mapValuesResultsTableBow");
 const rage_results_table = document.getElementById("mapValuesResultsTableRage");
@@ -188,17 +189,13 @@ let unlocked_giant_spawn_upgrades = [];
 let unlocked_bow_soul_upgrades = [];
 let unlocked_giant_soul_upgrades = [];
 let unlocked_rage_soul_upgrades = [];
+let unlocked_armory = {};
 let current_coins = 0;
 const map_active_value_result_cells = {};
 const map_bow_value_result_cells = {};
 const map_rage_value_result_cells = {};
 
 function enemy_checkboxes(list) {
-    // for (const [enemy, info] of list) {
-    //     console.log(enemy)
-    //     console.log(info[info.length - 1])
-    //     evolutions_list.appendChild(create_evolution_checkbox(enemy, info[info.length - 1], unlocked_enemies));
-    // }
     list[0].forEach((enemy, index) => {
         let cost = list[1][index];
         cost = cost[[cost.length - 1]]
@@ -207,9 +204,6 @@ function enemy_checkboxes(list) {
 }
 
 function giant_checkboxes(list) {
-    // for (const [giant, info] of list) {
-    //     giants_list.appendChild(create_evolution_checkbox(giant, info[info.length - 1], unlocked_giants));
-    // }
     list[0].forEach((giant, index) => {
         let cost = list[1][index];
         if (cost[3]) {
@@ -222,7 +216,6 @@ function giant_checkboxes(list) {
 }
 
 function upgrade_checkboxes(list) {
-    // console.log(list)
     list[0].forEach((upgrade, index) => {
         bow_soul_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_bow_soul_upgrades));
     });
@@ -292,6 +285,34 @@ function calculate_map_values_rage(rage_souls) {
     }
 }
 
+const create_map_row = (table, map, type) => {
+    const coins = document.createElement("td");
+    const souls = document.createElement("td");
+    if (type === "active") {
+        map_active_value_result_cells[map] = {coins, souls};
+    } else if (type === "bow") {
+        map_bow_value_result_cells[map] = {coins, souls};
+    } else if (type === "rage") {
+        map_rage_value_result_cells[map] = {coins, souls};
+    }
+    const map_row = document.createElement("tr");
+    const map_name_cell = document.createElement("td");
+    map_name_cell.textContent = map;
+    map_row.appendChild(map_name_cell);
+    map_row.appendChild(coins);
+    map_row.appendChild(souls);
+    table.appendChild(map_row);
+};
+
+function create_table(dimensions) {
+    for (const map of dimensions) {
+        create_map_row(active_results_table, map, "active");
+        create_map_row(bow_results_table, map, "bow");
+        create_map_row(rage_results_table, map, "rage");
+    }
+}
+
+
 async function get_evolution_names() {
     const fetchPromise = fetch("http://127.0.0.1:5000/evolutionNames");
     fetchPromise.then(response => {
@@ -339,6 +360,10 @@ async function get_table_values() {
         calculate_map_values_active(response[0]);
         calculate_map_values_bow(response[1]);
         calculate_map_values_rage(response[2])
+        // ## you need this for the next part
+        var e = document.getElementById("Bow");
+        var value = e.value;
+        var text = e.options[e.selectedIndex].text;
     });
 }
 
@@ -356,30 +381,92 @@ async function get_dimensions() {
     });
 }
 
-const create_map_row = (table, map, type) => {
-    const coins = document.createElement("td");
-    const souls = document.createElement("td");
-    if (type === "active") {
-        map_active_value_result_cells[map] = {coins, souls};
-    } else if (type === "bow") {
-        map_bow_value_result_cells[map] = {coins, souls};
-    } else if (type === "rage") {
-        map_rage_value_result_cells[map] = {coins, souls};
-    }
-    const map_row = document.createElement("tr");
-    const map_name_cell = document.createElement("td");
-    map_name_cell.textContent = map;
-    map_row.appendChild(map_name_cell);
-    map_row.appendChild(coins);
-    map_row.appendChild(souls);
-    table.appendChild(map_row);
-};
+async function get_armory() {
+    const fetchPromise = fetch("http://127.0.0.1:5000/armory");
+    fetchPromise.then(response => {
+        return response.json();
+    }).then(response => {
+        // console.log(response[0]["Sword"]["Adranos"]["Option"])
+        armory_textNodes(response[1], response[2], response[3]);
+    });
+}
 
 
-function create_table(dimensions) {
-    for (const map of dimensions) {
-        create_map_row(active_results_table, map, "active");
-        create_map_row(bow_results_table, map, "bow");
-        create_map_row(rage_results_table, map, "rage");
+function armory_textNodes(types, subtypes, options) {
+    types.forEach((item, index) => {
+        armory_names.appendChild(create_armory_text(item));
+        armory_list.appendChild(create_armory_dropdown(item, subtypes[item]));
+        for (const subtype of subtypes[item]) {
+            armory_options.appendChild(create_armory_options_dropdown(item, subtype, options[item][subtype]))
+        }
+    });
+}
+
+function create_armory_text(name) {
+    var textNode = document.createTextNode(name);
+
+    var container = document.createElement("li");
+    container.appendChild(textNode);
+    return container;
+}
+
+function create_armory_dropdown(item, subtypes) {
+    subtype_array = [...subtypes]
+    // subtype_array.unshift("None");
+
+    var select = document.createElement("select");
+    select.name = item;
+    select.id = item;
+    select.addEventListener('change', (event) => {
+        enableOptions(select, item)
+    });
+
+    for (const val of subtype_array) {
+        var subtype = document.createElement("option");
+        subtype.value = val;
+        subtype.text = val.charAt(0).toUpperCase() + val.slice(1);
+        select.appendChild(subtype);
     }
+    var label = document.createElement("label");
+    label.innerHTML = "Choose your item: "
+    label.htmlFor = "item";
+    var container = document.createElement("li");
+    return container.appendChild(label).appendChild(select);
+}
+
+function enableOptions(select, item) {
+    Array.from(document.getElementsByClassName(item)).forEach((input) => {
+        let id = input.id;
+        document.getElementById(id).classList.add("dnone");
+        if (id === item + select.value) {
+            document.getElementById(id).classList.remove("dnone");
+        }
+    })
+}
+
+function create_armory_options_dropdown(item, subtype, options) {
+    // console.log(options)
+    // options.unshift("None");
+
+    var select = document.createElement("select");
+    select.name = subtype;
+    select.id = item + subtype;
+    select.classList.add(item)
+    // select.multiple = true;
+    if (subtype !== "None") {
+        options.unshift("None");
+        select.classList.add("dnone");
+    }
+
+    for (const val of options) {
+        var option = document.createElement("option");
+        option.value = val;
+        option.text = val.charAt(0).toUpperCase() + val.slice(1);
+        select.appendChild(option);
+    }
+    var label = document.createElement("label");
+    label.innerHTML = "Choose your option: "
+    label.htmlFor = "option";
+    var container = document.createElement("li");
+    return container.appendChild(label).appendChild(select);
 }

@@ -19,7 +19,7 @@
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="./calculator.js" defer></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">
+    <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">-->
     <link rel="stylesheet" href="./static/css/main.css">
     <meta charset="utf-8"/>
     <link rel="icon" href="./img/favicon.png">
@@ -101,26 +101,6 @@
     <button id="unCheckAll">Uncheck all</button>
 </div>
 <div id="mapValueOptionsArea">
-    <!--    <label for="mapValueEnemySpawnRateList">Upgrades bought affecting enemy spawn rates:</label>-->
-    <!--    <ul id="mapValueEnemySpawnRateList" name="mapValueEnemySpawnRateList"></ul>-->
-
-    <!--    <label for="mapValueGiantSpawnRateList">Upgrades bought affecting giant spawn rates:</label>-->
-    <!--    <ul id="mapValueGiantSpawnRateList" name="mapValueGiantSpawnRateList"></ul>-->
-
-    <!--    <label for="mapValueBowSouls">Upgrades bought affecting bow souls multiplier:</label>-->
-    <!--    <ul id="mapValueBowSouls" name="mapValueBowSouls"></ul>-->
-
-    <!--    <label for="mapValueGiantSouls">Upgrades bought affecting giant souls multiplier:</label>-->
-    <!--    <ul id="mapValueGiantSouls" name="mapValueGiantSouls"></ul>-->
-
-    <!--    <label for="mapValueRageSouls">Upgrades bought affecting rage souls multiplier:</label>-->
-    <!--    <ul id="mapValueRageSouls" name="mapValueRageSouls"></ul>-->
-
-    <!--    <label for="mapValueEvolutionsList">Check unlocked evolutions:</label>-->
-    <!--    <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>-->
-
-    <!--    <label for="mapValueGiantsList">Check unlocked Giants:</label>-->
-    <!--    <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>-->
 
     <button type="button" class="collapsible">Check upgrades bought affecting enemy spawn rate</button>
     <div class="content">
@@ -155,6 +135,14 @@
     <button type="button" class="collapsible">Check unlocked giants and their evolutions</button>
     <div class="content">
         <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>
+    </div>
+
+    <label for="mapValueArmoryList">Check current Armory items:</label>
+    <ul id="mapValueArmoryNames" name="mapValueArmoryNames" style="padding-left: 50px"></ul>
+    <ul id="mapValueArmoryList" name="mapValueArmoryList"></ul>
+    <div id="list1" class="dropdown-check-list" tabindex="100">
+        <span class="anchor"></span>
+        <ul id="mapValueArmoryOptions" name="mapValueArmoryOptions"></ul>
     </div>
 </div>
 <h2>Active Play</h2>
