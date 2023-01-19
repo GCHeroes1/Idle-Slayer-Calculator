@@ -313,8 +313,7 @@ def upgrade_names():
 
 @app.route('/armory', methods=["GET"])
 def armory():
-    armory_json, armory_types, armory_names, armory_options = get_armory_info()
-    armory_levels = list(range(0, 15))
+    armory_json, armory_types, armory_names, armory_options, armory_levels = get_armory_info()
     return [armory_json, armory_types, armory_names, armory_options, armory_levels]
 
 

@@ -43,21 +43,35 @@
     align-content: space-evenly;
 }
 
-#mapValueArmoryList, #mapValueArmoryOptions {
+#mapValueArmoryList, #mapValueArmoryOptions, #mapValueArmoryLevels {
     column-count: 5;
     list-style: none;
     display: flex;
     flex-flow: row nowrap;
-    justify-content: space-around
+    justify-content: space-around;
+}
+
+#mapValueArmoryOptions {
+    height: 86px;
 }
 
 select {
     width: 100%;
 }
 
-.dnone {
-    display: none;
+.hidden {
+    display: none !important;
 }
+
+.box {
+    column-count: 5;
+    vertical-align: middle;
+    /*height: 300px;*/
+    display: flex;
+    flex-direction: column;
+    /*flex-wrap: wrap;*/
+}
+
 
 /*!*START DROPDOWN STUFF*!*/
 

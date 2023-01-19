@@ -177,7 +177,6 @@ const armory_names = document.getElementById("mapValueArmoryNames");
 const armory_list = document.getElementById("mapValueArmoryList");
 const armory_options = document.getElementById("mapValueArmoryOptions");
 const armory_levels = document.getElementById("mapValueArmoryLevels");
-const armory_excellent = document.getElementById("mapValueArmoryExcellent");
 const active_results_table = document.getElementById("mapValuesResultsTableActive");
 const bow_results_table = document.getElementById("mapValuesResultsTableBow");
 const rage_results_table = document.getElementById("mapValuesResultsTableRage");
@@ -386,19 +385,20 @@ async function get_armory() {
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
-        // console.log(response[0]["Sword"]["Adranos"]["Option"])
-        armory_textNodes(response[1], response[2], response[3]);
+        armory_textNodes(response[1], response[2], response[3], response[4]);
     });
 }
 
 
-function armory_textNodes(types, subtypes, options) {
+function armory_textNodes(types, subtypes, options, levels) {
     types.forEach((item, index) => {
         armory_names.appendChild(create_armory_text(item));
         armory_list.appendChild(create_armory_dropdown(item, subtypes[item]));
         for (const subtype of subtypes[item]) {
-            armory_options.appendChild(create_armory_options_dropdown(item, subtype, options[item][subtype]))
+            armory_options.appendChild(create_armory_options_dropdown(item, subtype, options[item][subtype]));
+            armory_levels.appendChild(create_armory_levels(item, subtype, levels[item][subtype]));
         }
+        // armory_levels.appendChild(create_armory_levels(item, levels));
     });
 }
 
@@ -418,7 +418,8 @@ function create_armory_dropdown(item, subtypes) {
     select.name = item;
     select.id = item;
     select.addEventListener('change', (event) => {
-        enableOptions(select, item)
+        enableOptions(select, item);
+        enableLevels(select, item);
     });
 
     for (const val of subtype_array) {
@@ -437,27 +438,23 @@ function create_armory_dropdown(item, subtypes) {
 function enableOptions(select, item) {
     Array.from(document.getElementsByClassName(item)).forEach((input) => {
         let id = input.id;
-        document.getElementById(id).classList.add("dnone");
+        document.getElementById(id).classList.add("hidden");
         if (id === item + select.value) {
-            document.getElementById(id).classList.remove("dnone");
+            document.getElementById(id).classList.remove("hidden");
         }
     })
 }
 
 function create_armory_options_dropdown(item, subtype, options) {
-    // console.log(options)
-    // options.unshift("None");
-
     var select = document.createElement("select");
     select.name = subtype;
     select.id = item + subtype;
     select.classList.add(item)
-    // select.multiple = true;
+    select.multiple = true;
     if (subtype !== "None") {
-        options.unshift("None");
-        select.classList.add("dnone");
+        // options.unshift("None");
+        select.classList.add("hidden");
     }
-
     for (const val of options) {
         var option = document.createElement("option");
         option.value = val;
@@ -467,6 +464,49 @@ function create_armory_options_dropdown(item, subtype, options) {
     var label = document.createElement("label");
     label.innerHTML = "Choose your option: "
     label.htmlFor = "option";
+    var container = document.createElement("li");
+    return container.appendChild(label).appendChild(select);
+}
+
+function enableLevels(select, item) {
+    Array.from(document.getElementsByClassName(item + item)).forEach((input) => {
+        let id = input.id;
+        // console.log(id)
+        document.getElementById(id).classList.add("hidden");
+        // console.log(select.value)
+        if (id === item + select.value + select.value) {
+            document.getElementById(id).classList.remove("hidden");
+        }
+    })
+}
+
+function create_armory_levels(item, subtype, levels) {
+    console.log(item)
+    levels_array = [...levels]
+    // levels_array.unshift("None");
+
+    var select = document.createElement("select");
+    select.name = subtype;
+    select.id = item + subtype + subtype;
+    select.classList.add(item + item);
+    if (subtype !== "None") {
+        // levels_array.unshift("None");
+        select.classList.add("hidden");
+    }
+
+    for (const val of levels_array) {
+        var level = document.createElement("option");
+        level.value = val;
+        if (val !== "None") {
+            level.text = "+" + val;
+        } else {
+            level.text = val;
+        }
+        select.appendChild(level);
+    }
+    var label = document.createElement("label");
+    label.innerHTML = "Choose your level: "
+    label.htmlFor = "item";
     var container = document.createElement("li");
     return container.appendChild(label).appendChild(select);
 }
