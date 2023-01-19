@@ -189,6 +189,7 @@ let unlocked_bow_soul_upgrades = [];
 let unlocked_giant_soul_upgrades = [];
 let unlocked_rage_soul_upgrades = [];
 let unlocked_armory = {};
+let test_armory = [];
 let current_coins = 0;
 const map_active_value_result_cells = {};
 const map_bow_value_result_cells = {};
@@ -340,6 +341,7 @@ async function get_upgrade_names() {
 }
 
 async function get_table_values() {
+    console.log(unlocked_armory);
     const fetchPromise = fetch("http://127.0.0.1:5000/calculateStats", {
         method: "GET",
         headers: {
@@ -350,7 +352,8 @@ async function get_table_values() {
             "RAGE_SOULS": unlocked_rage_soul_upgrades,
             "ENEMY_EVOLUTIONS": unlocked_enemies,
             "GIANT_EVOLUTIONS": unlocked_giants,
-            "CURRENT_COINS": current_coins
+            "CURRENT_COINS": current_coins,
+            "ARMORY_SELECTION": JSON.stringify(unlocked_armory)
         },
     });
     fetchPromise.then(response => {
@@ -359,10 +362,6 @@ async function get_table_values() {
         calculate_map_values_active(response[0]);
         calculate_map_values_bow(response[1]);
         calculate_map_values_rage(response[2])
-        // ## you need this for the next part
-        var e = document.getElementById("Bow");
-        var value = e.value;
-        var text = e.options[e.selectedIndex].text;
     });
 }
 
@@ -398,7 +397,6 @@ function armory_textNodes(types, subtypes, options, levels) {
             armory_options.appendChild(create_armory_options_dropdown(item, subtype, options[item][subtype]));
             armory_levels.appendChild(create_armory_levels(item, subtype, levels[item][subtype]));
         }
-        // armory_levels.appendChild(create_armory_levels(item, levels));
     });
 }
 
@@ -412,7 +410,6 @@ function create_armory_text(name) {
 
 function create_armory_dropdown(item, subtypes) {
     subtype_array = [...subtypes]
-    // subtype_array.unshift("None");
 
     var select = document.createElement("select");
     select.name = item;
@@ -420,6 +417,14 @@ function create_armory_dropdown(item, subtypes) {
     select.addEventListener('change', (event) => {
         enableOptions(select, item);
         enableLevels(select, item);
+    });
+
+    select.addEventListener('change', function () {
+        var e = document.getElementById(select.id)
+        var text = e.options[e.selectedIndex].text;
+        unlocked_armory[select.name] = {}
+        unlocked_armory[select.name][text] = {};
+        void get_table_values();
     });
 
     for (const val of subtype_array) {
@@ -452,9 +457,24 @@ function create_armory_options_dropdown(item, subtype, options) {
     select.classList.add(item)
     select.multiple = true;
     if (subtype !== "None") {
-        // options.unshift("None");
         select.classList.add("hidden");
     }
+    select.addEventListener('change', function () {
+        var result = [];
+        var options = select && select.options;
+        var opt;
+
+        for (var i = 0, iLen = options.length; i < iLen; i++) {
+            opt = options[i];
+
+            if (opt.selected) {
+                result.push(opt.text);
+            }
+        }
+        unlocked_armory[item][subtype]["Option"] = result;
+        void get_table_values();
+    });
+
     for (const val of options) {
         var option = document.createElement("option");
         option.value = val;
@@ -471,9 +491,7 @@ function create_armory_options_dropdown(item, subtype, options) {
 function enableLevels(select, item) {
     Array.from(document.getElementsByClassName(item + item)).forEach((input) => {
         let id = input.id;
-        // console.log(id)
         document.getElementById(id).classList.add("hidden");
-        // console.log(select.value)
         if (id === item + select.value + select.value) {
             document.getElementById(id).classList.remove("hidden");
         }
@@ -481,18 +499,20 @@ function enableLevels(select, item) {
 }
 
 function create_armory_levels(item, subtype, levels) {
-    console.log(item)
     levels_array = [...levels]
-    // levels_array.unshift("None");
 
     var select = document.createElement("select");
     select.name = subtype;
     select.id = item + subtype + subtype;
     select.classList.add(item + item);
     if (subtype !== "None") {
-        // levels_array.unshift("None");
         select.classList.add("hidden");
     }
+    select.addEventListener('change', function () {
+        var e = document.getElementById(select.id)
+        unlocked_armory[item][select.name]["Level"] = e.options[e.selectedIndex].text.slice(1);
+        void get_table_values();
+    });
 
     for (const val of levels_array) {
         var level = document.createElement("option");

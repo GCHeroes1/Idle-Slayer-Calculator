@@ -82,9 +82,64 @@ def get_armory_json():
     }
 
 
-# def calculate_armory_bonuses(armory_selection):
-#     Example_Armory = ["Adranos", ""]
-#     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = 1, 1, 1, 1, 0, 1, 1, 1, 0
+def calculate_bonus(stat, level):
+    return float(stat) * (int(level) + 1)
+
+
+def update_bonuses(variables, variable_to_update, multiplier):
+    Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = variables
+    match variable_to_update:
+        case "Souls":
+            Souls *= (multiplier / 100) + 1
+        case "Bow Souls":
+            Bow_Souls *= (multiplier / 100) + 1
+        case "Giant Souls":
+            Giant_Souls *= (multiplier / 100) + 1
+        case "Critical Souls":
+            Critical_Souls *= (multiplier / 100) + 1
+        case "Critical":
+            Critical += multiplier
+        case "Electric":
+            Electric *= (multiplier / 100) + 1
+        case "Dark":
+            Dark *= (multiplier / 100) + 1
+        case "Enemies":
+            Enemies += multiplier
+        case other:
+            print("something went wrong with " + variable_to_update)
+    variables = Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies
+    return variables
+
+
+def calculate_armory_bonuses(armory_selection):
+    Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = 1, 1, 1, 1, 0, 1, 1, 1, 0
+    variables = Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies
+    armory_json = get_armory_json()
+    for item, subtype_info in armory_selection.items():
+        for subtype, options_info in subtype_info.items():
+            level = 0
+            excellent = 1
+            if options_info:  # to handle the case where there are no provided options
+                if "Level" in options_info:
+                    level = options_info["Level"]
+                if "Excellent" in options_info["Option"]:
+                    excellent = 1.25
+                    options_info["Option"].remove("Excellent")
+                for option in options_info["Option"]:
+                    options = armory_json[item][subtype]["Option"]
+                    option_name = options[[x for x, y in enumerate(options) if y[0] == option][0]][0]
+                    option_stat = options[[x for x, y in enumerate(options) if y[0] == option][0]][1]
+                    calculated_bonus = calculate_bonus(option_stat, level) * excellent
+                    variables = update_bonuses(variables, option_name, calculated_bonus)
+                    # print(item + " " + subtype + " " + option_name + " +" + str(level) + " " + str(calculated_bonus))
+            if "Main" in armory_json[item][subtype]:
+                main_name = armory_json[item][subtype]["Main"][0]
+                main_stat = armory_json[item][subtype]["Main"][1]
+                calculated_bonus = calculate_bonus(main_stat, level) * excellent
+                # print(item + " " + subtype + " " + main_name + " +" + str(level) + " " + str(calculated_bonus))
+                variables = update_bonuses(variables, main_name, calculated_bonus)
+    return variables
+
 
 def get_armory_info():
     armory = get_armory_json()
@@ -111,5 +166,11 @@ def get_armory_info():
 
 
 if __name__ == '__main__':
-    print(json.dumps(get_armory_json(), indent=4))
-    get_armory_info()
+    Example_Armory = {'Shield': {'Kishar': {'Option': ['Giant Souls']}},
+                      'Armor': {'Adranos': {'Option': ['Excellent', 'Giant Souls', 'Souls'], 'Level': '17'}},
+                      'Sword': {'Adranos': {'Option': ['Excellent', 'Electric'], 'Level': '16'}},
+                      'Ring': {"Victor's Ring": {'Level': '10', 'Option': ['Excellent']}},
+                      'Bow': {'Bat Long Bow': {}}}
+    # print(json.dumps(get_armory_json(), indent=4))
+    # get_armory_info()
+    print(calculate_armory_bonuses(Example_Armory))

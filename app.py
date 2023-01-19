@@ -8,7 +8,8 @@ from Giants import get_giants_json
 from Patterns import get_patterns_json
 from Upgrades import get_upgrades_json
 from Rage import get_rage_json
-from Armory import get_armory_info
+from Armory import get_armory_info, calculate_armory_bonuses
+from Criticals import get_crit_json
 import numpy as np
 
 app = Flask(__name__)
@@ -203,6 +204,8 @@ def get_soul_stats(unlocked_bow, unlocked_giant, unlocked_rage):
     bow_souls_stat = souls_stat_helper(bow_upgrade_json, unlocked_bow)
     giant_souls_stat = souls_stat_helper(giant_soul_json, unlocked_giant)
     rage_souls_stat = upgrade_stat_helper(rage_souls_json, unlocked_rage)
+    if rage_souls_stat != 0:
+        rage_souls_stat += 100
     return bow_souls_stat, giant_souls_stat, rage_souls_stat
 
 
@@ -328,6 +331,9 @@ def calculate_stats():
     enemy_evolutions = headers.get("ENEMY_EVOLUTIONS").split(",")
     giant_evolutions = headers.get("GIANT_EVOLUTIONS").split(",")
     current_coins = float(headers.get("CURRENT_COINS"))
+    armory_selection = eval(headers.get("ARMORY_SELECTION"))
+    Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
+        armory_selection)
     player_speed = 4
     current_enemies = get_enemy_stats(get_enemies_json(), enemy_evolutions)
     current_giants = get_giant_stats(get_giants_json(), giant_evolutions)
