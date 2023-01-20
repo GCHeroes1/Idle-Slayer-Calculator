@@ -1,7 +1,3 @@
-import json
-from collections import OrderedDict
-
-
 def get_armory_json():
     return {
         "Sword": {
@@ -9,30 +5,30 @@ def get_armory_json():
             "Adranos": {
                 "Main": ("Souls", 2),
                 "Option": [("Excellent", 0), ("Electric", 2)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             },
             "Boreas": {
                 "Main": ("Fire", 15),
                 "Option": [("Excellent", 0), ("Souls", 0.2), ("Fire", 2)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             },
             "Kishar": {
                 "Option": [("Excellent", 0), ("Enemies", 1)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             }
         },
         "Armor": {
             "None": {},
             "Adranos": {
                 "Option": [("Excellent", 0), ("Giant Souls", 0.25), ("Souls", 0.7)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             },
             "Boreas": {
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             },
             "Kishar": {
                 "Option": [("Excellent", 0), ("Enemies", 0.5)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             }
         },
         "Shield": {
@@ -40,17 +36,17 @@ def get_armory_json():
             "Adranos": {
                 "Main": ("Souls", 1.8),
                 "Option": [("Excellent", 0), ("Critical Souls", 0.5), ("Giant Souls", 1.7)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             },
             "Boreas": {
                 "Main": ("Critical Souls", 4.8),
                 "Option": [("Excellent", 0), ("Fire", 0.8)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             },
             "Kishar": {
                 "Main": ("Critical Souls", 5.5),
                 "Option": [("Excellent", 0), ("Giant Souls", 1.5)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 16))
             }
         },
         "Ring": {
@@ -58,7 +54,7 @@ def get_armory_json():
             "Victor's Ring": {
                 "Main": ("Critical Souls", 1),
                 "Option": [("Excellent", 0), ("Critical", 0.2)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 20))
             }
         },
         "Bow": {
@@ -68,15 +64,15 @@ def get_armory_json():
             },
             "Adranos": {
                 "Option": [("Excellent", 0), ("Bow Souls", 3)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 14))
             },
             "Boreas": {
                 "Option": [("Excellent", 0), ("Bow Souls", 2.4)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 14))
             },
             "Kishar": {
                 "Option": [("Excellent", 0), ("Bow Souls", 1.6)],
-                "Levels": list(range(0, 19))
+                "Levels": list(range(0, 14))
             }
         }
     }

@@ -104,58 +104,88 @@
 </div>
 <div id="mapValueOptionsArea">
 
-    <button type="button" class="collapsible">Check upgrades bought affecting enemy spawn rate</button>
+    <button type="button" class="collapsible">Check unlocked <a
+            href="https://idleslayer.fandom.com/wiki/Enemies" target="_blank">Enemy</a> evolutions
+    </button>
+    <div class="content">
+        <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check unlocked <a
+            href="https://idleslayer.fandom.com/wiki/Giants" target="_blank">Giants</a> and their evolutions
+    </button>
+    <div class="content">
+        <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Upgrades#Enemy_Spawn_Upgrades" target="_blank">Enemy spawn rate</a>
+    </button>
     <div class="content">
         <ul id="mapValueEnemySpawnRateList" name="mapValueEnemySpawnRateList"></ul>
     </div>
 
-    <button type="button" class="collapsible">Check upgrades bought affecting giant spawn rate</button>
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Upgrades#Giant_Spawn_Upgrades" target="_blank">Giant spawn rate</a>
+    </button>
     <div class="content">
         <ul id="mapValueGiantSpawnRateList" name="mapValueGiantSpawnRateList"></ul>
     </div>
 
-    <button type="button" class="collapsible">Check upgrades bought affecting critical chance and critical multiplier
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Critical_Culling" target="_blank">Critical chance and Critical
+        Souls multiplier</a>
     </button>
     <div class="content">
         <ul id="mapValueCritical" name="mapValueCritical"></ul>
     </div>
 
-    <button type="button" class="collapsible">Check upgrades bought affecting bow souls multiplier</button>
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Bow" target="_blank">Bow</a> souls multiplier
+    </button>
     <div class="content">
         <ul id="mapValueBowSouls" name="mapValueBowSouls"></ul>
     </div>
 
-    <button type="button" class="collapsible">Check upgrades bought affecting giant souls multiplier</button>
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Giants" target="_blank">Giant</a> souls multiplier
+    </button>
     <div class="content">
         <ul id="mapValueGiantSouls" name="mapValueGiantSouls"></ul>
     </div>
 
-    <button type="button" class="collapsible">Check upgrades bought affecting rage souls multiplier</button>
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Rage_Mode" target="_blank">Rage</a> souls multiplier
+    </button>
     <div class="content">
         <ul id="mapValueRageSouls" name="mapValueRageSouls"></ul>
     </div>
 
-    <button type="button" class="collapsible">Check unlocked enemy evolutions</button>
+    <button type="button" class="collapsible"><a href="https://idleslayer.fandom.com/wiki/Armory"
+                                                 target="_blank">Armory</a> selection
+    </button>
     <div class="content">
-        <ul id="mapValueEvolutionsList" name="mapValueEvolutionsList"></ul>
-    </div>
-
-    <button type="button" class="collapsible">Check unlocked giants and their evolutions</button>
-    <div class="content">
-        <ul id="mapValueGiantsList" name="mapValueGiantsList"></ul>
-    </div>
-
-    <button type="button" class="collapsible">Armory selection</button>
-    <div class="content">
-        <label for="mapValueArmoryList">Check current Armory items:</label>
+        <label for="mapValueArmoryList">Select current Armory items:</label>
         <ul id="mapValueArmoryNames" name="mapValueArmoryNames" style="padding-left: 50px"></ul>
         <ul id="mapValueArmoryList" name="mapValueArmoryList"></ul>
-        <label for="mapValueArmoryList">Check current Armory options and trait, hold ctrl to multi select or unselect
+        <label for="mapValueArmoryOptions">Select current Armory options and trait, hold ctrl to multi select or
+            unselect
             (sorry mobile users)</label>
         <ul id="mapValueArmoryOptions" name="mapValueArmoryOptions"></ul>
-        <label for="mapValueArmoryList">Check current Armory level:</label>
+        <label for="mapValueArmoryLevels">Select current Armory levels:</label>
         <ul id="mapValueArmoryLevels" name="mapValueArmoryLevels"></ul>
     </div>
+
+    <button type="button" class="collapsible"><a href="https://idleslayer.fandom.com/wiki/Ultra_Slayer_Points"
+                                                 target="_blank">USP</a>
+        Allocation
+    </button>
+    <div class="content">
+        <label for="mapValueStoneNames">Select current USP allocation:</label>
+        <ul id="mapValueStoneNames" name="mapValueStoneNames" style="padding-left: 50px"></ul>
+        <ul id="mapValueStoneLevels" name="mapValueStoneLevels"></ul>
+    </div>
+
 </div>
 <h2>Active Play</h2>
 <p>This table shows you the base Coins/Souls per second for each Dimension. This assumes that you are not boosting, and

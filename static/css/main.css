@@ -15,7 +15,7 @@ body {
     list-style: none;
 }
 
-#mapValueArmoryNames {
+#mapValueArmoryNames, #mapValueStoneNames {
     list-style: none;
     gap: 5%;
     display: flex;
@@ -27,6 +27,14 @@ body {
 
 #mapValueArmoryList, #mapValueArmoryOptions, #mapValueArmoryLevels {
     column-count: 5;
+    list-style: none;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+}
+
+#mapValueStoneLevels {
+    column-count: 4;
     list-style: none;
     display: flex;
     flex-flow: row nowrap;
