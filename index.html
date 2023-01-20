@@ -99,6 +99,8 @@
 <div>
     <button id="checkAll">Check all</button>
     <button id="unCheckAll">Uncheck all</button>
+    <button id="collapseAll">Collapse all</button>
+    <button id="uncollapseAll">Uncollapse all</button>
 </div>
 <div id="mapValueOptionsArea">
 
@@ -110,6 +112,12 @@
     <button type="button" class="collapsible">Check upgrades bought affecting giant spawn rate</button>
     <div class="content">
         <ul id="mapValueGiantSpawnRateList" name="mapValueGiantSpawnRateList"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting critical chance and critical multiplier
+    </button>
+    <div class="content">
+        <ul id="mapValueCritical" name="mapValueCritical"></ul>
     </div>
 
     <button type="button" class="collapsible">Check upgrades bought affecting bow souls multiplier</button>
@@ -142,9 +150,8 @@
         <label for="mapValueArmoryList">Check current Armory items:</label>
         <ul id="mapValueArmoryNames" name="mapValueArmoryNames" style="padding-left: 50px"></ul>
         <ul id="mapValueArmoryList" name="mapValueArmoryList"></ul>
-        <label for="mapValueArmoryList">Check current Armory options and trait, hold ctrl to select multiple (sorry
-            mobile
-            users)</label>
+        <label for="mapValueArmoryList">Check current Armory options and trait, hold ctrl to multi select or unselect
+            (sorry mobile users)</label>
         <ul id="mapValueArmoryOptions" name="mapValueArmoryOptions"></ul>
         <label for="mapValueArmoryList">Check current Armory level:</label>
         <ul id="mapValueArmoryLevels" name="mapValueArmoryLevels"></ul>

@@ -1,7 +1,6 @@
 import copy
-import sys
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from Enemies import get_enemies_json
 from Giants import get_giants_json
@@ -10,7 +9,6 @@ from Upgrades import get_upgrades_json
 from Rage import get_rage_json
 from Armory import get_armory_info, calculate_armory_bonuses
 from Criticals import get_crit_json
-import numpy as np
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -157,7 +155,7 @@ def get_giant_stats(evolutions, unlocked_enemies):
 def upgrades_helper(json):
     array = []
     for key, value in json.items():
-        array.append([key, value["Cost"], value["Benefit"]])
+        array.append([key, value["Cost"]])
     return array
 
 
@@ -168,7 +166,8 @@ def get_upgrade_names():
     spawn_upgrades = upgrades_helper(spawn_upgrade_json)
     giant_upgrades = upgrades_helper(giant_upgrade_json)
     rage_upgrades = upgrades_helper(get_rage_json())
-    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades
+    critical_upgrades = upgrades_helper(get_crit_json())
+    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades
 
 
 def upgrade_stat_helper(upgrades, unlocked_upgrades):
@@ -207,6 +206,24 @@ def get_soul_stats(unlocked_bow, unlocked_giant, unlocked_rage):
     if rage_souls_stat != 0:
         rage_souls_stat += 100
     return bow_souls_stat, giant_souls_stat, rage_souls_stat
+
+
+def crit_helper(upgrades, unlocked_upgrades):
+    crit_chance = 0
+    crit_multiplier = 1
+    for upgrade in unlocked_upgrades:
+        if str(upgrade) in upgrades:
+            if "Critical" in upgrades[upgrade]:
+                crit_chance += upgrades[upgrade]["Critical"]
+            if "Critical Souls" in upgrades[upgrade]:
+                crit_multiplier *= (upgrades[upgrade]["Critical Souls"] / 100) + 1
+    return crit_chance, crit_multiplier
+
+
+def get_crit_stats(critical_upgrades):
+    crit_json = get_crit_json()
+    critical_chance, critical_multiplier = crit_helper(crit_json, critical_upgrades)
+    return critical_chance, critical_multiplier
 
 
 def get_armory_souls(armory):
@@ -283,9 +300,9 @@ def calculate_average_rage_gains(average_patterns, current_enemies, current_gian
     return average_rage_gains
 
 
-@app.route('/')
-def home():
-    return render_template('./index.html')
+# @app.route('/')
+# def home():
+#     return render_template('index.html')
 
 
 @app.route('/evolutionNames', methods=["GET"])
@@ -310,8 +327,8 @@ def giant_names():
 
 @app.route('/upgradeNames', methods=["GET"])
 def upgrade_names():
-    bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades = get_upgrade_names()
-    return [bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades]
+    variables = get_upgrade_names()
+    return list(variables)
 
 
 @app.route('/armory', methods=["GET"])
@@ -325,6 +342,7 @@ def calculate_stats():
     headers = request.headers
     enemy_spawn = headers.get("ENEMY_SPAWN").split(",")
     giant_spawn = headers.get("GIANT_SPAWN").split(",")
+    critical_upgrades = headers.get("CRITICAL_UPGRADES").split(",")
     bow_souls = headers.get("BOW_SOULS").split(",")
     giant_souls = headers.get("GIANT_SOULS").split(",")
     rage_souls = headers.get("RAGE_SOULS").split(",")
@@ -332,15 +350,19 @@ def calculate_stats():
     giant_evolutions = headers.get("GIANT_EVOLUTIONS").split(",")
     current_coins = float(headers.get("CURRENT_COINS"))
     armory_selection = eval(headers.get("ARMORY_SELECTION"))
+    # TODO: setup these bonuses, implement them into the calculator
+    # [Souls * (1 - crit_chance)] + [Souls * crit * crit_souls]
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
         armory_selection)
     player_speed = 4
     current_enemies = get_enemy_stats(get_enemies_json(), enemy_evolutions)
     current_giants = get_giant_stats(get_giants_json(), giant_evolutions)
     average_patterns, __ = calculate_average_pattern(current_coins)
-    # bow_soul_upgrades, giant_soul_upgrades, spawn_upgrades, giant_upgrades = get_upgrade_names()
     pattern_spawn, giant_freq = get_upgrade_stats(enemy_spawn, giant_spawn)
     bow_souls_stat, giant_souls_stat, rage_souls_stat = get_soul_stats(bow_souls, giant_souls, rage_souls)
+    critical_chance, critical_souls = get_crit_stats(critical_upgrades)
+    critical_chance += Critical
+    critical_souls *= Critical_Souls
     average_base_gains = calculate_average_base_gains(average_patterns, current_enemies, current_giants, pattern_spawn,
                                                       giant_freq, giant_souls_stat, player_speed)
     average_bow_gains = calculate_average_bow_gains(average_patterns, current_enemies, current_giants, pattern_spawn,

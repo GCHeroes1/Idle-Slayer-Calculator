@@ -1,34 +1,16 @@
-#mapValueEvolutionsList {
-    column-count: 3;
-    list-style: none;
+@charset "UTF-8";
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    line-height: 1.4;
+    max-width: 850px;
+    margin: 20px auto;
+    padding: 0 10px;
+    color: #dbdbdb;
+    background: #202b38;
+    text-rendering: optimizeLegibility
 }
 
-#mapValueGiantsList {
-    column-count: 3;
-    list-style: none;
-}
-
-#mapValueEnemySpawnRateList {
-    column-count: 3;
-    list-style: none;
-}
-
-#mapValueGiantSpawnRateList {
-    column-count: 3;
-    list-style: none;
-}
-
-#mapValueBowSouls {
-    column-count: 3;
-    list-style: none;
-}
-
-#mapValueGiantSouls {
-    column-count: 2;
-    list-style: none;
-}
-
-#mapValueRageSouls {
+#mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls {
     column-count: 3;
     list-style: none;
 }
@@ -66,10 +48,8 @@ select {
 .box {
     column-count: 5;
     vertical-align: middle;
-    /*height: 300px;*/
     display: flex;
     flex-direction: column;
-    /*flex-wrap: wrap;*/
 }
 
 
@@ -203,17 +183,17 @@ th.des::after {
     color: white;
 }
 
-@charset "UTF-8";
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    line-height: 1.4;
-    max-width: 850px;
-    margin: 20px auto;
-    padding: 0 10px;
-    color: #dbdbdb;
-    background: #202b38;
-    text-rendering: optimizeLegibility
-}
+/*@charset "UTF-8";*/
+/*body {*/
+/*    font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;*/
+/*    line-height: 1.4;*/
+/*    max-width: 850px;*/
+/*    margin: 20px auto;*/
+/*    padding: 0 10px;*/
+/*    color: #dbdbdb;*/
+/*    background: #202b38;*/
+/*    text-rendering: optimizeLegibility*/
+/*}*/
 
 button, input, textarea {
     transition: background-color .1s linear, border-color .1s linear, color .1s linear, box-shadow .1s linear, transform .1s ease

@@ -83,7 +83,18 @@ const setAllCheckboxes = (value) => {
         }
     });
 };
-
+const setAllCollapse = (value) => {
+    Array.from(document.getElementsByClassName("collapsible")).forEach((input) => {
+        // false = collapse All -> if its active, you need to click it
+        // true = uncollapse all -> if its not active, you need to click it
+        if (value && !input.classList.contains("active")) {
+            input.click()
+        }
+        if (!value && input.classList.contains("active")) {
+            input.click()
+        }
+    });
+};
 const checkCoins = (value) => {
     current_coins = 0;
     Array.from(document.getElementsByTagName("input")).forEach((input) => {
@@ -149,6 +160,13 @@ document.addEventListener("DOMContentLoaded", () => {
         setAllCheckboxes(false);
         void get_table_values();
     });
+    // handle clicks on collapse/uncollapse all
+    document.getElementById("collapseAll").addEventListener("click", () => {
+        setAllCollapse(false);
+    });
+    document.getElementById("uncollapseAll").addEventListener("click", () => {
+        setAllCollapse(true);
+    });
 });
 
 var coll = document.getElementsByClassName("collapsible");
@@ -171,6 +189,7 @@ const giant_spawn_options_area = document.getElementById("mapValueGiantSpawnRate
 const bow_soul_options_area = document.getElementById("mapValueBowSouls");
 const rage_soul_options_area = document.getElementById("mapValueRageSouls");
 const giant_soul_options_area = document.getElementById("mapValueGiantSouls");
+const critical_options_area = document.getElementById("mapValueCritical");
 const evolutions_list = document.getElementById("mapValueEvolutionsList");
 const giants_list = document.getElementById("mapValueGiantsList");
 const armory_names = document.getElementById("mapValueArmoryNames");
@@ -188,8 +207,8 @@ let unlocked_giant_spawn_upgrades = [];
 let unlocked_bow_soul_upgrades = [];
 let unlocked_giant_soul_upgrades = [];
 let unlocked_rage_soul_upgrades = [];
+let unlocked_critical_upgrades = [];
 let unlocked_armory = {};
-let test_armory = [];
 let current_coins = 0;
 const map_active_value_result_cells = {};
 const map_bow_value_result_cells = {};
@@ -230,6 +249,9 @@ function upgrade_checkboxes(list) {
     });
     list[4].forEach((upgrade, index) => {
         giant_spawn_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_giant_spawn_upgrades));
+    });
+    list[5].forEach((upgrade, index) => {
+        critical_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_critical_upgrades));
     });
 }
 
@@ -347,6 +369,7 @@ async function get_table_values() {
         headers: {
             "ENEMY_SPAWN": unlocked_enemy_spawn_upgrades,
             "GIANT_SPAWN": unlocked_giant_spawn_upgrades,
+            "CRITICAL_UPGRADES": unlocked_critical_upgrades,
             "BOW_SOULS": unlocked_bow_soul_upgrades,
             "GIANT_SOULS": unlocked_giant_soul_upgrades,
             "RAGE_SOULS": unlocked_rage_soul_upgrades,
