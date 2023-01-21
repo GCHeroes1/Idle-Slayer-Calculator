@@ -12,19 +12,22 @@ custom:
   wsgi:
     app: app.app
     packRequirements: false
-
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
 functions:
   evolutionNames:
-    handler: handler.evolution_names
+    handler: app.evolution_names
   giantNames:
-    handler: handler.giant_names
+    handler: app.giant_names
   upgradeNames:
-    handler: handler.upgrade_names
+    handler: app.upgrade_names
   armory:
-    handler: handler.armory
+    handler: app.armory
   stones:
-    handler: handler.stones
+    handler: app.stones
   randomBoxes:
-    handler: handler.randomBoxes
+    handler: app.randomBoxes
   calculateStats:
-    handler: handler.calculateStats
+    handler: app.calculateStats
