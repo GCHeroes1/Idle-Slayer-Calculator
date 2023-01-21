@@ -12,3 +12,19 @@ custom:
   wsgi:
     app: app.app
     packRequirements: false
+
+functions:
+  evolutionNames:
+    handler: handler.evolution_names
+  giantNames:
+    handler: handler.giant_names
+  upgradeNames:
+    handler: handler.upgrade_names
+  armory:
+    handler: handler.armory
+  stones:
+    handler: handler.stones
+  randomBoxes:
+    handler: handler.randomBoxes
+  calculateStats:
+    handler: handler.calculateStats
