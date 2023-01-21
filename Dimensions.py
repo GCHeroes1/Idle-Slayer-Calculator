@@ -33,6 +33,7 @@ def get_dimension_json():
             dict[dimension["Name"]] = {
                 "Cost": dimension["Cost"],
             }
+    dict["Hot Desert"]["Cost"] = "5 SP, after UA"
     return dict
 
 

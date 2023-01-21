@@ -10,10 +10,15 @@ body {
     text-rendering: optimizeLegibility
 }
 
-#mapValueDimensions, #mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls, #mapValueRandomBoxes {
+#mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls, #mapValueRandomBoxes {
+    column-count: 3;
+    list-style: none;
+}
+
+#mapValueDimensions {
+    list-style: none;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    list-style: none;
 }
 
 #mapValueArmoryNames, #mapValueStoneNames {

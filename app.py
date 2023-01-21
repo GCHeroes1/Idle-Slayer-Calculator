@@ -9,7 +9,7 @@ from Upgrades import get_upgrades_json
 from Rage import get_rage_json
 from Armory import get_armory_info, calculate_armory_bonuses
 from Criticals import get_crit_json
-from StonesOfTime import get_sot_info, calculate_stone_bonuses
+from StonesOfTime import *
 from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time
 from Dimensions import get_dimension_json
 

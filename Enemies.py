@@ -39,7 +39,7 @@ def get_enemies_json():
     enemies_data.drop("Enemy Type", inplace=True, axis=1)
     enemies_data.drop("Drop", inplace=True, axis=1)
     # print(enemies_data)
-    enemies_data.to_csv("enemies.csv", index=False)
+    # enemies_data.to_csv("enemies.csv", index=False)
 
     evolutions = tb[1]
     headers = []
@@ -57,12 +57,11 @@ def get_enemies_json():
         evolutions_data.loc[length] = row
 
     evolutions_data.drop(evolutions_data.index[21:23], inplace=True)
-    # evolutions_data.drop(evolutions_data.index[22], inplace=True)
 
     evolutions_data.drop("Image", inplace=True, axis=1)
     evolutions_data.drop("How To Obtain", inplace=True, axis=1)
     # print(evolutions_data)
-    evolutions_data.to_csv("enemy_evolutions.csv", index=False)
+    # evolutions_data.to_csv("enemy_evolutions.csv", index=False)
 
     dict = {}
     for _, enemy in enemies_data.iterrows():

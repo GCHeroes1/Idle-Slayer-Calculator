@@ -31,7 +31,7 @@ def get_giants_json():
     giants_data.drop("Drop", inplace=True, axis=1)
     giants_data.drop("UnlockCondition", inplace=True, axis=1)
     # print(enemies_data)
-    giants_data.to_csv("giants.csv", index=False)
+    # giants_data.to_csv("giants.csv", index=False)
 
     evolutions = tb[1]
     headers = []
@@ -51,7 +51,7 @@ def get_giants_json():
     evolutions_data.drop("Image", inplace=True, axis=1)
     evolutions_data.drop("How To Obtain", inplace=True, axis=1)
     # print(evolutions_data)
-    evolutions_data.to_csv("giant_evolutions.csv", index=False)
+    # evolutions_data.to_csv("giant_evolutions.csv", index=False)
 
     dict = {}
     for _, giant in giants_data.iterrows():

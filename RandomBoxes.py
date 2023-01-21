@@ -19,6 +19,37 @@ def get_random_box_json():
     }
 
 
+def get_random_box_event_odds():
+    return {"Coins": 1,
+            "Frenzy": 0.3,
+            "Equipment Bonus": 0.04,
+            "OMG": 0.01,
+            "Coin Value": 0.05,
+            "Dual Randomness": 0.1,
+            "Gemstone Rush": 0.12,
+            "CpS Multiplier": 0.2,
+            "Horde": 0.25,
+            "Souls Bonus Multiplier": 0.12
+            }
+
+
+def get_random_box_extra_events():
+    return {
+        "Souls Bonus Multiplier": {
+            "Cost": "5 SP",
+        },
+        "Dual Randomness": {
+            "Cost": "300 SP",
+        },
+        "Gemstone Rush": {
+            "Cost": "10,000 SP",
+        },
+        "Less Coins More Fun": {
+            "Cost": "380 DP",
+        }
+    }
+
+
 def get_random_box_lower_time(chance):
     return 38 / (chance / 100 + 1)
 
