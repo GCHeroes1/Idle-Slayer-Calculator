@@ -1,5 +1,5 @@
 service: idle-slayer-calculator-2
-
+app: idle-slayer-calculator
 provider:
   name: aws
   runtime: python3.9
