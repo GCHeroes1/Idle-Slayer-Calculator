@@ -232,15 +232,14 @@ def get_crit_stats(critical_upgrades):
 
 def calc_type_multiplier(Electric, Fire, Dark, enemy_type):
     multiplier = 1
-    match enemy_type:
-        case "Electric":
-            return multiplier * Electric
-        case "Fire":
-            return multiplier * Fire
-        case "Dark":
-            return multiplier * Dark
-        case other:
-            return multiplier
+    if enemy_type == "Electric":
+        return multiplier * Electric
+    elif enemy_type == "Fire":
+        return multiplier * Fire
+    elif enemy_type == "Dark":
+        return multiplier * Dark
+    else:
+        return multiplier
 
 
 def calculate_average_gains(average_patterns, current_enemies, current_giants, pattern_spawn, giant_spawn, bow_bonus,

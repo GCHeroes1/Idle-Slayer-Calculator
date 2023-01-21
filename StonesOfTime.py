@@ -119,18 +119,17 @@ def get_stat_multiplier(USP, target_stat):
 
 def update_bonuses(variables, stone, level):
     Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls = variables
-    match stone:
-        case "Activity":
-            Ingame_Souls *= get_stat_multiplier(level, "Ingame Souls") / 100 + 1
-            Bow_Souls *= get_stat_multiplier(level, "Bow Souls") / 100 + 1
-        case "Idle":
-            Critical_Souls *= get_stat_multiplier(level, "Critical Souls") / 100 + 1
-        case "Hope":
-            Souls *= get_stat_multiplier(level, "Souls") / 100 + 1
-        case "Rage":
-            Rage_Souls += get_stat_multiplier(level, "Rage Souls")
-        case other:
-            print("something went wrong with " + stone)
+    if stone == "Activity":
+        Ingame_Souls *= get_stat_multiplier(level, "Ingame Souls") / 100 + 1
+        Bow_Souls *= get_stat_multiplier(level, "Bow Souls") / 100 + 1
+    elif stone == "Idle":
+        Critical_Souls *= get_stat_multiplier(level, "Critical Souls") / 100 + 1
+    elif stone == "Hope":
+        Souls *= get_stat_multiplier(level, "Souls") / 100 + 1
+    elif stone == "Rage":
+        Rage_Souls += get_stat_multiplier(level, "Rage Souls")
+    else:
+        print("something went wrong with " + stone)
     variables = Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls
     return variables
 

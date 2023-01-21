@@ -84,27 +84,26 @@ def calculate_bonus(stat, level):
 
 def update_bonuses(variables, variable_to_update, multiplier):
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = variables
-    match variable_to_update:
-        case "Souls":
-            Souls *= (multiplier / 100) + 1
-        case "Bow Souls":
-            Bow_Souls *= (multiplier / 100) + 1
-        case "Giant Souls":
-            Giant_Souls *= (multiplier / 100) + 1
-        case "Critical Souls":
-            Critical_Souls *= (multiplier / 100) + 1
-        case "Critical":
-            Critical += multiplier
-        case "Electric":
-            Electric *= (multiplier / 100) + 1
-        case "Fire":
-            Fire *= (multiplier / 100) + 1
-        case "Dark":
-            Dark *= (multiplier / 100) + 1
-        case "Enemies":
-            Enemies += multiplier
-        case other:
-            print("something went wrong with " + variable_to_update)
+    if variable_to_update == "Souls":
+        Souls *= (multiplier / 100) + 1
+    elif variable_to_update == "Bow Souls":
+        Bow_Souls *= (multiplier / 100) + 1
+    elif variable_to_update == "Giant Souls":
+        Giant_Souls *= (multiplier / 100) + 1
+    elif variable_to_update == "Critical Souls":
+        Critical_Souls *= (multiplier / 100) + 1
+    elif variable_to_update == "Critical":
+        Critical += multiplier
+    elif variable_to_update == "Electric":
+        Electric *= (multiplier / 100) + 1
+    elif variable_to_update == "Fire":
+        Fire *= (multiplier / 100) + 1
+    elif variable_to_update == "Dark":
+        Dark *= (multiplier / 100) + 1
+    elif variable_to_update == "Enemies":
+        Enemies += multiplier
+    else:
+        print("something went wrong with " + variable_to_update)
     variables = Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies
     return variables
 
