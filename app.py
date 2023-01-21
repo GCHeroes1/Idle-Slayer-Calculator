@@ -11,6 +11,7 @@ from Armory import get_armory_info, calculate_armory_bonuses
 from Criticals import get_crit_json
 from StonesOfTime import get_sot_info, calculate_stone_bonuses
 from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time
+from Dimensions import get_dimension_json
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -70,7 +71,7 @@ def get_enemy_stats(evolutions, unlocked_enemies):
     return current_enemies
 
 
-def calculate_average_pattern(coins):
+def calculate_average_pattern(coins, unlocked_dimensions):
     patterns_cost = get_upgrades_json()[2]
     patterns = get_patterns_json()
     spawn_level = 0
@@ -92,20 +93,19 @@ def calculate_average_pattern(coins):
                 spawn__.append(0)
             current_patterns[dimension][enemy] = spawn__
 
-    average_patterns = copy.deepcopy(current_patterns)
-    dimension_array = []
-    for dimension, dimension_pattern in average_patterns.items():
+    average_patterns = {}
+    for dimension in unlocked_dimensions:
+        average_patterns[dimension] = {}
         totals = []
         total = 0
-        for enemy, spawn in dimension_pattern.items():
+        for enemy, spawn in current_patterns[dimension].items():
             totals.append((enemy, sum(spawn)))
             total += len(spawn)
         for enemy, sum_enemies in totals:
             average_patterns[dimension][enemy] = {
                 "Average": sum_enemies / total
             }
-        dimension_array.append(dimension)
-    return average_patterns, dimension_array
+    return average_patterns
 
 
 def get_giant_evolutions():
@@ -170,7 +170,8 @@ def get_upgrade_names():
     rage_upgrades = upgrades_helper(get_rage_json())
     critical_upgrades = upgrades_helper(get_crit_json())
     random_box_upgrades = upgrades_helper(get_random_box_json())
-    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades
+    dimension_unlocks = upgrades_helper(get_dimension_json())
+    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks
 
 
 def upgrade_stat_helper(upgrades, unlocked_upgrades):
@@ -307,14 +308,6 @@ def evolution_names():
     return list(get_enemy_evolutions())
 
 
-@app.route('/dimensions', methods=["GET"])
-def dimensions():
-    headers = request.headers
-    current_coins = float(headers.get("CURRENT_COINS"))
-    _, dimension_array = calculate_average_pattern(current_coins)
-    return dimension_array
-
-
 @app.route('/giantNames', methods=["GET"])
 def giant_names():
     return list(get_giant_evolutions())
@@ -346,6 +339,7 @@ def randomBoxes():
 @app.route('/calculateStats', methods=["GET"])
 def calculate_stats():
     headers = request.headers
+    dimensions = headers.get("DIMENSIONS").split(",")
     enemy_spawn = headers.get("ENEMY_SPAWN").split(",")
     giant_spawn = headers.get("GIANT_SPAWN").split(",")
     critical_upgrades = headers.get("CRITICAL_UPGRADES").split(",")
@@ -364,7 +358,7 @@ def calculate_stats():
     player_speed = 4
     current_enemies = get_enemy_stats(get_enemies_json(), enemy_evolutions)
     current_giants = get_giant_stats(get_giants_json(), giant_evolutions)
-    average_patterns, __ = calculate_average_pattern(current_coins)
+    average_patterns = calculate_average_pattern(current_coins, dimensions)
     pattern_spawn, giant_freq = get_upgrade_stats(enemy_spawn, giant_spawn, Enemies)
     bow_souls_stat, giant_souls_stat, rage_souls_stat = get_soul_stats(bow_souls, giant_souls, rage_souls,
                                                                        Bow_Souls_ * Bow_Souls, Giant_Souls, Rage_Souls)

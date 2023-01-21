@@ -10,8 +10,9 @@ body {
     text-rendering: optimizeLegibility
 }
 
-#mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls, #mapValueRandomBoxes {
-    column-count: 3;
+#mapValueDimensions, #mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls, #mapValueRandomBoxes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     list-style: none;
 }
 

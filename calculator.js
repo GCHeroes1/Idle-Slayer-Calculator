@@ -142,7 +142,7 @@ const change_table_sort = (event) => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    void get_dimensions();
+    create_table(unlocked_dimensions);
     // setup_random_box_simulation();
     void get_evolution_names();
     void get_giant_names();
@@ -170,14 +170,14 @@ document.addEventListener("DOMContentLoaded", () => {
         setAllCollapse(true);
     });
     document.getElementById("updateTables").addEventListener("click", () => {
+        delete_table();
+        create_table(unlocked_dimensions);
         void get_table_values();
     });
 });
 
 var coll = document.getElementsByClassName("collapsible");
-var i;
-
-for (i = 0; i < coll.length; i++) {
+for (var i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function () {
         this.classList.toggle("active");
         var content = this.nextElementSibling;
@@ -189,6 +189,7 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
+const dimension_options_area = document.getElementById("mapValueDimensions");
 const enemy_spawn_options_area = document.getElementById("mapValueEnemySpawnRateList");
 const giant_spawn_options_area = document.getElementById("mapValueGiantSpawnRateList");
 const bow_soul_options_area = document.getElementById("mapValueBowSouls");
@@ -209,6 +210,7 @@ const active_results_table = document.getElementById("mapValuesResultsTableActiv
 const bow_results_table = document.getElementById("mapValuesResultsTableBow");
 const rage_results_table = document.getElementById("mapValuesResultsTableRage");
 
+let unlocked_dimensions = ["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle"];
 let unlocked_enemies = [];
 let unlocked_giants = [];
 let unlocked_enemy_spawn_upgrades = [];
@@ -221,7 +223,7 @@ let unlocked_random_box_upgrades = [];
 let unlocked_armory = {};
 let unlocked_stones = {};
 let current_coins = 0;
-const map_active_value_result_cells = {};
+let map_active_value_result_cells = {};
 const map_bow_value_result_cells = {};
 const map_rage_value_result_cells = {};
 
@@ -266,6 +268,9 @@ function upgrade_checkboxes(list) {
     });
     list[6].forEach((upgrade, index) => {
         random_box_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_random_box_upgrades));
+    });
+    list[7].forEach((upgrade, index) => {
+        dimension_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_dimensions));
     });
 }
 
@@ -335,6 +340,7 @@ const create_map_row = (table, map, type) => {
         map_rage_value_result_cells[map] = {coins, souls};
     }
     const map_row = document.createElement("tr");
+    map_row.classList.add(type + "_");
     const map_name_cell = document.createElement("td");
     map_name_cell.textContent = map;
     map_row.appendChild(map_name_cell);
@@ -351,6 +357,17 @@ function create_table(dimensions) {
     }
 }
 
+function delete_table() {
+    Array.from(document.getElementsByClassName("active" + "_")).forEach((input) => {
+        input.remove()
+    })
+    Array.from(document.getElementsByClassName("bow" + "_")).forEach((input) => {
+        input.remove()
+    })
+    Array.from(document.getElementsByClassName("rage" + "_")).forEach((input) => {
+        input.remove()
+    })
+}
 
 async function get_evolution_names() {
     const fetchPromise = fetch("http://127.0.0.1:5000/evolutionNames");
@@ -384,6 +401,7 @@ async function get_table_values() {
     const fetchPromise = fetch("http://127.0.0.1:5000/calculateStats", {
         method: "GET",
         headers: {
+            "DIMENSIONS": unlocked_dimensions,
             "ENEMY_SPAWN": unlocked_enemy_spawn_upgrades,
             "GIANT_SPAWN": unlocked_giant_spawn_upgrades,
             "CRITICAL_UPGRADES": unlocked_critical_upgrades,
@@ -416,7 +434,9 @@ async function get_dimensions() {
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
-        create_table(response);
+        // console.log(response)
+        create_table(["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle", "Mystic Valley", "Factory", "Hot Desert"]);
+        // create_table(response);
     });
 }
 
@@ -617,7 +637,7 @@ function create_stone_levels(stone, levels) {
     select.addEventListener('change', function () {
         var e = document.getElementById(select.id)
         unlocked_stones[stone] = e.options[e.selectedIndex].text;
-        console.log(unlocked_stones)
+        // console.log(unlocked_stones)
         // void get_table_values();
     });
 
