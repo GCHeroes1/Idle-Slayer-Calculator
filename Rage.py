@@ -41,7 +41,7 @@ def get_rage_json():
             "Cost": rage["Cost"],
             "Benefit": int(rage["Description"]),
         }
-    dict["Bad-Tempered"]["Cost"] = "50B SP"
+    dict["Bad-Tempered"]["Cost"] = "50 B SP"
     return dict
 
 

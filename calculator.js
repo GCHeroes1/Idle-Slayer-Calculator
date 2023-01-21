@@ -83,6 +83,7 @@ const setAllCheckboxes = (value) => {
         }
     });
 };
+
 const setAllCollapse = (value) => {
     Array.from(document.getElementsByClassName("collapsible")).forEach((input) => {
         // false = collapse All -> if its active, you need to click it
@@ -95,6 +96,7 @@ const setAllCollapse = (value) => {
         }
     });
 };
+
 const checkCoins = (value) => {
     current_coins = 0;
     Array.from(document.getElementsByTagName("input")).forEach((input) => {
@@ -145,9 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
     void get_evolution_names();
     void get_giant_names();
     void get_upgrade_names();
-    void get_table_values();
     void get_armory();
     void get_stones();
+    void get_random_boxes();
+    void get_table_values();
     const sortable_headers = document.querySelectorAll(".sortable");
     for (const header of sortable_headers) {
         header.addEventListener("click", change_table_sort);
@@ -155,11 +158,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // handle clicks on check/uncheck all
     document.getElementById("checkAll").addEventListener("click", () => {
         setAllCheckboxes(true);
-        void get_table_values();
     });
     document.getElementById("unCheckAll").addEventListener("click", () => {
         setAllCheckboxes(false);
-        void get_table_values();
     });
     // handle clicks on collapse/uncollapse all
     document.getElementById("collapseAll").addEventListener("click", () => {
@@ -167,6 +168,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById("uncollapseAll").addEventListener("click", () => {
         setAllCollapse(true);
+    });
+    document.getElementById("updateTables").addEventListener("click", () => {
+        void get_table_values();
     });
 });
 
@@ -199,6 +203,8 @@ const armory_options = document.getElementById("mapValueArmoryOptions");
 const armory_levels = document.getElementById("mapValueArmoryLevels");
 const stone_names = document.getElementById("mapValueStoneNames");
 const stone_levels = document.getElementById("mapValueStoneLevels");
+const random_box_options_area = document.getElementById("mapValueRandomBoxes");
+const random_box_time = document.getElementById("mapValueRandomBoxesTime");
 const active_results_table = document.getElementById("mapValuesResultsTableActive");
 const bow_results_table = document.getElementById("mapValuesResultsTableBow");
 const rage_results_table = document.getElementById("mapValuesResultsTableRage");
@@ -211,6 +217,7 @@ let unlocked_bow_soul_upgrades = [];
 let unlocked_giant_soul_upgrades = [];
 let unlocked_rage_soul_upgrades = [];
 let unlocked_critical_upgrades = [];
+let unlocked_random_box_upgrades = [];
 let unlocked_armory = {};
 let unlocked_stones = {};
 let current_coins = 0;
@@ -257,6 +264,9 @@ function upgrade_checkboxes(list) {
     list[5].forEach((upgrade, index) => {
         critical_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_critical_upgrades));
     });
+    list[6].forEach((upgrade, index) => {
+        random_box_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_random_box_upgrades));
+    });
 }
 
 function create_evolution_checkbox(name, cost, unlocked_array) {
@@ -275,7 +285,10 @@ function create_evolution_checkbox(name, cost, unlocked_array) {
             }
         }
         checkCoins(true);
-        get_table_values();
+        if (unlocked_array === unlocked_random_box_upgrades) {
+            void get_random_boxes();
+        }
+        // get_table_values();
         // console.log(unlocked_array);
     });
 
@@ -421,8 +434,21 @@ async function get_stones() {
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
-        console.log(response)
         stone_section(response[0], response[1]);
+    });
+}
+
+async function get_random_boxes() {
+    const fetchPromise = fetch("http://127.0.0.1:5000/randomBoxes", {
+        method: "GET",
+        headers: {
+            "RANDOM_BOX": unlocked_random_box_upgrades,
+        },
+    });
+    fetchPromise.then(response => {
+        return response.json();
+    }).then(response => {
+        random_box_time.appendChild(update_spawn_times(response[0], response[1]));
     });
 }
 
@@ -461,7 +487,7 @@ function create_armory_dropdown(item, subtypes) {
         var text = e.options[e.selectedIndex].text;
         unlocked_armory[select.name] = {}
         unlocked_armory[select.name][text] = {};
-        void get_table_values();
+        // void get_table_values();
     });
 
     for (const val of subtype_array) {
@@ -509,7 +535,7 @@ function create_armory_options_dropdown(item, subtype, options) {
             }
         }
         unlocked_armory[item][subtype]["Option"] = result;
-        void get_table_values();
+        // void get_table_values();
     });
 
     for (const val of options) {
@@ -548,7 +574,7 @@ function create_armory_levels(item, subtype, levels) {
     select.addEventListener('change', function () {
         var e = document.getElementById(select.id)
         unlocked_armory[item][select.name]["Level"] = e.options[e.selectedIndex].text.slice(1);
-        void get_table_values();
+        // void get_table_values();
     });
 
     for (const val of levels_array) {
@@ -592,7 +618,7 @@ function create_stone_levels(stone, levels) {
         var e = document.getElementById(select.id)
         unlocked_stones[stone] = e.options[e.selectedIndex].text;
         console.log(unlocked_stones)
-        void get_table_values();
+        // void get_table_values();
     });
 
     for (const val of levels_array) {
@@ -606,4 +632,15 @@ function create_stone_levels(stone, levels) {
     label.htmlFor = "USP";
     var container = document.createElement("li");
     return container.appendChild(label).appendChild(select);
+}
+
+function update_spawn_times(lower_time, upper_time) {
+    if (document.getElementById("remove")) {
+        random_box_time.removeChild(document.getElementById("remove"))
+    }
+    let textNode = document.createTextNode("Random boxes will spawn every " + lower_time.toFixed(1) + "-" + upper_time.toFixed(1) + " seconds.");
+    let container = document.createElement("label");
+    container.id = "remove"
+    container.appendChild(textNode);
+    return container;
 }

@@ -26,81 +26,22 @@
 </head>
 
 <body>
-<!--<h1 id="randomBoxCalc">Random Box Bonus Odds</h1>-->
-<!--<p>For details on the bonuses, visit <a href="https://idleslayer.fandom.com/wiki/Random_Box">the wiki</a>.</p>-->
-<!--<div id="randomBoxOptionsArea"></div>-->
-<!--<table>-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--        <th>Name</th>-->
-<!--        <th>Chance</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody id="randomBoxResultsTable">-->
-<!--    </tbody>-->
-<!--</table>-->
-<!--<hr/>-->
-<!--<br>-->
-<!--<h1>Random Box Spawn Rate</h1>-->
-<!--<span>Select your highest upgrade purchased to show Random Box spawn rate.</span>-->
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="utf-8">-->
-<!--    <title>jQuery Show Hide Elements Using Radio Buttons</title>-->
-<!--    <style>-->
-<!--        .box {-->
-<!--            color: #fff;-->
-<!--            padding: 10px;-->
-<!--            display: none;-->
-<!--            margin-top: 10px;-->
-<!--        }-->
-
-<!--        .base {-->
-<!--            background: #202b38;-->
-<!--        }-->
-
-<!--        .upgrade1 {-->
-<!--            background: #202b38;-->
-<!--        }-->
-
-<!--        .upgrade2 {-->
-<!--            background: #202b38;-->
-<!--        }-->
-<!--    </style>-->
-<!--    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>-->
-<!--    <script>-->
-<!--        $(document).ready(function () {-->
-<!--            $('input[type="radio"]').click(function () {-->
-<!--                var inputValue = $(this).attr("value");-->
-<!--                var targetBox = $("." + inputValue);-->
-<!--                $(".box").not(targetBox).hide();-->
-<!--                $(targetBox).show();-->
-<!--            });-->
-<!--            $(document).ready(function () {-->
-<!--                $('input[type="radio"]:first').trigger('click');-->
-<!--            });-->
-<!--        });-->
-<!--    </script>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div>-->
-<!--    <label><input type="radio" name="RBSRRadio" value="base">Random Box (base)</label>-->
-<!--    <label><input type="radio" name="RBSRRadio" value="upgrade1">Mega Random Box</label>-->
-<!--    <label><input type="radio" name="RBSRRadio" value="upgrade2">Roll The Dice</label>-->
-<!--</div>-->
-<!--<div class="base box">Random Boxes will spawn every 30-120 seconds.</div>-->
-<!--<div class="upgrade1 box">Random Boxes will spawn every 15-60 seconds.</div>-->
-<!--<div class="upgrade2 box">Random Boxes will spawn every 13.6-54.5 seconds.</div>-->
-<!--</body>-->
-<!--</html>-->
+<h1>Random Box Spawn Rate</h1>
+<label for="mapValueRandomBoxes">Select current <a href="https://idleslayer.fandom.com/wiki/Random_Box" target="_blank">Random
+    Box</a> spawn upgrades:</label>
+<ul id="mapValueRandomBoxes" name="mapValueRandomBoxes"></ul>
+<label id="mapValueRandomBoxesTime" name="mapValueRandomBoxesTime"></label>
 <br>
+
 <h1 id="mapValues">Dimension Values</h1>
 <div>
-    <button id="checkAll">Check all</button>
-    <button id="unCheckAll">Uncheck all</button>
-    <button id="collapseAll">Collapse all</button>
-    <button id="uncollapseAll">Uncollapse all</button>
+    <div style="text-align: center;">
+        <button id="checkAll">Check all</button>
+        <button id="unCheckAll">Uncheck all</button>
+        <button id="updateTables"><b>UPDATE TABLES</b></button>
+        <button id="collapseAll">Collapse all</button>
+        <button id="uncollapseAll">Uncollapse all</button>
+    </div>
 </div>
 <div id="mapValueOptionsArea">
 
@@ -141,21 +82,21 @@
     </div>
 
     <button type="button" class="collapsible">Check upgrades bought affecting <a
-            href="https://idleslayer.fandom.com/wiki/Bow" target="_blank">Bow</a> souls multiplier
+            href="https://idleslayer.fandom.com/wiki/Bow" target="_blank">Bow</a> Souls multiplier
     </button>
     <div class="content">
         <ul id="mapValueBowSouls" name="mapValueBowSouls"></ul>
     </div>
 
     <button type="button" class="collapsible">Check upgrades bought affecting <a
-            href="https://idleslayer.fandom.com/wiki/Giants" target="_blank">Giant</a> souls multiplier
+            href="https://idleslayer.fandom.com/wiki/Giants" target="_blank">Giant</a> Souls multiplier
     </button>
     <div class="content">
         <ul id="mapValueGiantSouls" name="mapValueGiantSouls"></ul>
     </div>
 
     <button type="button" class="collapsible">Check upgrades bought affecting <a
-            href="https://idleslayer.fandom.com/wiki/Rage_Mode" target="_blank">Rage</a> souls multiplier
+            href="https://idleslayer.fandom.com/wiki/Rage_Mode" target="_blank">Rage</a> Souls multiplier
     </button>
     <div class="content">
         <ul id="mapValueRageSouls" name="mapValueRageSouls"></ul>
@@ -165,12 +106,11 @@
                                                  target="_blank">Armory</a> selection
     </button>
     <div class="content">
-        <label for="mapValueArmoryList">Select current Armory items:</label>
+        <label for="mapValueArmoryNames">Select current Armory items:</label>
         <ul id="mapValueArmoryNames" name="mapValueArmoryNames" style="padding-left: 50px"></ul>
         <ul id="mapValueArmoryList" name="mapValueArmoryList"></ul>
-        <label for="mapValueArmoryOptions">Select current Armory options and trait, hold ctrl to multi select or
-            unselect
-            (sorry mobile users)</label>
+        <label for="mapValueArmoryOptions">Select current Armory options and trait, hold ctrl to multi-select or
+            unselect (sorry mobile users)</label>
         <ul id="mapValueArmoryOptions" name="mapValueArmoryOptions"></ul>
         <label for="mapValueArmoryLevels">Select current Armory levels:</label>
         <ul id="mapValueArmoryLevels" name="mapValueArmoryLevels"></ul>
@@ -243,5 +183,21 @@
     </table>
 </div>
 
+
+<!--<h1 id="randomBoxCalc">Random Box Bonus Odds</h1>-->
+<!--<p>For details on the bonuses, visit <a href="https://idleslayer.fandom.com/wiki/Random_Box">the wiki</a>.</p>-->
+<!--<div id="randomBoxOptionsArea"></div>-->
+<!--<table>-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>Name</th>-->
+<!--        <th>Chance</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="randomBoxResultsTable">-->
+<!--    </tbody>-->
+<!--</table>-->
+<!--<hr/>-->
+<!--<br>-->
 </body>
 </html>

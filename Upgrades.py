@@ -99,7 +99,7 @@ def get_upgrades_json():
         },
         "Wander's Path": {
             # "Cost": 0,  # 1T SP
-            "Cost": "1T SP",  # 1T SP
+            "Cost": "1 T SP",  # 1T SP
             "Benefit": int(400)
         }
     }

@@ -10,7 +10,7 @@ body {
     text-rendering: optimizeLegibility
 }
 
-#mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls {
+#mapValueEvolutionsList, #mapValueGiantsList, #mapValueEnemySpawnRateList, #mapValueGiantSpawnRateList, #mapValueCritical, #mapValueBowSouls, #mapValueRageSouls, #mapValueGiantSouls, #mapValueRandomBoxes {
     column-count: 3;
     list-style: none;
 }
@@ -43,6 +43,10 @@ body {
 
 #mapValueArmoryOptions {
     height: 86px;
+}
+
+#mapValueRandomBoxesTime {
+    list-style: none;
 }
 
 select {

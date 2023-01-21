@@ -10,6 +10,7 @@ from Rage import get_rage_json
 from Armory import get_armory_info, calculate_armory_bonuses
 from Criticals import get_crit_json
 from StonesOfTime import get_sot_info, calculate_stone_bonuses
+from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -168,7 +169,8 @@ def get_upgrade_names():
     giant_upgrades = upgrades_helper(giant_upgrade_json)
     rage_upgrades = upgrades_helper(get_rage_json())
     critical_upgrades = upgrades_helper(get_crit_json())
-    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades
+    random_box_upgrades = upgrades_helper(get_random_box_json())
+    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades
 
 
 def upgrade_stat_helper(upgrades, unlocked_upgrades):
@@ -331,6 +333,14 @@ def armory():
 @app.route('/stones', methods=["GET"])
 def stones():
     return list(get_sot_info())
+
+
+@app.route('/randomBoxes', methods=["GET"])
+def randomBoxes():
+    headers = request.headers
+    random_box = headers.get("RANDOM_BOX").split(",")
+    random_box_chance = upgrade_stat_helper(get_random_box_json(), random_box)
+    return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 
 @app.route('/calculateStats', methods=["GET"])

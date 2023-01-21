@@ -9,7 +9,7 @@ def get_random_box_json():
             "Benefit": float(50)
         },
         "Roll The Dice": {
-            "Cost": convert_standard_to_exponential("10 No"),
+            "Cost": "16,500 SP",
             "Benefit": float(20)
         },
         "Pandora's Box": {
@@ -17,6 +17,14 @@ def get_random_box_json():
             "Benefit": float(8)
         }
     }
+
+
+def get_random_box_lower_time(chance):
+    return 38 / (chance / 100 + 1)
+
+
+def get_random_box_upper_time(chance):
+    return 120 / (chance / 100 + 1)
 
 
 def get_random_box_time(chance):
