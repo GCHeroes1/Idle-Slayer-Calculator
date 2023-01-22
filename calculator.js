@@ -370,7 +370,9 @@ function delete_table() {
 }
 
 async function get_evolution_names() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/evolutionNames");
+    // let evolutionNames = "https://se7pzunbecr24lk2hxy5xh2xe40bewdx.lambda-url.us-east-1.on.aws/"
+    let evolutionNames = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(evolutionNames + "evolutionNames");
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
@@ -379,7 +381,9 @@ async function get_evolution_names() {
 }
 
 async function get_giant_names() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/giantNames");
+    // let giantNames = "https://zbjcvuymh2vunmtg2jrkr6bgo40ughkn.lambda-url.us-east-1.on.aws/"
+    let giantNames = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(giantNames + "giantNames");
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
@@ -388,7 +392,9 @@ async function get_giant_names() {
 }
 
 async function get_upgrade_names() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/upgradeNames");
+    // let upgradeNames = "https://2ada44sslf4ifqhq22iz6tykbq0xkjfz.lambda-url.us-east-1.on.aws/"
+    let upgradeNames = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(upgradeNames + "upgradeNames");
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
@@ -398,8 +404,10 @@ async function get_upgrade_names() {
 
 async function get_table_values() {
     console.log(unlocked_armory);
-    const fetchPromise = fetch("http://127.0.0.1:5000/calculateStats", {
-        method: "GET",
+    // let calculateStats = "https://sfrcipmywjxpvpowxi5ksi74ze0enrmg.lambda-url.us-east-1.on.aws/"
+    let calculateStats = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(calculateStats + "calculateStats", {
+        method: "POST",
         headers: {
             "DIMENSIONS": unlocked_dimensions,
             "ENEMY_SPAWN": unlocked_enemy_spawn_upgrades,
@@ -414,6 +422,7 @@ async function get_table_values() {
             "ARMORY_SELECTION": JSON.stringify(unlocked_armory),
             "STONE_SELECTION": JSON.stringify(unlocked_stones)
         },
+        // mode: "no-cors"
     });
     fetchPromise.then(response => {
         return response.json();
@@ -424,24 +433,10 @@ async function get_table_values() {
     });
 }
 
-async function get_dimensions() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/dimensions", {
-        method: "GET",
-        headers: {
-            "CURRENT_COINS": current_coins,
-        },
-    });
-    fetchPromise.then(response => {
-        return response.json();
-    }).then(response => {
-        // console.log(response)
-        create_table(["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle", "Mystic Valley", "Factory", "Hot Desert"]);
-        // create_table(response);
-    });
-}
-
 async function get_armory() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/armory");
+    // let armory = "https://cvingbaei5kuzzphjxseqlbk3i0viggh.lambda-url.us-east-1.on.aws/"
+    let armory = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(armory + "armory");
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
@@ -450,7 +445,9 @@ async function get_armory() {
 }
 
 async function get_stones() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/stones");
+    // let stones = "https://cq3crx27wztwuidliacnevptqi0dkqvt.lambda-url.us-east-1.on.aws/"
+    let stones = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(stones + "stones");
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
@@ -459,8 +456,10 @@ async function get_stones() {
 }
 
 async function get_random_boxes() {
-    const fetchPromise = fetch("http://127.0.0.1:5000/randomBoxes", {
-        method: "GET",
+    // let randomBoxes = "https://2syytwjpbwxw3aa7xzh4ljmsea0wwrap.lambda-url.us-east-1.on.aws/"
+    let randomBoxes = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(randomBoxes + "randomBoxes", {
+        method: "POST",
         headers: {
             "RANDOM_BOX": unlocked_random_box_upgrades,
         },

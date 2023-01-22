@@ -12,22 +12,62 @@ custom:
   wsgi:
     app: app.app
     packRequirements: false
+  pythonRequirements:
+    pythonBin: python3
+    dockerizePip: non-linux
 package:
-  exclude:
-    - node_modules/**
-    - venv/**
+  patterns:
+    - '!node_modules/**'
+    - '!venv/**'
 functions:
+  login:
+    handler: app.login
   evolutionNames:
     handler: app.evolution_names
+    events:
+      - http:
+          path: /endpoint
+          method: get
+          cors: true
   giantNames:
     handler: app.giant_names
+    events:
+      - http:
+          path: /endpoint
+          method: get
+          cors: true
   upgradeNames:
     handler: app.upgrade_names
+    events:
+      - http:
+          path: /endpoint
+          method: get
+          cors: true
   armory:
     handler: app.armory
+    events:
+      - http:
+          path: /endpoint
+          method: get
+          cors: true
   stones:
     handler: app.stones
+    events:
+      - http:
+          path: /endpoint
+          method: get
+          cors: true
   randomBoxes:
-    handler: app.randomBoxes
+    handler: app.random_boxes
+    events:
+      - http:
+          path: /endpoint
+          method: post
+          cors: true
   calculateStats:
-    handler: app.calculateStats
+    handler: app.calculate_stats
+    events:
+      - http:
+          path: /endpoint
+          method: post
+          cors: true

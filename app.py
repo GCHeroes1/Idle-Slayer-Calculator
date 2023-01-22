@@ -1,5 +1,6 @@
 import copy
 
+import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from Enemies import get_enemies_json
@@ -14,6 +15,8 @@ from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_rand
 from Dimensions import get_dimension_json
 
 app = Flask(__name__)
+app.app_context().push()
+
 CORS(app, support_credentials=True)
 
 
@@ -303,39 +306,70 @@ def calculate_average_gains(average_patterns, current_enemies, current_giants, p
 
 
 @app.route('/evolutionNames', methods=["GET"])
+@cross_origin(supports_credentials=True)
 def evolution_names():
+    list_ = list(get_enemy_evolutions())
+    response = flask.jsonify(get_enemy_evolutions())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
     return list(get_enemy_evolutions())
 
 
 @app.route('/giantNames', methods=["GET"])
+@cross_origin(supports_credentials=True)
 def giant_names():
+    list_ = list(get_giant_evolutions())
+    response = flask.jsonify(get_giant_evolutions())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
     return list(get_giant_evolutions())
 
 
 @app.route('/upgradeNames', methods=["GET"])
+@cross_origin(supports_credentials=True)
 def upgrade_names():
+    list_ = list(get_upgrade_names())
+    response = flask.jsonify(get_upgrade_names())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
     return list(get_upgrade_names())
 
 
 @app.route('/armory', methods=["GET"])
+@cross_origin(supports_credentials=True)
 def armory():
+    list_ = list(get_armory_info())
+    response = flask.jsonify(get_armory_info())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
     return list(get_armory_info())
 
 
 @app.route('/stones', methods=["GET"])
+@cross_origin(supports_credentials=True)
 def stones():
+    list_ = list(get_sot_info())
+    response = flask.jsonify(get_sot_info())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
     return list(get_sot_info())
 
 
-@app.route('/randomBoxes', methods=["GET"])
-def randomBoxes():
+@app.route('/randomBoxes', methods=["POST"])
+@cross_origin(supports_credentials=True)
+def random_boxes():
     headers = request.headers
     random_box = headers.get("RANDOM_BOX").split(",")
     random_box_chance = upgrade_stat_helper(get_random_box_json(), random_box)
-    return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
+    response = flask.jsonify(
+        [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)])
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+    # return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 
-@app.route('/calculateStats', methods=["GET"])
+@app.route('/calculateStats', methods=["POST"])
+@cross_origin(supports_credentials=True)
 def calculate_stats():
     headers = request.headers
     dimensions = headers.get("DIMENSIONS").split(",")
@@ -370,10 +404,15 @@ def calculate_stats():
                                                                 pattern_spawn, giant_freq, bow_souls_stat,
                                                                 rage_souls_stat, giant_souls_stat, player_speed,
                                                                 variables)
-    return [base_gains, bow_gains, rage_gains]
+    response = flask.jsonify([base_gains, bow_gains, rage_gains])
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+    # return [base_gains, bow_gains, rage_gains]
 
 
 if __name__ == '__main__':
+    # with app.app_context():
+    #     app.run(debug=True)
     app.run(host='127.0.0.1', port=5000, debug=True)
     # evolution_names, evolution_info = get_enemy_evolutions()  # done
     # enemy_evolutions = ['Hornet', 'Black Hornet']

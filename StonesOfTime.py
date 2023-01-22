@@ -14,7 +14,6 @@ from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_rand
 from Dimensions import get_dimension_json
 from app import *
 from operator import itemgetter
-import numpy as np
 from time import time
 from concurrent import futures
 from tqdm import tqdm
