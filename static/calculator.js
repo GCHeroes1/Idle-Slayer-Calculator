@@ -378,6 +378,7 @@ async function get_evolution_names() {
         return response.json();
     }).then(response => {
         enemy_checkboxes(response);
+        return true;
     });
 }
 
@@ -387,6 +388,7 @@ async function get_giant_names() {
         return response.json();
     }).then(response => {
         giant_checkboxes(response);
+        return true;
     });
 }
 
@@ -396,6 +398,7 @@ async function get_upgrade_names() {
         return response.json();
     }).then(response => {
         upgrade_checkboxes(response);
+        return true;
     });
 }
 
@@ -414,8 +417,8 @@ async function get_random_boxes() {
         return response.json();
     }).then(response => {
         random_box_time.appendChild(update_spawn_times(response[0], response[1]));
+        return true;
     });
-    return true;
 }
 
 async function get_table_values() {
@@ -433,7 +436,6 @@ async function get_table_values() {
         "ARMORY_SELECTION": JSON.stringify(unlocked_armory),
         "STONE_SELECTION": JSON.stringify(unlocked_stones)
     })
-    console.log(body_data)
     console.log(JSON.stringify(unlocked_armory));
     const fetchPromise = fetch(endpoint + "calculateStats", {
         method: "POST",
@@ -459,8 +461,8 @@ async function get_table_values() {
         calculate_map_values_active(response[0]);
         calculate_map_values_bow(response[1]);
         calculate_map_values_rage(response[2])
+        return true;
     });
-    return true;
 }
 
 async function get_armory() {
@@ -469,6 +471,7 @@ async function get_armory() {
         return response.json();
     }).then(response => {
         armory_section(response[1], response[2], response[3], response[4]);
+        return true;
     });
 }
 
@@ -478,6 +481,7 @@ async function get_stones() {
         return response.json();
     }).then(response => {
         stone_section(response[0], response[1]);
+        return true;
     });
 }
 
