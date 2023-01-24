@@ -2,6 +2,7 @@ import copy
 
 import flask
 from flask import Flask, request, jsonify, render_template
+from flask_api import status
 from flask_cors import CORS, cross_origin
 from Enemies import get_enemies_json
 from Giants import get_giants_json
@@ -309,88 +310,68 @@ def index():
 
 @app.route('/evolutionNames', methods=["GET"])
 def evolution_names():
-    list_ = list(get_enemy_evolutions())
-    response = flask.jsonify(get_enemy_evolutions())
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return list(get_enemy_evolutions())
 
 
 @app.route('/giantNames', methods=["GET"])
 def giant_names():
-    list_ = list(get_giant_evolutions())
-    # response = flask.jsonsify(get_giant_evolutions())
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return list(get_giant_evolutions())
 
 
 @app.route('/upgradeNames', methods=["GET"])
 def upgrade_names():
-    list_ = list(get_upgrade_names())
-    # response = flask.jsonify(get_upgrade_names())
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return list(get_upgrade_names())
 
 
 @app.route('/armory', methods=["GET"])
 def armory():
-    list_ = list(get_armory_info())
-    # response = flask.jsonify(get_armory_info())
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return list(get_armory_info())
 
 
 @app.route('/stones', methods=["GET"])
 def stones():
-    list_ = list(get_sot_info())
-    # response = flask.jsonify(get_sot_info())
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return list(get_sot_info())
 
 
 @app.route('/randomBoxes', methods=["POST"])
 def random_boxes():
     body = request.get_json(force=True)
-    random_box = body["RANDOM_BOX"]
-    # headers = request.headers
-    # random_box = headers.get("RANDOM_BOX").split(",")
+    random_box = []
+    if "RANDOM_BOX" in body:
+        random_box = body["RANDOM_BOX"]
     random_box_chance = upgrade_stat_helper(get_random_box_json(), random_box)
-    # response.headers.add('Access-Control-Allow-Origin', '*')
     return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 
 @app.route('/calculateStats', methods=["POST"])
 def calculate_stats():
+    dimensions, enemy_spawn, giant_spawn, critical_upgrades, bow_souls, giant_souls, rage_souls, enemy_evolutions, \
+    giant_evolutions, current_coins, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], [], []
     body = request.get_json(force=True)
-    dimensions = body["DIMENSIONS"]
-    enemy_spawn = body["ENEMY_SPAWN"]
-    giant_spawn = body["GIANT_SPAWN"]
-    critical_upgrades = body["CRITICAL_UPGRADES"]
-    bow_souls = body["BOW_SOULS"]
-    giant_souls = body["GIANT_SOULS"]
-    rage_souls = body["RAGE_SOULS"]
-    enemy_evolutions = body["ENEMY_EVOLUTIONS"]
-    giant_evolutions = body["GIANT_EVOLUTIONS"]
-    current_coins = float(body["CURRENT_COINS"])
-    armory_selection = eval(body["ARMORY_SELECTION"])
-    stone_selection = eval(body["STONE_SELECTION"])
-    # headers = request.headers
-    # dimensions = headers.get("DIMENSIONS").split(",")
-    # enemy_spawn = headers.get("ENEMY_SPAWN").split(",")
-    # giant_spawn = headers.get("GIANT_SPAWN").split(",")
-    # critical_upgrades = headers.get("CRITICAL_UPGRADES").split(",")
-    # bow_souls = headers.get("BOW_SOULS").split(",")
-    # giant_souls = headers.get("GIANT_SOULS").split(",")
-    # rage_souls = headers.get("RAGE_SOULS").split(",")
-    # enemy_evolutions = headers.get("ENEMY_EVOLUTIONS").split(",")
-    # giant_evolutions = headers.get("GIANT_EVOLUTIONS").split(",")
-    # current_coins = float(headers.get("CURRENT_COINS"))
-    # armory_selection = eval(headers.get("ARMORY_SELECTION"))
-    # stone_selection = eval(headers.get("STONE_SELECTION"))
+    if "DIMENSIONS" in body:
+        dimensions = body["DIMENSIONS"]
+    if "ENEMY_SPAWN" in body:
+        enemy_spawn = body["ENEMY_SPAWN"]
+    if "GIANT_SPAWN" in body:
+        giant_spawn = body["GIANT_SPAWN"]
+    if "CRITICAL_UPGRADES" in body:
+        critical_upgrades = body["CRITICAL_UPGRADES"]
+    if "BOW_SOULS" in body:
+        bow_souls = body["BOW_SOULS"]
+    if "GIANT_SOULS" in body:
+        giant_souls = body["GIANT_SOULS"]
+    if "RAGE_SOULS" in body:
+        rage_souls = body["RAGE_SOULS"]
+    if "ENEMY_EVOLUTIONS" in body:
+        enemy_evolutions = body["ENEMY_EVOLUTIONS"]
+    if "GIANT_EVOLUTIONS" in body:
+        giant_evolutions = body["GIANT_EVOLUTIONS"]
+    if "CURRENT_COINS" in body:
+        current_coins = float(body["CURRENT_COINS"])
+    if "ARMORY_SELECTION" in body:
+        armory_selection = eval(body["ARMORY_SELECTION"])
+    if "STONE_SELECTION" in body:
+        stone_selection = eval(body["STONE_SELECTION"])
 
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
         armory_selection)
@@ -411,15 +392,10 @@ def calculate_stats():
                                                                 pattern_spawn, giant_freq, bow_souls_stat,
                                                                 rage_souls_stat, giant_souls_stat, player_speed,
                                                                 variables)
-    # response = flask.jsonify([base_gains, bow_gains, rage_gains])
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return [base_gains, bow_gains, rage_gains]
 
 
 if __name__ == '__main__':
-    # with app.app_context():
-    #     app.run(debug=True)
     app.run(host='0.0.0.0')
     # evolution_names, evolution_info = get_enemy_evolutions()  # done
     # enemy_evolutions = ['Hornet', 'Black Hornet']
