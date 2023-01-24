@@ -352,33 +352,45 @@ def stones():
     return list(get_sot_info())
 
 
-@app.route('/randomBoxes', methods=["GET"])
+@app.route('/randomBoxes', methods=["POST"])
 def random_boxes():
-    headers = request.headers
-    random_box = headers.get("RANDOMBOX").split(",")
+    body = request.get_json(force=True)
+    random_box = body["RANDOM_BOX"]
+    # headers = request.headers
+    # random_box = headers.get("RANDOM_BOX").split(",")
     random_box_chance = upgrade_stat_helper(get_random_box_json(), random_box)
-    # response = flask.jsonify(
-    #     [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)])
     # response.headers.add('Access-Control-Allow-Origin', '*')
-    # return response
     return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 
-@app.route('/calculateStats', methods=["GET"])
+@app.route('/calculateStats', methods=["POST"])
 def calculate_stats():
-    headers = request.headers
-    dimensions = headers.get("DIMENSIONS").split(",")
-    enemy_spawn = headers.get("ENEMYSPAWN").split(",")
-    giant_spawn = headers.get("GIANTSPAWN").split(",")
-    critical_upgrades = headers.get("CRITICALUPGRADES").split(",")
-    bow_souls = headers.get("BOWSOULS").split(",")
-    giant_souls = headers.get("GIANTSOULS").split(",")
-    rage_souls = headers.get("RAGESOULS").split(",")
-    enemy_evolutions = headers.get("ENEMYEVOLUTIONS").split(",")
-    giant_evolutions = headers.get("GIANTEVOLUTIONS").split(",")
-    current_coins = float(headers.get("CURRENTCOINS"))
-    armory_selection = eval(headers.get("ARMORYSELECTION"))
-    stone_selection = eval(headers.get("STONESELECTION"))
+    body = request.get_json(force=True)
+    dimensions = body["DIMENSIONS"]
+    enemy_spawn = body["ENEMY_SPAWN"]
+    giant_spawn = body["GIANT_SPAWN"]
+    critical_upgrades = body["CRITICAL_UPGRADES"]
+    bow_souls = body["BOW_SOULS"]
+    giant_souls = body["GIANT_SOULS"]
+    rage_souls = body["RAGE_SOULS"]
+    enemy_evolutions = body["ENEMY_EVOLUTIONS"]
+    giant_evolutions = body["GIANT_EVOLUTIONS"]
+    current_coins = float(body["CURRENT_COINS"])
+    armory_selection = eval(body["ARMORY_SELECTION"])
+    stone_selection = eval(body["STONE_SELECTION"])
+    # headers = request.headers
+    # dimensions = headers.get("DIMENSIONS").split(",")
+    # enemy_spawn = headers.get("ENEMY_SPAWN").split(",")
+    # giant_spawn = headers.get("GIANT_SPAWN").split(",")
+    # critical_upgrades = headers.get("CRITICAL_UPGRADES").split(",")
+    # bow_souls = headers.get("BOW_SOULS").split(",")
+    # giant_souls = headers.get("GIANT_SOULS").split(",")
+    # rage_souls = headers.get("RAGE_SOULS").split(",")
+    # enemy_evolutions = headers.get("ENEMY_EVOLUTIONS").split(",")
+    # giant_evolutions = headers.get("GIANT_EVOLUTIONS").split(",")
+    # current_coins = float(headers.get("CURRENT_COINS"))
+    # armory_selection = eval(headers.get("ARMORY_SELECTION"))
+    # stone_selection = eval(headers.get("STONE_SELECTION"))
 
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
         armory_selection)
