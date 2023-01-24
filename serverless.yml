@@ -20,54 +20,23 @@ package:
     - '!node_modules/**'
     - '!venv/**'
 functions:
-  login:
-    handler: app.login
   evolutionNames:
     handler: app.evolution_names
-    events:
-      - http:
-          path: /endpoint
-          method: get
-          cors: true
   giantNames:
     handler: app.giant_names
-    events:
-      - http:
-          path: /endpoint
-          method: get
-          cors: true
   upgradeNames:
     handler: app.upgrade_names
-    events:
-      - http:
-          path: /endpoint
-          method: get
-          cors: true
   armory:
     handler: app.armory
-    events:
-      - http:
-          path: /endpoint
-          method: get
-          cors: true
   stones:
     handler: app.stones
-    events:
-      - http:
-          path: /endpoint
-          method: get
-          cors: true
   randomBoxes:
     handler: app.random_boxes
     events:
-      - http:
-          path: /endpoint
-          method: post
-          cors: true
+      - http: ANY /
+      - http: 'ANY {proxy+}'
   calculateStats:
     handler: app.calculate_stats
     events:
-      - http:
-          path: /endpoint
-          method: post
-          cors: true
+      - http: ANY /
+      - http: 'ANY {proxy+}'

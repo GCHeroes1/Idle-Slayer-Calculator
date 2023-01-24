@@ -371,7 +371,9 @@ function delete_table() {
 
 async function get_evolution_names() {
     // let evolutionNames = "https://se7pzunbecr24lk2hxy5xh2xe40bewdx.lambda-url.us-east-1.on.aws/"
-    let evolutionNames = "http://127.0.0.1:5000/"
+    // let evolutionNames = "GCHeroes.pythonanywhere.com/"
+    let evolutionNames = "http://api.idle-slayer-calculator.com/"
+    // let evolutionNames = "http://127.0.0.1:5000/"
     const fetchPromise = fetch(evolutionNames + "evolutionNames");
     fetchPromise.then(response => {
         return response.json();
@@ -382,7 +384,9 @@ async function get_evolution_names() {
 
 async function get_giant_names() {
     // let giantNames = "https://zbjcvuymh2vunmtg2jrkr6bgo40ughkn.lambda-url.us-east-1.on.aws/"
-    let giantNames = "http://127.0.0.1:5000/"
+    // let giantNames = "GCHeroes.pythonanywhere.com/"
+    let giantNames = "http://api.idle-slayer-calculator.com/"
+    // let giantNames = "http://127.0.0.1:5000/"
     const fetchPromise = fetch(giantNames + "giantNames");
     fetchPromise.then(response => {
         return response.json();
@@ -393,7 +397,9 @@ async function get_giant_names() {
 
 async function get_upgrade_names() {
     // let upgradeNames = "https://2ada44sslf4ifqhq22iz6tykbq0xkjfz.lambda-url.us-east-1.on.aws/"
-    let upgradeNames = "http://127.0.0.1:5000/"
+    // let upgradeNames = "GCHeroes.pythonanywhere.com/"
+    let upgradeNames = "http://api.idle-slayer-calculator.com/"
+    // let upgradeNames = "http://127.0.0.1:5000/"
     const fetchPromise = fetch(upgradeNames + "upgradeNames");
     fetchPromise.then(response => {
         return response.json();
@@ -402,25 +408,45 @@ async function get_upgrade_names() {
     });
 }
 
+async function get_random_boxes() {
+    // let randomBoxes = "https://2syytwjpbwxw3aa7xzh4ljmsea0wwrap.lambda-url.us-east-1.on.aws/"
+    // let randomBoxes = "GCHeroes.pythonanywhere.com/"
+    let randomBoxes = "http://api.idle-slayer-calculator.com/"
+    // let randomBoxes = "http://127.0.0.1:5000/"
+    const fetchPromise = fetch(randomBoxes + "randomBoxes", {
+        method: "GET",
+        headers: {
+            "RANDOMBOX": unlocked_random_box_upgrades,
+        },
+    });
+    fetchPromise.then(response => {
+        return response.json();
+    }).then(response => {
+        random_box_time.appendChild(update_spawn_times(response[0], response[1]));
+    });
+}
+
 async function get_table_values() {
     console.log(unlocked_armory);
     // let calculateStats = "https://sfrcipmywjxpvpowxi5ksi74ze0enrmg.lambda-url.us-east-1.on.aws/"
-    let calculateStats = "http://127.0.0.1:5000/"
+    // let calculateStats = "GCHeroes.pythonanywhere.com/"
+    let calculateStats = "http://api.idle-slayer-calculator.com/"
+    // let calculateStats = "http://127.0.0.1:5000/"
     const fetchPromise = fetch(calculateStats + "calculateStats", {
-        method: "POST",
+        method: "GET",
         headers: {
             "DIMENSIONS": unlocked_dimensions,
-            "ENEMY_SPAWN": unlocked_enemy_spawn_upgrades,
-            "GIANT_SPAWN": unlocked_giant_spawn_upgrades,
-            "CRITICAL_UPGRADES": unlocked_critical_upgrades,
-            "BOW_SOULS": unlocked_bow_soul_upgrades,
-            "GIANT_SOULS": unlocked_giant_soul_upgrades,
-            "RAGE_SOULS": unlocked_rage_soul_upgrades,
-            "ENEMY_EVOLUTIONS": unlocked_enemies,
-            "GIANT_EVOLUTIONS": unlocked_giants,
-            "CURRENT_COINS": current_coins,
-            "ARMORY_SELECTION": JSON.stringify(unlocked_armory),
-            "STONE_SELECTION": JSON.stringify(unlocked_stones)
+            "ENEMYSPAWN": unlocked_enemy_spawn_upgrades,
+            "GIANTSPAWN": unlocked_giant_spawn_upgrades,
+            "CRITICALUPGRADES": unlocked_critical_upgrades,
+            "BOWSOULS": unlocked_bow_soul_upgrades,
+            "GIANTSOULS": unlocked_giant_soul_upgrades,
+            "RAGESOULS": unlocked_rage_soul_upgrades,
+            "ENEMYEVOLUTIONS": unlocked_enemies,
+            "GIANTEVOLUTIONS": unlocked_giants,
+            "CURRENTCOINS": current_coins,
+            "ARMORYSELECTION": JSON.stringify(unlocked_armory),
+            "STONESELECTION": JSON.stringify(unlocked_stones)
         },
         // mode: "no-cors"
     });
@@ -435,7 +461,9 @@ async function get_table_values() {
 
 async function get_armory() {
     // let armory = "https://cvingbaei5kuzzphjxseqlbk3i0viggh.lambda-url.us-east-1.on.aws/"
-    let armory = "http://127.0.0.1:5000/"
+    // let armory = "GCHeroes.pythonanywhere.com/"
+    let armory = "http://api.idle-slayer-calculator.com/"
+    // let armory = "http://127.0.0.1:5000/"
     const fetchPromise = fetch(armory + "armory");
     fetchPromise.then(response => {
         return response.json();
@@ -446,28 +474,14 @@ async function get_armory() {
 
 async function get_stones() {
     // let stones = "https://cq3crx27wztwuidliacnevptqi0dkqvt.lambda-url.us-east-1.on.aws/"
-    let stones = "http://127.0.0.1:5000/"
+    // let stones = "GCHeroes.pythonanywhere.com/"
+    let stones = "http://api.idle-slayer-calculator.com/"
+    // let stones = "http://127.0.0.1:5000/"
     const fetchPromise = fetch(stones + "stones");
     fetchPromise.then(response => {
         return response.json();
     }).then(response => {
         stone_section(response[0], response[1]);
-    });
-}
-
-async function get_random_boxes() {
-    // let randomBoxes = "https://2syytwjpbwxw3aa7xzh4ljmsea0wwrap.lambda-url.us-east-1.on.aws/"
-    let randomBoxes = "http://127.0.0.1:5000/"
-    const fetchPromise = fetch(randomBoxes + "randomBoxes", {
-        method: "POST",
-        headers: {
-            "RANDOM_BOX": unlocked_random_box_upgrades,
-        },
-    });
-    fetchPromise.then(response => {
-        return response.json();
-    }).then(response => {
-        random_box_time.appendChild(update_spawn_times(response[0], response[1]));
     });
 }
 
