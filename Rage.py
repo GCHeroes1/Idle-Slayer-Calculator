@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from Conversion import add_standard_to_dict
 import pandas as pd
 import re
 import json
@@ -42,6 +43,7 @@ def get_rage_json():
             "Benefit": int(rage["Description"]),
         }
     dict["Bad-Tempered"]["Cost"] = "50 B SP"
+    dict = add_standard_to_dict(dict)
     return dict
 
 

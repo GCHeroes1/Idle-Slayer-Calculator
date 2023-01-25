@@ -1,9 +1,9 @@
-from Conversion import convert_standard_to_exponential
+from Conversion import add_standard_to_dict
 import random as random
 
 
 def get_random_box_json():
-    return {
+    dict = {
         "Mega Random Box": {
             "Cost": float(7.50e21),
             "Benefit": float(50)
@@ -17,6 +17,8 @@ def get_random_box_json():
             "Benefit": float(8)
         }
     }
+    dict = add_standard_to_dict(dict)
+    return dict
 
 
 def get_random_box_event_odds():
@@ -65,4 +67,4 @@ def get_random_box_time(chance):
 
 
 if __name__ == '__main__':
-    print(get_random_box_time(0))
+    print(get_random_box_json())

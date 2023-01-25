@@ -30,6 +30,8 @@ def login():
 
 
 def get_enemy_helper(enemies):
+    # for evolution, evolution_info in enemies["Evolutions"]:
+
     evolution_names, evolution_info = [], []
     for key_, value_ in enemies.items():
         if key_ == "Evolutions":
@@ -63,15 +65,14 @@ def get_enemy_stats(evolutions, unlocked_enemies):
             "Coins": stats["Coins"],
             "Souls": stats["Souls"]
         }
-        evolution_names, evolution_info = get_enemy_helper(stats)
-        for evolution, evolution_stats in zip(evolution_names, evolution_info):
+        for evolution, evolution_stats in stats["Evolutions"].items():
             if evolution:
                 if evolution in unlocked_enemies:
                     return_stats = {
                         "Dimension": stats["Dimension"],
-                        "Type": evolution_stats[-4],
-                        "Coins": evolution_stats[-3],
-                        "Souls": evolution_stats[-2]
+                        "Type": evolution_stats["Type"],
+                        "Coins": evolution_stats["Coins"],
+                        "Souls": evolution_stats["Souls"]
                     }
         current_enemies[enemy] = return_stats
     return current_enemies
@@ -147,14 +148,13 @@ def get_giant_stats(evolutions, unlocked_enemies):
             "Coins": coins,
             "Souls": souls
         }
-        evolution_names, evolution_info = get_enemy_helper(stats)
-        for evolution, evolution_stats in zip(evolution_names, evolution_info):
+        for evolution, evolution_stats in stats["Evolutions"].items():
             if evolution:
                 if evolution in unlocked_enemies:
                     return_stats = {
                         "Dimension": stats["Dimension"],
-                        "Coins": evolution_stats[-3],
-                        "Souls": evolution_stats[-2]
+                        "Coins": evolution_stats["Coins"],
+                        "Souls": evolution_stats["Souls"]
                     }
         current_giants[giant] = return_stats
     return current_giants

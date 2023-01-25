@@ -234,50 +234,46 @@ function enemy_checkboxes(list) {
     list[0].forEach((enemy, index) => {
         let cost = list[1][index];
         cost = cost[[cost.length - 1]]
-        evolutions_list.appendChild(create_evolution_checkbox(enemy, cost, unlocked_enemies));
+        evolutions_list.appendChild(create_checkbox(enemy, cost, unlocked_enemies));
     });
 }
 
 function giant_checkboxes(list) {
     list[0].forEach((giant, index) => {
         let cost = list[1][index];
-        if (cost[3]) {
-            cost = cost[3]
-        } else {
-            cost = 0
-        }
-        giants_list.appendChild(create_evolution_checkbox(giant, cost, unlocked_giants));
+        cost = cost[[cost.length - 1]]
+        giants_list.appendChild(create_checkbox(giant, cost, unlocked_giants));
     });
 }
 
 function upgrade_checkboxes(list) {
     list[0].forEach((upgrade, index) => {
-        bow_soul_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_bow_soul_upgrades));
+        bow_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_bow_soul_upgrades));
     });
     list[1].forEach((upgrade, index) => {
-        giant_soul_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_giant_soul_upgrades));
+        giant_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_giant_soul_upgrades));
     });
     list[2].forEach((upgrade, index) => {
-        rage_soul_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_rage_soul_upgrades));
+        rage_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_rage_soul_upgrades));
     });
     list[3].forEach((upgrade, index) => {
-        enemy_spawn_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_enemy_spawn_upgrades));
+        enemy_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_enemy_spawn_upgrades));
     });
     list[4].forEach((upgrade, index) => {
-        giant_spawn_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_giant_spawn_upgrades));
+        giant_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_giant_spawn_upgrades));
     });
     list[5].forEach((upgrade, index) => {
-        critical_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_critical_upgrades));
+        critical_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_critical_upgrades));
     });
     list[6].forEach((upgrade, index) => {
-        random_box_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_random_box_upgrades));
+        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_random_box_upgrades));
     });
     list[7].forEach((upgrade, index) => {
-        dimension_options_area.appendChild(create_evolution_checkbox(upgrade[0], upgrade[1], unlocked_dimensions));
+        dimension_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_dimensions));
     });
 }
 
-function create_evolution_checkbox(name, cost, unlocked_array) {
+function create_checkbox(name, cost, unlocked_array) {
     var checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.name = name;
@@ -408,9 +404,6 @@ async function get_random_boxes() {
     })
     const fetchPromise = fetch(endpoint + "randomBoxes", {
         method: "POST",
-        // headers: {
-        //     "RANDOM_BOX": unlocked_random_box_upgrades,
-        // },
         body: body_data
     });
     fetchPromise.then(response => {
@@ -439,20 +432,6 @@ async function get_table_values() {
     console.log(JSON.stringify(unlocked_armory));
     const fetchPromise = fetch(endpoint + "calculateStats", {
         method: "POST",
-        // headers: {
-        //     "DIMENSIONS": unlocked_dimensions,
-        //     "ENEMY_SPAWN": unlocked_enemy_spawn_upgrades,
-        //     "GIANT_SPAWN": unlocked_giant_spawn_upgrades,
-        //     "CRITICAL_UPGRADES": unlocked_critical_upgrades,
-        //     "BOW_SOULS": unlocked_bow_soul_upgrades,
-        //     "GIANT_SOULS": unlocked_giant_soul_upgrades,
-        //     "RAGE_SOULS": unlocked_rage_soul_upgrades,
-        //     "ENEMY_EVOLUTIONS": unlocked_enemies,
-        //     "GIANT_EVOLUTIONS": unlocked_giants,
-        //     "CURRENT_COINS": current_coins,
-        //     "ARMORY_SELECTION": JSON.stringify(unlocked_armory),
-        //     "STONE_SELECTION": JSON.stringify(unlocked_stones)
-        // },
         body: body_data
     });
     fetchPromise.then(response => {

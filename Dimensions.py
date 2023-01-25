@@ -4,6 +4,8 @@ import pandas as pd
 import re
 import json
 
+from Conversion import add_standard_to_dict
+
 URL = "https://idleslayer.fandom.com/wiki/Portals_and_Dimensions"
 page = requests.get(URL)
 
@@ -34,6 +36,7 @@ def get_dimension_json():
                 "Cost": dimension["Cost"],
             }
     dict["Hot Desert"]["Cost"] = "5 SP, after UA"
+    dict = add_standard_to_dict(dict)
     return dict
 
 

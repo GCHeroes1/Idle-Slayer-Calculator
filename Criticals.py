@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from Conversion import add_standard_to_dict
 import pandas as pd
 import re
 import json
@@ -46,6 +47,8 @@ def get_crit_json():
                 "Cost": crit["Cost"],
                 "Critical Souls": int(crit["Description"][-4:-2]),
             }
+
+    dict = add_standard_to_dict(dict)
     return dict
 
 

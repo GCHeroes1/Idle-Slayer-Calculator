@@ -28,7 +28,6 @@ def get_patterns_json():
             length = len(pattern_data)
             pattern_data.loc[length] = row
 
-    # pattern_data.drop("Level", inplace=True, axis=1)
     pattern_data.drop("Formation", inplace=True, axis=1)
     # print(pattern_data)
     # pattern_data.to_csv("patterns.csv", index=False)
@@ -42,7 +41,6 @@ def get_patterns_json():
             if pattern["Enemy"] not in dict[map]:
                 dict[map][pattern["Enemy"]] = []
             dict[map][pattern["Enemy"]].append((int(pattern["Enemies"]), int(pattern["Level"])))
-            # dict[map][pattern["Enemy"]]["Level"].append(int(pattern["Level"]))
     return dict
 
 
