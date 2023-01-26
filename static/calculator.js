@@ -640,7 +640,6 @@ function create_stone_levels(stone, levels) {
         for (const [key, value] of Object.entries(unlocked_stones)) {
             total_USP += Number(value)
         }
-        console.log(total_USP)
         USP_allocation.appendChild(create_usp_allocation(total_USP));
         // console.log(unlocked_stones)
         // void get_table_values();
