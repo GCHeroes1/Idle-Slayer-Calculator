@@ -178,16 +178,20 @@ document.addEventListener("DOMContentLoaded", () => {
         void get_table_values();
     });
     document.getElementById("scientific").addEventListener("click", () => {
-        setAllCheckboxes(false);
-        delete_checkboxes();
-        scientific = 2;
-        void setup();
+        if (scientific !== 2) {
+            setAllCheckboxes(false);
+            delete_checkboxes();
+            scientific = 2;
+            void setup();
+        }
     });
     document.getElementById("standard").addEventListener("click", () => {
-        setAllCheckboxes(false);
-        delete_checkboxes();
-        scientific = 1;
-        void setup();
+        if (scientific !== 1) {
+            setAllCheckboxes(false);
+            delete_checkboxes();
+            scientific = 1;
+            void setup();
+        }
     });
 });
 
