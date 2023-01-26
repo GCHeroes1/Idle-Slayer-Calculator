@@ -84,7 +84,7 @@ def get_upgrades_json():
         "Benefit": int(25)
     }
     giant_dict["Big Troubles"] = {
-        "Cost": "15 DP",
+        "Cost": "45 DP",
         "Benefit": int(15)
     }
     giant_souls_dict = {
