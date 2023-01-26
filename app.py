@@ -195,15 +195,15 @@ def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
             if isfloat(upgrades[upgrade]["Cost"]):
                 if current_coins < float(upgrades[upgrade]["Cost"]):
                     current_coins = float(upgrades[upgrade]["Cost"])
-    return total
+    return float(total), current_coins
 
 
 def get_upgrade_stats(current_coins, unlocked_spawn, unlocked_giant, Enemies):
     # get a list of the selected upgrades, need to check against their lists to see whats unlocked
     _, _, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
-    spawn_stat = upgrade_stat_helper(current_coins, spawn_upgrade_json, unlocked_spawn) + Enemies
-    giant_stat = upgrade_stat_helper(current_coins, giant_upgrade_json, unlocked_giant)
-
+    spawn_stat, current_coins = upgrade_stat_helper(current_coins, spawn_upgrade_json, unlocked_spawn)
+    giant_stat, current_coins = upgrade_stat_helper(current_coins, giant_upgrade_json, unlocked_giant)
+    spawn_stat += Enemies
     pattern_spawn = (60 / (spawn_stat / 100 + 1) + 90 / (spawn_stat / 100 + 1)) / 2
     giant_spawn = (250 / (giant_stat / 100 + 1) + 450 / (giant_stat / 100 + 1)) / 2
     return pattern_spawn, giant_spawn, current_coins
@@ -217,15 +217,18 @@ def souls_stat_helper(current_coins, upgrades, unlocked_upgrades):
             if isfloat(upgrades[upgrade]["Cost"]):
                 if current_coins < float(upgrades[upgrade]["Cost"]):
                     current_coins = float(upgrades[upgrade]["Cost"])
-    return total
+    return total, current_coins
 
 
 def get_soul_stats(current_coins, unlocked_bow, unlocked_giant, unlocked_rage, bow_souls, giant_souls, rage_souls):
     bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
     rage_souls_json = get_rage_json()
-    bow_souls_stat = souls_stat_helper(current_coins, bow_upgrade_json, unlocked_bow) * bow_souls
-    giant_souls_stat = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant) * giant_souls
-    rage_souls_stat = upgrade_stat_helper(current_coins, rage_souls_json, unlocked_rage) + rage_souls
+    bow_souls_stat, current_coins = souls_stat_helper(current_coins, bow_upgrade_json, unlocked_bow)
+    bow_souls_stat *= bow_souls
+    giant_souls_stat, current_coins = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant)
+    giant_souls_stat *= giant_souls
+    rage_souls_stat, current_coins = upgrade_stat_helper(current_coins, rage_souls_json, unlocked_rage)
+    rage_souls += rage_souls
     if rage_souls_stat != 0:
         rage_souls_stat += 100
     return bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
@@ -355,7 +358,7 @@ def random_boxes():
     random_box = []
     if "RANDOM_BOX" in body:
         random_box = body["RANDOM_BOX"]
-    random_box_chance = upgrade_stat_helper(0, get_random_box_json(), random_box)
+    random_box_chance, _ = upgrade_stat_helper(0, get_random_box_json(), random_box)
     return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 

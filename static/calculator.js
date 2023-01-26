@@ -177,21 +177,17 @@ document.addEventListener("DOMContentLoaded", () => {
         create_table(unlocked_dimensions);
         void get_table_values();
     });
-    document.getElementById("scientific").addEventListener("click", () => {
+    document.getElementById("toggleNotation").addEventListener("click", () => {
+        setAllCheckboxes(false);
+        delete_checkboxes();
         if (scientific !== 2) {
-            setAllCheckboxes(false);
-            delete_checkboxes();
+            void setup();
             scientific = 2;
+        } else {
             void setup();
-        }
-    });
-    document.getElementById("standard").addEventListener("click", () => {
-        if (scientific !== 1) {
-            setAllCheckboxes(false);
-            delete_checkboxes();
             scientific = 1;
-            void setup();
         }
+
     });
 });
 
