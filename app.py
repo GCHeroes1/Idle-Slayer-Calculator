@@ -228,7 +228,7 @@ def get_soul_stats(current_coins, unlocked_bow, unlocked_giant, unlocked_rage, b
     giant_souls_stat, current_coins = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant)
     giant_souls_stat *= giant_souls
     rage_souls_stat, current_coins = upgrade_stat_helper(current_coins, rage_souls_json, unlocked_rage)
-    rage_souls += rage_souls
+    rage_souls_stat += rage_souls
     if rage_souls_stat != 0:
         rage_souls_stat += 100
     return bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
