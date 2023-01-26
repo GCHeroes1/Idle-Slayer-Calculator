@@ -21,7 +21,6 @@ def convert_standard_to_exponential(standard):
 def convert_exponential_to_standard(exponential):
     if "e" in str(exponential):
         try:
-            exponential = float(exponential)
             exponent = str(exponential).split('e')[1]
             base = str(exponential).split('e')[0]
             exponent_div_3 = float(exponent) / 3
@@ -34,22 +33,19 @@ def convert_exponential_to_standard(exponential):
             final_string = str(final_number) + " " + abbreviation
             return final_string
         except:
-            return exponential
-    return exponential
+            return str(exponential)
+    return str(exponential)
 
 
 def add_standard_to_dict(dict):
     for key, value in dict.items():
-        dict[key]["Standard Cost"] = convert_exponential_to_standard(value["Cost"])
-    return dict
-
-
-def add_standard_to_dict_enemies(dict):
-    for enemy, stats in dict.items():
-        for evolution, evolution_stats in stats["Evolutions"].items():
-            if evolution:
-                dict[enemy]["Evolutions"][evolution]["Standard Cost"] = convert_exponential_to_standard(
-                    evolution_stats["Unlock Cost"])
+        if "Cost" in value:
+            dict[key]["Standard Cost"] = convert_exponential_to_standard(value["Cost"])
+        if "Evolutions" in value:
+            for evolution, evolution_stats in value["Evolutions"].items():
+                if evolution:
+                    dict[key]["Evolutions"][evolution]["Standard Cost"] = convert_exponential_to_standard(
+                        evolution_stats["Cost"])
     return dict
 
 

@@ -9,8 +9,8 @@ $.ajaxSetup({
     contentType: 'application/json; charset=utf-8'
 });
 
-const endpoint = "https://idle-slayer-calculator.com/"
-// const endpoint = "http://127.0.0.1:5000/"
+// const endpoint = "https://idle-slayer-calculator.com/"
+const endpoint = "http://127.0.0.1:5000/"
 
 var SortDirection;
 (function (SortDirection) {
@@ -100,15 +100,10 @@ const setAllCollapse = (value) => {
     });
 };
 
-const checkCoins = (value) => {
-    current_coins = 0;
-    Array.from(document.getElementsByTagName("input")).forEach((input) => {
-        if (input.type === "checkbox" && input.checked === value) {
-            if (+input.value > current_coins && input.value.includes("e")) {
-                current_coins = +input.value;
-            }
-        }
-    });
+const delete_checkboxes = (value) => {
+    Array.from(document.getElementsByClassName("checkbox")).forEach((input) => {
+        input.remove()
+    })
 }
 
 const change_table_sort = (event) => {
@@ -144,16 +139,21 @@ const change_table_sort = (event) => {
     sort_table_inner(t_body, header_idx, new_dir);
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    create_table(unlocked_dimensions);
-    // setup_random_box_simulation();
+function setup() {
     void get_evolution_names();
     void get_giant_names();
     void get_upgrade_names();
+    void get_random_boxes();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    create_table(unlocked_dimensions);
+    // setup_random_box_simulation();
+    void setup();
     void get_armory();
     void get_stones();
-    void get_random_boxes();
     void get_table_values();
+
     const sortable_headers = document.querySelectorAll(".sortable");
     for (const header of sortable_headers) {
         header.addEventListener("click", change_table_sort);
@@ -176,6 +176,18 @@ document.addEventListener("DOMContentLoaded", () => {
         delete_table();
         create_table(unlocked_dimensions);
         void get_table_values();
+    });
+    document.getElementById("scientific").addEventListener("click", () => {
+        setAllCheckboxes(false);
+        delete_checkboxes();
+        scientific = 2;
+        void setup();
+    });
+    document.getElementById("standard").addEventListener("click", () => {
+        setAllCheckboxes(false);
+        delete_checkboxes();
+        scientific = 1;
+        void setup();
     });
 });
 
@@ -205,6 +217,7 @@ const armory_names = document.getElementById("mapValueArmoryNames");
 const armory_list = document.getElementById("mapValueArmoryList");
 const armory_options = document.getElementById("mapValueArmoryOptions");
 const armory_levels = document.getElementById("mapValueArmoryLevels");
+const USP_allocation = document.getElementById("mapValueUSPAllocation");
 const stone_names = document.getElementById("mapValueStoneNames");
 const stone_levels = document.getElementById("mapValueStoneLevels");
 const random_box_options_area = document.getElementById("mapValueRandomBoxes");
@@ -225,52 +238,54 @@ let unlocked_critical_upgrades = [];
 let unlocked_random_box_upgrades = [];
 let unlocked_armory = {};
 let unlocked_stones = {};
-let current_coins = 0;
 let map_active_value_result_cells = {};
 const map_bow_value_result_cells = {};
 const map_rage_value_result_cells = {};
 
+let scientific = 2;
+let total_USP = 0;
+
 function enemy_checkboxes(list) {
-    list[0].forEach((enemy, index) => {
-        let cost = list[1][index];
-        cost = cost[[cost.length - 1]]
-        evolutions_list.appendChild(create_checkbox(enemy, cost, unlocked_enemies));
-    });
+    for (const [key, enemy] of Object.entries(list)) {
+        const enemy_name = enemy[0]
+        const enemy_cost = enemy[[enemy.length - scientific]]; // -1 for standard, maybe a global variable that gets +1 -1 in value
+        evolutions_list.appendChild(create_checkbox(enemy_name, enemy_cost, unlocked_enemies));
+    }
 }
 
 function giant_checkboxes(list) {
-    list[0].forEach((giant, index) => {
-        let cost = list[1][index];
-        cost = cost[[cost.length - 1]]
-        giants_list.appendChild(create_checkbox(giant, cost, unlocked_giants));
-    });
+    for (const [key, giant] of Object.entries(list)) {
+        const giant_name = giant[0];
+        const giant_cost = giant[[giant.length - scientific]]; // this *will* be -1 and -2, eventually
+        giants_list.appendChild(create_checkbox(giant_name, giant_cost, unlocked_giants));
+    }
 }
 
 function upgrade_checkboxes(list) {
-    list[0].forEach((upgrade, index) => {
-        bow_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_bow_soul_upgrades));
-    });
-    list[1].forEach((upgrade, index) => {
-        giant_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_giant_soul_upgrades));
-    });
-    list[2].forEach((upgrade, index) => {
-        rage_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_rage_soul_upgrades));
-    });
-    list[3].forEach((upgrade, index) => {
-        enemy_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_enemy_spawn_upgrades));
-    });
-    list[4].forEach((upgrade, index) => {
-        giant_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_giant_spawn_upgrades));
-    });
-    list[5].forEach((upgrade, index) => {
-        critical_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_critical_upgrades));
-    });
-    list[6].forEach((upgrade, index) => {
-        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_random_box_upgrades));
-    });
-    list[7].forEach((upgrade, index) => {
-        dimension_options_area.appendChild(create_checkbox(upgrade[0], upgrade[1], unlocked_dimensions));
-    });
+    for (const [key, upgrade] of Object.entries(list[0])) {
+        bow_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_bow_soul_upgrades)); // can also follow the -2 thing
+    }
+    for (const [key, upgrade] of Object.entries(list[1])) {
+        giant_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_giant_soul_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[2])) {
+        rage_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_rage_soul_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[3])) {
+        enemy_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_enemy_spawn_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[4])) {
+        giant_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_giant_spawn_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[5])) {
+        critical_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_critical_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[6])) {
+        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_random_box_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[7])) {
+        dimension_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_dimensions));
+    }
 }
 
 function create_checkbox(name, cost, unlocked_array) {
@@ -288,11 +303,9 @@ function create_checkbox(name, cost, unlocked_array) {
                 unlocked_array.splice(index, 1);
             }
         }
-        checkCoins(true);
         if (unlocked_array === unlocked_random_box_upgrades) {
             void get_random_boxes();
         }
-        // get_table_values();
         // console.log(unlocked_array);
     });
 
@@ -304,6 +317,7 @@ function create_checkbox(name, cost, unlocked_array) {
     var container = document.createElement("li");
     container.appendChild(checkbox);
     container.appendChild(label);
+    container.classList.add("checkbox")
     return container;
 }
 
@@ -339,7 +353,7 @@ const create_map_row = (table, map, type) => {
         map_rage_value_result_cells[map] = {coins, souls};
     }
     const map_row = document.createElement("tr");
-    map_row.classList.add(type + "_");
+    map_row.classList.add("souls_table");
     const map_name_cell = document.createElement("td");
     map_name_cell.textContent = map;
     map_row.appendChild(map_name_cell);
@@ -357,13 +371,7 @@ function create_table(dimensions) {
 }
 
 function delete_table() {
-    Array.from(document.getElementsByClassName("active" + "_")).forEach((input) => {
-        input.remove()
-    })
-    Array.from(document.getElementsByClassName("bow" + "_")).forEach((input) => {
-        input.remove()
-    })
-    Array.from(document.getElementsByClassName("rage" + "_")).forEach((input) => {
+    Array.from(document.getElementsByClassName("souls_table")).forEach((input) => {
         input.remove()
     })
 }
@@ -425,7 +433,6 @@ async function get_table_values() {
         "RAGE_SOULS": unlocked_rage_soul_upgrades,
         "ENEMY_EVOLUTIONS": unlocked_enemies,
         "GIANT_EVOLUTIONS": unlocked_giants,
-        "CURRENT_COINS": current_coins,
         "ARMORY_SELECTION": JSON.stringify(unlocked_armory),
         "STONE_SELECTION": JSON.stringify(unlocked_stones)
     })
@@ -460,6 +467,7 @@ async function get_stones() {
         return response.json();
     }).then(response => {
         stone_section(response[0], response[1]);
+        USP_allocation.appendChild(create_usp_allocation(total_USP))
         return true;
     });
 }
@@ -477,7 +485,6 @@ function armory_section(types, subtypes, options, levels) {
 
 function create_armory_text(name) {
     var textNode = document.createTextNode(name);
-
     var container = document.createElement("li");
     container.appendChild(textNode);
     return container;
@@ -629,6 +636,12 @@ function create_stone_levels(stone, levels) {
     select.addEventListener('change', function () {
         var e = document.getElementById(select.id)
         unlocked_stones[stone] = e.options[e.selectedIndex].text;
+        let total_USP = 0
+        for (const [key, value] of Object.entries(unlocked_stones)) {
+            total_USP += Number(value)
+        }
+        console.log(total_USP)
+        USP_allocation.appendChild(create_usp_allocation(total_USP));
         // console.log(unlocked_stones)
         // void get_table_values();
     });
@@ -646,13 +659,24 @@ function create_stone_levels(stone, levels) {
     return container.appendChild(label).appendChild(select);
 }
 
+function create_usp_allocation(USP) {
+    if (document.getElementById("usp_remove")) {
+        USP_allocation.removeChild(document.getElementById("usp_remove"))
+    }
+    let textNode = document.createTextNode("Currently allocated " + USP + " USP");
+    let container = document.createElement("label");
+    container.id = "usp_remove"
+    container.appendChild(textNode);
+    return container;
+}
+
 function update_spawn_times(lower_time, upper_time) {
-    if (document.getElementById("remove")) {
-        random_box_time.removeChild(document.getElementById("remove"))
+    if (document.getElementById("box_remove")) {
+        random_box_time.removeChild(document.getElementById("box_remove"))
     }
     let textNode = document.createTextNode("Random boxes will spawn every " + lower_time.toFixed(1) + "-" + upper_time.toFixed(1) + " seconds.");
     let container = document.createElement("label");
-    container.id = "remove"
+    container.id = "box_remove"
     container.appendChild(textNode);
     return container;
 }

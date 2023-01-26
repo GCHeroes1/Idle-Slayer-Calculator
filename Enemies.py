@@ -4,7 +4,7 @@ import pandas as pd
 import re
 import json
 
-from Conversion import add_standard_to_dict_enemies
+from Conversion import add_standard_to_dict
 
 URL = "https://idleslayer.fandom.com/wiki/Enemies"
 page = requests.get(URL)
@@ -78,9 +78,9 @@ def get_enemies_json():
             "Type": evolution["Type"],
             "Coins": int(evolution["Coin Reward"]),
             "Souls": int(evolution["Soul Reward"]),
-            "Unlock Cost": float(evolution["Unlock Cost"])
+            "Cost": float(evolution["Unlock Cost"])
         }
-    dict = add_standard_to_dict_enemies(dict)
+    dict = add_standard_to_dict(dict)
 
     return dict
 

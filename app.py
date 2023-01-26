@@ -29,33 +29,39 @@ def login():
     return jsonify({'success': 'ok'})
 
 
+def isfloat(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
+
+
 def get_enemy_helper(enemies):
     # for evolution, evolution_info in enemies["Evolutions"]:
 
-    evolution_names, evolution_info = [], []
+    evolution_info = []
     for key_, value_ in enemies.items():
         if key_ == "Evolutions":
             for key__, value__ in value_.items():
                 temp_array = [key__]
                 temp_array.extend(list(value__.values()))
-                evolution_names.append(key__)
                 evolution_info.append(temp_array)
-    return evolution_names, evolution_info
+    return evolution_info
 
 
 def get_enemy_evolutions():
     enemies = get_enemies_json()
-    evolution_names, evolution_info = [], []
+    evolution_info = []
     for key, value in enemies.items():
-        result = list(map(list, zip(*get_enemy_helper(value))))
+        result = get_enemy_helper(value)
         if result:
             for res in result:
-                evolution_names.append(res[0])
-                evolution_info.append(res[1])
-    return evolution_names, evolution_info
+                evolution_info.append(res)
+    return evolution_info
 
 
-def get_enemy_stats(evolutions, unlocked_enemies):
+def get_enemy_stats(current_coins, evolutions, unlocked_enemies):
     # get a list of the selected evolutions, need to check against the enemies list to find the maximum evolutions
     current_enemies = {}
     for enemy, stats in evolutions.items():
@@ -74,8 +80,11 @@ def get_enemy_stats(evolutions, unlocked_enemies):
                         "Coins": evolution_stats["Coins"],
                         "Souls": evolution_stats["Souls"]
                     }
+                    if isfloat(evolution_stats["Cost"]):
+                        if current_coins < evolution_stats["Cost"]:
+                            current_coins = evolution_stats["Cost"]
         current_enemies[enemy] = return_stats
-    return current_enemies
+    return current_enemies, current_coins
 
 
 def calculate_average_pattern(coins, unlocked_dimensions):
@@ -117,25 +126,17 @@ def calculate_average_pattern(coins, unlocked_dimensions):
 
 def get_giant_evolutions():
     giants = get_giants_json()
-    giant_names, giant_info = [], []
+    giant_info = []
     for key, value in giants.items():
-        giant_names.append(key)
-        giant_info.append([key, value["Coins"], value["Souls"]])
-        result = list(map(list, zip(*get_enemy_helper(value))))
+        giant_info.append([key, value["Coins"], value["Souls"], value["Cost"], value["Standard Cost"]])
+        result = get_enemy_helper(value)
         if result:
             for res in result:
-                giant_names.append(res[0])
-                giant_info.append(res[1])
-    giant_info[0].append("7000")  # Hills Giant Cost
-    giant_info[2].append("1e8")  # Yeti Giant Cost
-    giant_info[3].append(1e35)  # Fairy Giant Cost
-    giant_info[4].append(2.5e29)  # Archdemon Giant Cost
-    giant_info[5].append("5e18")  # Anubis Giant Cost
-
-    return giant_names, giant_info
+                giant_info.append(res)
+    return giant_info
 
 
-def get_giant_stats(evolutions, unlocked_enemies):
+def get_giant_stats(current_coins, evolutions, unlocked_enemies):
     # get a list of the selected giants, need to check against the giants list to see whats unlocked
     current_giants = {}
     for giant, stats in evolutions.items():
@@ -143,6 +144,9 @@ def get_giant_stats(evolutions, unlocked_enemies):
         if giant in unlocked_enemies:
             coins = stats["Coins"]
             souls = stats["Souls"]
+            if isfloat(evolutions[giant]["Cost"]):
+                if current_coins < float(evolutions[giant]["Cost"]):
+                    current_coins = float(evolutions[giant]["Cost"])
         return_stats = {
             "Dimension": stats["Dimension"],
             "Coins": coins,
@@ -156,14 +160,17 @@ def get_giant_stats(evolutions, unlocked_enemies):
                         "Coins": evolution_stats["Coins"],
                         "Souls": evolution_stats["Souls"]
                     }
+                    if isfloat(evolution_stats["Cost"]):
+                        if current_coins < float(evolution_stats["Cost"]):
+                            current_coins = float(evolution_stats["Cost"])
         current_giants[giant] = return_stats
-    return current_giants
+    return current_giants, current_coins
 
 
 def upgrades_helper(json):
     array = []
     for key, value in json.items():
-        array.append([key, value["Cost"]])
+        array.append([key, value["Cost"], value["Standard Cost"]])
     return array
 
 
@@ -180,45 +187,51 @@ def get_upgrade_names():
     return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks
 
 
-def upgrade_stat_helper(upgrades, unlocked_upgrades):
+def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
     total = 0
     for upgrade in unlocked_upgrades:
         if upgrade in upgrades:
             total += upgrades[upgrade]["Benefit"]
+            if isfloat(upgrades[upgrade]["Cost"]):
+                if current_coins < float(upgrades[upgrade]["Cost"]):
+                    current_coins = float(upgrades[upgrade]["Cost"])
     return total
 
 
-def get_upgrade_stats(unlocked_spawn, unlocked_giant, Enemies):
+def get_upgrade_stats(current_coins, unlocked_spawn, unlocked_giant, Enemies):
     # get a list of the selected upgrades, need to check against their lists to see whats unlocked
     _, _, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
-    spawn_stat = upgrade_stat_helper(spawn_upgrade_json, unlocked_spawn) + Enemies
-    giant_stat = upgrade_stat_helper(giant_upgrade_json, unlocked_giant)
+    spawn_stat = upgrade_stat_helper(current_coins, spawn_upgrade_json, unlocked_spawn) + Enemies
+    giant_stat = upgrade_stat_helper(current_coins, giant_upgrade_json, unlocked_giant)
 
     pattern_spawn = (60 / (spawn_stat / 100 + 1) + 90 / (spawn_stat / 100 + 1)) / 2
     giant_spawn = (250 / (giant_stat / 100 + 1) + 450 / (giant_stat / 100 + 1)) / 2
-    return pattern_spawn, giant_spawn
+    return pattern_spawn, giant_spawn, current_coins
 
 
-def souls_stat_helper(upgrades, unlocked_upgrades):
+def souls_stat_helper(current_coins, upgrades, unlocked_upgrades):
     total = 1
     for upgrade in unlocked_upgrades:
         if str(upgrade) in upgrades:
             total *= (upgrades[upgrade]["Benefit"] / 100) + 1
+            if isfloat(upgrades[upgrade]["Cost"]):
+                if current_coins < float(upgrades[upgrade]["Cost"]):
+                    current_coins = float(upgrades[upgrade]["Cost"])
     return total
 
 
-def get_soul_stats(unlocked_bow, unlocked_giant, unlocked_rage, bow_souls, giant_souls, rage_souls):
+def get_soul_stats(current_coins, unlocked_bow, unlocked_giant, unlocked_rage, bow_souls, giant_souls, rage_souls):
     bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
     rage_souls_json = get_rage_json()
-    bow_souls_stat = souls_stat_helper(bow_upgrade_json, unlocked_bow) * bow_souls
-    giant_souls_stat = souls_stat_helper(giant_soul_json, unlocked_giant) * giant_souls
-    rage_souls_stat = upgrade_stat_helper(rage_souls_json, unlocked_rage) + rage_souls
+    bow_souls_stat = souls_stat_helper(current_coins, bow_upgrade_json, unlocked_bow) * bow_souls
+    giant_souls_stat = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant) * giant_souls
+    rage_souls_stat = upgrade_stat_helper(current_coins, rage_souls_json, unlocked_rage) + rage_souls
     if rage_souls_stat != 0:
         rage_souls_stat += 100
-    return bow_souls_stat, giant_souls_stat, rage_souls_stat
+    return bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
 
 
-def crit_helper(upgrades, unlocked_upgrades):
+def crit_helper(current_coins, upgrades, unlocked_upgrades):
     crit_chance = 0
     crit_multiplier = 1
     for upgrade in unlocked_upgrades:
@@ -227,13 +240,16 @@ def crit_helper(upgrades, unlocked_upgrades):
                 crit_chance += upgrades[upgrade]["Critical"]
             if "Critical Souls" in upgrades[upgrade]:
                 crit_multiplier *= (upgrades[upgrade]["Critical Souls"] / 100) + 1
-    return crit_chance, crit_multiplier
+            if isfloat(upgrades[upgrade]["Cost"]):
+                if current_coins < float(upgrades[upgrade]["Cost"]):
+                    current_coins = float(upgrades[upgrade]["Cost"])
+    return crit_chance, crit_multiplier, current_coins
 
 
-def get_crit_stats(critical_upgrades):
+def get_crit_stats(current_coins, critical_upgrades):
     crit_json = get_crit_json()
-    critical_chance, critical_multiplier = crit_helper(crit_json, critical_upgrades)
-    return critical_chance, critical_multiplier
+    critical_chance, critical_multiplier, current_coins = crit_helper(current_coins, crit_json, critical_upgrades)
+    return critical_chance, critical_multiplier, current_coins
 
 
 def calc_type_multiplier(Electric, Fire, Dark, enemy_type):
@@ -310,12 +326,12 @@ def index():
 
 @app.route('/evolutionNames', methods=["GET"])
 def evolution_names():
-    return list(get_enemy_evolutions())
+    return get_enemy_evolutions()
 
 
 @app.route('/giantNames', methods=["GET"])
 def giant_names():
-    return list(get_giant_evolutions())
+    return get_giant_evolutions()
 
 
 @app.route('/upgradeNames', methods=["GET"])
@@ -339,14 +355,15 @@ def random_boxes():
     random_box = []
     if "RANDOM_BOX" in body:
         random_box = body["RANDOM_BOX"]
-    random_box_chance = upgrade_stat_helper(get_random_box_json(), random_box)
+    random_box_chance = upgrade_stat_helper(0, get_random_box_json(), random_box)
     return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 
 @app.route('/calculateStats', methods=["POST"])
 def calculate_stats():
+    current_coins = 0
     dimensions, enemy_spawn, giant_spawn, critical_upgrades, bow_souls, giant_souls, rage_souls, enemy_evolutions, \
-    giant_evolutions, current_coins, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], [], []
+    giant_evolutions, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], []
     body = request.get_json(force=True)
     if "DIMENSIONS" in body:
         dimensions = body["DIMENSIONS"]
@@ -366,8 +383,6 @@ def calculate_stats():
         enemy_evolutions = body["ENEMY_EVOLUTIONS"]
     if "GIANT_EVOLUTIONS" in body:
         giant_evolutions = body["GIANT_EVOLUTIONS"]
-    if "CURRENT_COINS" in body:
-        current_coins = float(body["CURRENT_COINS"])
     if "ARMORY_SELECTION" in body:
         armory_selection = eval(body["ARMORY_SELECTION"])
     if "STONE_SELECTION" in body:
@@ -377,13 +392,15 @@ def calculate_stats():
         armory_selection)
     Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls = calculate_stone_bonuses(stone_selection)
     player_speed = 4
-    current_enemies = get_enemy_stats(get_enemies_json(), enemy_evolutions)
-    current_giants = get_giant_stats(get_giants_json(), giant_evolutions)
+    current_enemies, current_coins = get_enemy_stats(current_coins, get_enemies_json(), enemy_evolutions)
+    current_giants, current_coins = get_giant_stats(current_coins, get_giants_json(), giant_evolutions)
+    pattern_spawn, giant_freq, current_coins = get_upgrade_stats(current_coins, enemy_spawn, giant_spawn, Enemies)
+    bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = get_soul_stats(current_coins, bow_souls,
+                                                                                      giant_souls, rage_souls,
+                                                                                      Bow_Souls_ * Bow_Souls,
+                                                                                      Giant_Souls, Rage_Souls)
+    critical_chance, critical_souls, current_coins = get_crit_stats(current_coins, critical_upgrades)
     average_patterns = calculate_average_pattern(current_coins, dimensions)
-    pattern_spawn, giant_freq = get_upgrade_stats(enemy_spawn, giant_spawn, Enemies)
-    bow_souls_stat, giant_souls_stat, rage_souls_stat = get_soul_stats(bow_souls, giant_souls, rage_souls,
-                                                                       Bow_Souls_ * Bow_Souls, Giant_Souls, Rage_Souls)
-    critical_chance, critical_souls = get_crit_stats(critical_upgrades)
     Critical_Chance += critical_chance
     Critical_Souls *= critical_souls * Critical_Souls_
     Souls *= Ingame_Souls * Souls_
@@ -396,7 +413,7 @@ def calculate_stats():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
     # evolution_names, evolution_info = get_enemy_evolutions()  # done
     # enemy_evolutions = ['Hornet', 'Black Hornet']
     # current_enemies, current_coins = get_enemy_stats(get_enemies_json(), enemy_evolutions)  # done

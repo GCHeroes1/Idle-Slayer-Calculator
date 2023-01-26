@@ -4,7 +4,7 @@ import pandas as pd
 import re
 import json
 
-from Conversion import add_standard_to_dict_enemies
+from Conversion import add_standard_to_dict
 
 URL = "https://idleslayer.fandom.com/wiki/Giants"
 page = requests.get(URL)
@@ -32,7 +32,7 @@ def get_giants_json():
     giants_data.drop("Image", inplace=True, axis=1)
     giants_data.drop("Drop", inplace=True, axis=1)
     giants_data.drop("UnlockCondition", inplace=True, axis=1)
-    # print(enemies_data)
+    # print(giants_data)
     # giants_data.to_csv("giants.csv", index=False)
 
     evolutions = tb[1]
@@ -59,19 +59,23 @@ def get_giants_json():
     for _, giant in giants_data.iterrows():
         dict[giant["Name"]] = {
             "Dimension": giant["Home Dimension"],
-            # "HP": int(giant["HP"]),
             "Coins": int(giant["Coin Reward"]),
             "Souls": int(giant["Soul Reward"]),
             "Evolutions": {}
         }
     for __, evolution in evolutions_data.iterrows():
         dict[evolution["Evolved From"]]["Evolutions"][evolution["Name"]] = {
-            # "HP": int(evolution["HP"]),
             "Coins": int(evolution["Coin Reward"]),
             "Souls": int(evolution["Soul Reward"]),
-            "Unlock Cost": float(evolution["Unlock Cost"])
+            "Cost": float(evolution["Unlock Cost"])
         }
-    dict = add_standard_to_dict_enemies(dict)
+    dict["Hills' Giant"]["Cost"] = "7000"
+    dict["Adult Yeti"]["Cost"] = "1e8"
+    dict["Fairy Queen"]["Cost"] = 1e35
+    dict["Archdemon"]["Cost"] = 2.5e29
+    dict["Anubis Warrior"]["Cost"] = "5e18"  # must be a string, javascript will try to display the full number
+
+    dict = add_standard_to_dict(dict)
     return dict
 
 
