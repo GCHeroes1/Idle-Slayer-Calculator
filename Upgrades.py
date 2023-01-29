@@ -47,10 +47,12 @@ def generate_dict(dataframe):
 
 def get_upgrades_json():
     tb = soup.findAll("table")
-    bowSoulUpgrades = tb[12]
-    patternUpgrades = tb[20]
-    spawnUpgrades = tb[21]
-    giantUpgrades = tb[25]
+    bowSoulUpgrades = tb[13]
+    patternUpgrades = tb[21]
+    spawnUpgrades = tb[22]
+    giantCostUpgrades = tb[25]
+    giantUpgrades = tb[26]
+    giantEvolutionUpgrades = tb[27]
 
     # # pattern_data.to_csv("patterns.csv", index=False)
     bow_upgrade_data = generate_dataframe(bowSoulUpgrades)

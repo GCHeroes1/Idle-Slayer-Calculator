@@ -8,11 +8,9 @@ exponentials = [float("1e6"), float("1e9"), float("1e12"), float("1e15"), float(
                 float("1e69"), float("1e72"), float("1e75"), float("1e78"), float("1e81"), float("1e84"), float("1e87")]
 
 
-## todo: make this into a dict and then try to do shit that way ig
-
 def convert_standard_to_exponential(standard):
-    abbreviation = standard[-2:]
-    coins = float(standard[:-3])
+    abbreviation = str(standard).split(' ')[1]
+    coins = float(str(standard).split(' ')[0])
     index = standardNotation.index(abbreviation)
 
     return coins * exponentials[index]
@@ -50,14 +48,14 @@ def add_standard_to_dict(dict):
 
 
 if __name__ == '__main__':
-    print(convert_standard_to_exponential("10.3 Vg"))
-    for i in range(0, 100):
-        print(convert_exponential_to_standard(("3e" + str(i))))
-    print(convert_exponential_to_standard("100 DP"))
-    print(convert_exponential_to_standard("100 SP"))
-    print(convert_exponential_to_standard("100 T SP"))
-    print(convert_exponential_to_standard("0"))
-    print(convert_exponential_to_standard("1,000,000 SP"))
-    print(convert_exponential_to_standard("1e10"))
-    print(convert_exponential_to_standard("1e10"))
-    print(convert_exponential_to_standard("7e40"))
+    # print(convert_standard_to_exponential("10.3 Vg"))
+    # for i in range(0, 100):
+    #     print(convert_exponential_to_standard(("3e" + str(i))))
+    print(convert_standard_to_exponential("250 B"))
+    # print(convert_exponential_to_standard("100 SP"))
+    # print(convert_exponential_to_standard("100 T SP"))
+    # print(convert_exponential_to_standard("0"))
+    # print(convert_exponential_to_standard("1,000,000 SP"))
+    # print(convert_exponential_to_standard("1e10"))
+    # print(convert_exponential_to_standard("1e10"))
+    # print(convert_exponential_to_standard("7e40"))
