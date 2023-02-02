@@ -51,7 +51,8 @@ if __name__ == '__main__':
     # print(convert_standard_to_exponential("10.3 Vg"))
     # for i in range(0, 100):
     #     print(convert_exponential_to_standard(("3e" + str(i))))
-    print(convert_standard_to_exponential("250 B"))
+    print(convert_standard_to_exponential("100 St"))
+    print(convert_exponential_to_standard(1e48))
     # print(convert_exponential_to_standard("100 SP"))
     # print(convert_exponential_to_standard("100 T SP"))
     # print(convert_exponential_to_standard("0"))

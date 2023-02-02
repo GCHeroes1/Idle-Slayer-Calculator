@@ -207,6 +207,7 @@ for (var i = 0; i < coll.length; i++) {
 const dimension_options_area = document.getElementById("mapValueDimensions");
 const enemy_spawn_options_area = document.getElementById("mapValueEnemySpawnRateList");
 const giant_spawn_options_area = document.getElementById("mapValueGiantSpawnRateList");
+const boost_soul_options_area = document.getElementById("mapValueBoostSouls");
 const bow_soul_options_area = document.getElementById("mapValueBowSouls");
 const rage_soul_options_area = document.getElementById("mapValueRageSouls");
 const giant_soul_options_area = document.getElementById("mapValueGiantSouls");
@@ -224,13 +225,16 @@ const random_box_options_area = document.getElementById("mapValueRandomBoxes");
 const random_box_time = document.getElementById("mapValueRandomBoxesTime");
 const active_results_table = document.getElementById("mapValuesResultsTableActive");
 const bow_results_table = document.getElementById("mapValuesResultsTableBow");
+const current_bow_souls = document.getElementById("mapValueCurrentBowSouls");
 const rage_results_table = document.getElementById("mapValuesResultsTableRage");
+const current_rage_souls = document.getElementById("mapValueCurrentRageSouls");
 
 let unlocked_dimensions = ["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle"];
 let unlocked_enemies = [];
 let unlocked_giants = [];
 let unlocked_enemy_spawn_upgrades = [];
 let unlocked_giant_spawn_upgrades = [];
+let unlocked_boost_soul_upgrades = [];
 let unlocked_bow_soul_upgrades = [];
 let unlocked_giant_soul_upgrades = [];
 let unlocked_rage_soul_upgrades = [];
@@ -256,34 +260,37 @@ function enemy_checkboxes(list) {
 function giant_checkboxes(list) {
     for (const [key, giant] of Object.entries(list)) {
         const giant_name = giant[0];
-        const giant_cost = giant[[giant.length - scientific]]; // this *will* be -1 and -2, eventually
+        const giant_cost = giant[[giant.length - scientific]];
         giants_list.appendChild(create_checkbox(giant_name, giant_cost, unlocked_giants));
     }
 }
 
 function upgrade_checkboxes(list) {
     for (const [key, upgrade] of Object.entries(list[0])) {
-        bow_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_bow_soul_upgrades)); // can also follow the -2 thing
+        boost_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_boost_soul_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[1])) {
-        giant_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_giant_soul_upgrades));
+        bow_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_bow_soul_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[2])) {
-        rage_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_rage_soul_upgrades));
+        giant_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_giant_soul_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[3])) {
-        enemy_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_enemy_spawn_upgrades));
+        rage_soul_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_rage_soul_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[4])) {
-        giant_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_giant_spawn_upgrades));
+        enemy_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_enemy_spawn_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[5])) {
-        critical_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_critical_upgrades));
+        giant_spawn_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_giant_spawn_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[6])) {
-        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_random_box_upgrades));
+        critical_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_critical_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[7])) {
+        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_random_box_upgrades));
+    }
+    for (const [key, upgrade] of Object.entries(list[8])) {
         dimension_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_dimensions));
     }
 }
@@ -428,6 +435,7 @@ async function get_table_values() {
         "ENEMY_SPAWN": unlocked_enemy_spawn_upgrades,
         "GIANT_SPAWN": unlocked_giant_spawn_upgrades,
         "CRITICAL_UPGRADES": unlocked_critical_upgrades,
+        "BOOST_SOULS": unlocked_boost_soul_upgrades,
         "BOW_SOULS": unlocked_bow_soul_upgrades,
         "GIANT_SOULS": unlocked_giant_soul_upgrades,
         "RAGE_SOULS": unlocked_rage_soul_upgrades,
@@ -447,6 +455,8 @@ async function get_table_values() {
         calculate_map_values_active(response[0]);
         calculate_map_values_bow(response[1]);
         calculate_map_values_rage(response[2])
+        current_bow_souls.appendChild(create_multiplier_text(current_bow_souls, "Bow", response[3]))
+        current_rage_souls.appendChild(create_multiplier_text(current_rage_souls, "Rage", response[4]))
         return true;
     });
 }
@@ -676,6 +686,17 @@ function update_spawn_times(lower_time, upper_time) {
     let textNode = document.createTextNode("Random boxes will spawn every " + lower_time.toFixed(1) + "-" + upper_time.toFixed(1) + " seconds.");
     let container = document.createElement("label");
     container.id = "box_remove"
+    container.appendChild(textNode);
+    return container;
+}
+
+function create_multiplier_text(element, text, stat) {
+    if (document.getElementById(text + "_remove")) {
+        element.removeChild(document.getElementById(text + "_remove"))
+    }
+    let textNode = document.createTextNode("Current " + text + " Souls multiplier: " + stat.toFixed(1) + "x");
+    let container = document.createElement("label");
+    container.id = text + "_remove"
     container.appendChild(textNode);
     return container;
 }

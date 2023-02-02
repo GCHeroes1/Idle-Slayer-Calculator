@@ -82,7 +82,7 @@ def get_upgrades_json():
         "Benefit": int(30)
     }
     spawn_dict["Reincarnation"] = {
-        "Cost": "2.5B SP",
+        "Cost": "2.5 B SP",
         "Benefit": int(25)
     }
     giant_dict["Big Troubles"] = {
@@ -99,16 +99,27 @@ def get_upgrades_json():
             "Benefit": int(400)
         }
     }
+    boost_souls_dict = {
+        "Boost Kill": {
+            "Cost": "10 SP",
+            "Benefit": int(100)
+        },
+        "Augmented Boost Kill": {
+            "Cost": "100,000 SP",
+            "Benefit": int(100)
+        }
+    }
+    boost_souls_dict = add_standard_to_dict(boost_souls_dict)
     bow_souls_dict = add_standard_to_dict(bow_souls_dict)
     giant_souls_dict = add_standard_to_dict(giant_souls_dict)
     pattern_dict = add_standard_to_dict(pattern_dict)
     spawn_dict = add_standard_to_dict(spawn_dict)
     giant_dict = add_standard_to_dict(giant_dict)
-    return bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict
+    return boost_souls_dict, bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict
 
 
 if __name__ == '__main__':
-    bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict = get_upgrades_json()
+    boost_souls_dict, bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict = get_upgrades_json()
 
     print(json.dumps(bow_souls_dict, indent=4))
     print(json.dumps(pattern_dict, indent=4))

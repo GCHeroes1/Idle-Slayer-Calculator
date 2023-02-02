@@ -74,6 +74,13 @@
     </div>
 
     <button type="button" class="collapsible">Check upgrades bought affecting <a
+            href="https://idleslayer.fandom.com/wiki/Boost" target="_blank">Boost</a> Souls multiplier
+    </button>
+    <div class="content">
+        <ul id="mapValueBoostSouls" name="mapValueBoostSouls"></ul>
+    </div>
+
+    <button type="button" class="collapsible">Check upgrades bought affecting <a
             href="https://idleslayer.fandom.com/wiki/Bow" target="_blank">Bow</a> Souls multiplier
     </button>
     <div class="content">
@@ -125,9 +132,8 @@
     <button id="updateTables" style="width:100%"><b>UPDATE TABLES</b></button>
 </div>
 <h2>Active Play</h2>
-<p>This table shows you the base Coins/Souls per second for each Dimension. This assumes that you are not boosting, and
-    that you are slaying all enemies. It also does not take into consideration any boosts to your Soul or Coin
-    collection.</p>
+<p>This table shows you the base Coins/Souls per second for each Dimension. This assumes that you are slaying all
+    enemies. It also does not take into consideration any boosts to your Soul or Coin collection.</p>
 <button type="button" class="collapsible">View table</button>
 <div class="content">
     <table>
@@ -144,9 +150,10 @@
 </div>
 
 <h2>Bow</h2>
-<p>This table shows you the base Coins/Souls per second for each Dimension when using bow. This assumes that you are not
-    boosting, and that you are slaying all enemies. It also does not take into consideration any boosts to your Coin
-    collection. Giants are assumed to be killed with Sword and instantly when encountered.</p>
+<p>This table shows you the base Coins/Souls per second for each Dimension when using bow. This assumes that you are
+    slaying all enemies. It also does not take into consideration any boosts to your Coin collection. Giants are assumed
+    to be killed with Sword and instantly when encountered.</p>
+<p id="mapValueCurrentBowSouls" name="mapValueCurrentBowSouls"></p>
 <button type="button" class="collapsible">View table</button>
 <div class="content">
     <table>
@@ -165,6 +172,7 @@
 <h2>Rage Mode</h2>
 <p>This table shows the average Coins and Souls per second for each Dimension during Rage Mode. It also does not take
     into consideration any boosts to your Coin collection.</p>
+<p id="mapValueCurrentRageSouls" name="mapValueCurrentRageSouls"></p>
 <button type="button" class="collapsible">View table</button>
 <div class="content">
     <table>

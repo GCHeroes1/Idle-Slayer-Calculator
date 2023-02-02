@@ -15,7 +15,7 @@ body {
     list-style: none;
 }
 
-#mapValueBowSouls, #mapValueCritical, #mapValueGiantSouls {
+#mapValueBoostSouls, #mapValueBowSouls, #mapValueCritical, #mapValueGiantSouls {
     column-count: 2;
     list-style: none;
 }

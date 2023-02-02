@@ -88,7 +88,7 @@ def get_enemy_stats(current_coins, evolutions, unlocked_enemies):
 
 
 def calculate_average_pattern(coins, unlocked_dimensions):
-    patterns_cost = get_upgrades_json()[2]
+    patterns_cost = get_upgrades_json()[3]
     patterns = get_patterns_json()
     spawn_level = 0
     for pattern in patterns_cost.values():
@@ -175,7 +175,8 @@ def upgrades_helper(json):
 
 
 def get_upgrade_names():
-    bow_upgrade_json, giant_soul_json, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
+    boost_upgrade_json, bow_upgrade_json, giant_soul_json, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
+    boost_soul_upgrades = upgrades_helper(boost_upgrade_json)
     bow_soul_upgrades = upgrades_helper(bow_upgrade_json)
     giant_soul_upgrades = upgrades_helper(giant_soul_json)
     spawn_upgrades = upgrades_helper(spawn_upgrade_json)
@@ -184,7 +185,7 @@ def get_upgrade_names():
     critical_upgrades = upgrades_helper(get_crit_json())
     random_box_upgrades = upgrades_helper(get_random_box_json())
     dimension_unlocks = upgrades_helper(get_dimension_json())
-    return bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks
+    return boost_soul_upgrades, bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks
 
 
 def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
@@ -200,7 +201,7 @@ def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
 
 def get_upgrade_stats(current_coins, unlocked_spawn, unlocked_giant, Enemies):
     # get a list of the selected upgrades, need to check against their lists to see whats unlocked
-    _, _, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
+    _, _, _, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
     spawn_stat, current_coins = upgrade_stat_helper(current_coins, spawn_upgrade_json, unlocked_spawn)
     giant_stat, current_coins = upgrade_stat_helper(current_coins, giant_upgrade_json, unlocked_giant)
     spawn_stat += Enemies
@@ -220,9 +221,11 @@ def souls_stat_helper(current_coins, upgrades, unlocked_upgrades):
     return total, current_coins
 
 
-def get_soul_stats(current_coins, unlocked_bow, unlocked_giant, unlocked_rage, bow_souls, giant_souls, rage_souls):
-    bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
+def get_soul_stats(current_coins, unlocked_boost, unlocked_bow, unlocked_giant, unlocked_rage, bow_souls, giant_souls,
+                   rage_souls):
+    boost_upgrade_json, bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
     rage_souls_json = get_rage_json()
+    boost_souls_stat, current_coins = souls_stat_helper(current_coins, boost_upgrade_json, unlocked_boost)
     bow_souls_stat, current_coins = souls_stat_helper(current_coins, bow_upgrade_json, unlocked_bow)
     bow_souls_stat *= bow_souls
     giant_souls_stat, current_coins = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant)
@@ -231,7 +234,7 @@ def get_soul_stats(current_coins, unlocked_bow, unlocked_giant, unlocked_rage, b
     rage_souls_stat += rage_souls
     if rage_souls_stat != 0:
         rage_souls_stat += 100
-    return bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
+    return boost_souls_stat, bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
 
 
 def crit_helper(current_coins, upgrades, unlocked_upgrades):
@@ -267,8 +270,8 @@ def calc_type_multiplier(Electric, Fire, Dark, enemy_type):
         return multiplier
 
 
-def calculate_average_gains(average_patterns, current_enemies, current_giants, pattern_spawn, giant_spawn, bow_bonus,
-                            rage_bonus, giant_bonus, player_speed, variables, bow=False, rage=False):
+def calculate_average_gains(average_patterns, current_enemies, current_giants, pattern_spawn, giant_spawn, boost_bonus,
+                            bow_bonus, rage_bonus, giant_bonus, player_speed, variables, bow=False, rage=False):
     Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark = variables
     patterns_per_second = player_speed / pattern_spawn
     giants_per_second = player_speed / giant_spawn
@@ -308,12 +311,12 @@ def calculate_average_gains(average_patterns, current_enemies, current_giants, p
             enemy_soul_reward += enemy_souls_crit * patterns_per_second
         average_base_gains[dimension] = {
             "Coins": round(enemy_coin_reward + giant_coin_reward, 2),
-            "Souls": round(enemy_soul_reward + giant_soul_reward, 2)
+            "Souls": round((enemy_soul_reward + giant_soul_reward) * boost_bonus, 2)
         }
         if bow:
             enemy_reward_bow = enemy_soul_reward * bow_bonus
             average_bow_gains[dimension]["Coins"] = round(enemy_coin_reward + giant_coin_reward, 2)
-            average_bow_gains[dimension]["Souls"] = round(enemy_reward_bow + giant_soul_reward, 2)
+            average_bow_gains[dimension]["Souls"] = round(enemy_reward_bow + giant_soul_reward * boost_bonus, 2)
         if rage:
             enemy_reward_rage = enemy_soul_reward * rage_bonus
             giant_reward_rage = giant_soul_reward * rage_bonus
@@ -365,8 +368,8 @@ def random_boxes():
 @app.route('/calculateStats', methods=["POST"])
 def calculate_stats():
     current_coins = 0
-    dimensions, enemy_spawn, giant_spawn, critical_upgrades, bow_souls, giant_souls, rage_souls, enemy_evolutions, \
-    giant_evolutions, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], []
+    dimensions, enemy_spawn, giant_spawn, critical_upgrades, boost_souls, bow_souls, giant_souls, rage_souls, \
+    enemy_evolutions, giant_evolutions, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], [], []
     body = request.get_json(force=True)
     if "DIMENSIONS" in body:
         dimensions = body["DIMENSIONS"]
@@ -376,6 +379,8 @@ def calculate_stats():
         giant_spawn = body["GIANT_SPAWN"]
     if "CRITICAL_UPGRADES" in body:
         critical_upgrades = body["CRITICAL_UPGRADES"]
+    if "BOOST_SOULS" in body:
+        boost_souls = body["BOOST_SOULS"]
     if "BOW_SOULS" in body:
         bow_souls = body["BOW_SOULS"]
     if "GIANT_SOULS" in body:
@@ -398,10 +403,9 @@ def calculate_stats():
     current_enemies, current_coins = get_enemy_stats(current_coins, get_enemies_json(), enemy_evolutions)
     current_giants, current_coins = get_giant_stats(current_coins, get_giants_json(), giant_evolutions)
     pattern_spawn, giant_freq, current_coins = get_upgrade_stats(current_coins, enemy_spawn, giant_spawn, Enemies)
-    bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = get_soul_stats(current_coins, bow_souls,
-                                                                                      giant_souls, rage_souls,
-                                                                                      Bow_Souls_ * Bow_Souls,
-                                                                                      Giant_Souls, Rage_Souls)
+    boost_souls_stat, bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = \
+        get_soul_stats(current_coins, boost_souls, bow_souls, giant_souls, rage_souls, Bow_Souls_ * Bow_Souls,
+                       Giant_Souls, Rage_Souls)
     critical_chance, critical_souls, current_coins = get_crit_stats(current_coins, critical_upgrades)
     average_patterns = calculate_average_pattern(current_coins, dimensions)
     Critical_Chance += critical_chance
@@ -409,10 +413,10 @@ def calculate_stats():
     Souls *= Ingame_Souls * Souls_
     variables = Souls, Critical_Souls, Critical_Chance / 100, Electric, Fire, Dark
     base_gains, bow_gains, rage_gains = calculate_average_gains(average_patterns, current_enemies, current_giants,
-                                                                pattern_spawn, giant_freq, bow_souls_stat,
-                                                                rage_souls_stat, giant_souls_stat, player_speed,
-                                                                variables)
-    return [base_gains, bow_gains, rage_gains]
+                                                                pattern_spawn, giant_freq, boost_souls_stat,
+                                                                bow_souls_stat, rage_souls_stat, giant_souls_stat,
+                                                                player_speed, variables)
+    return [base_gains, bow_gains, rage_gains, bow_souls_stat, rage_souls_stat]
 
 
 if __name__ == '__main__':
