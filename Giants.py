@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from Upgrades import get_giant_costs_json
 import pandas as pd
 import re
 import json
@@ -69,11 +70,9 @@ def get_giants_json():
             "Souls": int(evolution["Soul Reward"]),
             "Cost": float(evolution["Unlock Cost"])
         }
-    dict["Hills' Giant"]["Cost"] = "7000"
-    dict["Adult Yeti"]["Cost"] = "1e8"
-    dict["Fairy Queen"]["Cost"] = 1e35
-    dict["Archdemon"]["Cost"] = 2.5e29
-    dict["Anubis Warrior"]["Cost"] = "5e18"  # must be a string, javascript will try to display the full number
+    giant_costs = get_giant_costs_json()
+    for key, item in giant_costs.items():
+        dict[key]["Cost"] = item["Cost"]
 
     dict = add_standard_to_dict(dict)
     return dict

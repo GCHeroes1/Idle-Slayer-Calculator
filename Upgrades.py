@@ -45,26 +45,43 @@ def generate_dict(dataframe):
     return dict
 
 
+def generate_costs_dict(dataframe):
+    dict = {}
+    for _, data in dataframe.iterrows():
+        dict[data["Name"]] = {
+            "Cost": str(data["Cost"]),
+        }
+    return dict
+
+
+def get_giant_costs_json():
+    headers = soup.findAll("h3")
+    for item in headers:
+        table = item.findNext("table")
+        if "Giant Unlocks" in item.contents[0]:
+            giantUnlock = generate_dataframe(table)
+    giant_cost_dict = generate_costs_dict(giantUnlock)
+    return giant_cost_dict
+
+
 def get_upgrades_json():
-    tb = soup.findAll("table")
-    bowSoulUpgrades = tb[13]
-    patternUpgrades = tb[21]
-    spawnUpgrades = tb[22]
-    giantCostUpgrades = tb[25]
-    giantUpgrades = tb[26]
-    giantEvolutionUpgrades = tb[27]
+    headers = soup.findAll("h3")
+    for item in headers:
+        table = item.findNext("table")
+        if "Bow Soul Upgrades" in item.contents[0]:
+            bowSoul = generate_dataframe(table)
+        elif "Enemy Pattern Upgrades" in item.contents[0]:
+            enemyPattern = generate_dataframe(table)
+        elif "Enemy Spawn Upgrades" in item.contents[0]:
+            enemySpawn = generate_dataframe(table)
+        elif "Giant Spawn Upgrades" in item.contents[0]:
+            giantSpawn = generate_dataframe(table)
+            giantSpawn.drop(giantSpawn.index[2], inplace=True)
 
-    # # pattern_data.to_csv("patterns.csv", index=False)
-    bow_upgrade_data = generate_dataframe(bowSoulUpgrades)
-    pattern_upgrade_data = generate_dataframe(patternUpgrades)
-    spawn_upgrade_data = generate_dataframe(spawnUpgrades)
-    giant_upgrade_data = generate_dataframe(giantUpgrades)
-    giant_upgrade_data.drop(giant_upgrade_data.index[2], inplace=True)
-
-    bow_souls_dict = generate_dict(bow_upgrade_data)
-    pattern_dict = generate_dict(pattern_upgrade_data)
-    spawn_dict = generate_dict(spawn_upgrade_data)
-    giant_dict = generate_dict(giant_upgrade_data)
+    bow_souls_dict = generate_dict(bowSoul)
+    pattern_dict = generate_dict(enemyPattern)
+    spawn_dict = generate_dict(enemySpawn)
+    giant_dict = generate_dict(giantSpawn)
     bow_souls_dict["Wind Waker"] = {
         "Cost": "200 DP",
         "Benefit": int(100)
@@ -120,6 +137,7 @@ def get_upgrades_json():
 
 if __name__ == '__main__':
     boost_souls_dict, bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict = get_upgrades_json()
+    giant_cost_dict = get_giant_costs_json()
 
     print(json.dumps(bow_souls_dict, indent=4))
     print(json.dumps(pattern_dict, indent=4))
