@@ -1,3 +1,6 @@
+import sys
+
+
 def get_armory_json():
     return {
         "Sword": {
@@ -123,19 +126,25 @@ def calculate_armory_bonuses(armory_selection):
                     if "Excellent" in options_info["Option"]:
                         excellent = 1.25
                         options_info["Option"].remove("Excellent")
-                    for option in options_info["Option"]:
-                        options = armory_json[item][subtype]["Option"]
-                        option_name = options[[x for x, y in enumerate(options) if y[0] == option][0]][0]
-                        option_stat = options[[x for x, y in enumerate(options) if y[0] == option][0]][1]
-                        calculated_bonus = calculate_bonus(option_stat, level) * excellent
-                        variables = update_bonuses(variables, option_name, calculated_bonus)
-                    # print(item + " " + subtype + " " + option_name + " +" + str(level) + " " + str(calculated_bonus))
-            if "Main" in armory_json[item][subtype]:
-                main_name = armory_json[item][subtype]["Main"][0]
-                main_stat = armory_json[item][subtype]["Main"][1]
-                calculated_bonus = calculate_bonus(main_stat, level) * excellent
-                # print(item + " " + subtype + " " + main_name + " +" + str(level) + " " + str(calculated_bonus))
-                variables = update_bonuses(variables, main_name, calculated_bonus)
+                    try:
+                        for option in options_info["Option"]:
+                            options = armory_json[item][subtype]["Option"]
+                            option_name = options[[x for x, y in enumerate(options) if y[0] == option][0]][0]
+                            option_stat = options[[x for x, y in enumerate(options) if y[0] == option][0]][1]
+                            calculated_bonus = calculate_bonus(option_stat, level) * excellent
+                            variables = update_bonuses(variables, option_name, calculated_bonus)
+                        # print(item + " " + subtype + " " + option_name + " +" + str(level) + " " + str(calculated_bonus))
+                    except IndexError:
+                        print(options_info, file=sys.stderr)
+            try:
+                if "Main" in armory_json[item][subtype]:
+                    main_name = armory_json[item][subtype]["Main"][0]
+                    main_stat = armory_json[item][subtype]["Main"][1]
+                    calculated_bonus = calculate_bonus(main_stat, level) * excellent
+                    # print(item + " " + subtype + " " + main_name + " +" + str(level) + " " + str(calculated_bonus))
+                    variables = update_bonuses(variables, main_name, calculated_bonus)
+            except KeyError:
+                print(armory_selection, file=sys.stderr)
     return variables
 
 
