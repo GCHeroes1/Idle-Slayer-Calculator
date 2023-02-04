@@ -12,7 +12,8 @@ from Rage import get_rage_json
 from Armory import get_armory_info, calculate_armory_bonuses
 from Criticals import get_crit_json
 from StonesOfTime import *
-from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time
+from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time, \
+    get_random_box_extra_options, get_box_probabilities
 from Dimensions import get_dimension_json
 
 app = Flask(__name__)
@@ -184,8 +185,9 @@ def get_upgrade_names():
     rage_upgrades = upgrades_helper(get_rage_json())
     critical_upgrades = upgrades_helper(get_crit_json())
     random_box_upgrades = upgrades_helper(get_random_box_json())
+    random_box_options = upgrades_helper(get_random_box_extra_options())
     dimension_unlocks = upgrades_helper(get_dimension_json())
-    return boost_soul_upgrades, bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks
+    return boost_soul_upgrades, bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks, random_box_options
 
 
 def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
@@ -417,6 +419,16 @@ def calculate_stats():
                                                                 bow_souls_stat, rage_souls_stat, giant_souls_stat,
                                                                 player_speed, variables)
     return [base_gains, bow_gains, rage_gains, bow_souls_stat, rage_souls_stat]
+
+
+@app.route('/calculateRandomBoxes', methods=["POST"])
+def calculate_random_boxes():
+    random_box_selection = []
+    body = request.get_json(force=True)
+    if "RANDOM_BOX_OPTIONS" in body:
+        random_box_selection = body["RANDOM_BOX_OPTIONS"]
+    random_box_odds = get_box_probabilities(random_box_selection)
+    return random_box_odds
 
 
 if __name__ == '__main__':

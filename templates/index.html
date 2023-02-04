@@ -11,13 +11,6 @@
 </head>
 
 <body>
-<h1>Random Box Spawn Rate</h1>
-<label for="mapValueRandomBoxes">Select current <a href="https://idleslayer.fandom.com/wiki/Random_Box" target="_blank">Random
-    Box</a> spawn upgrades:</label>
-<ul id="mapValueRandomBoxes" name="mapValueRandomBoxes"></ul>
-<label id="mapValueRandomBoxesTime" name="mapValueRandomBoxesTime"></label>
-<br>
-
 <h1 id="mapValues">Dimension Values</h1>
 <div style="text-align: center;">
     <button id="checkAll">Check all</button>
@@ -187,22 +180,32 @@
         </tbody>
     </table>
 </div>
+<br>
+<h1 id="randomBoxSpawnRate">Random Box Spawn Rate</h1>
+<label for="randomBoxSpawn">Select current <a href="https://idleslayer.fandom.com/wiki/Random_Box" target="_blank">Random
+    Box</a> spawn upgrades:</label>
+<ul id="randomBoxSpawn" name="randomBoxSpawn"></ul>
+<label id="randomBoxTime" name="randomBoxTime"></label>
+<br>
+<br>
+<h1 id="randomBoxCalc">Random Box Bonus Odds</h1>
+<label>Select <a href="https://idleslayer.fandom.com/wiki/Random_Box#Related_Purchases" target="_blank">Random Box</a>
+    Event modifiers:</label>
+<ul id="randomBoxOptionsArea"></ul>
+<button type="button" class="collapsible">View Table</button>
+<div class="content">
+    <table>
+        <thead>
+        <tr>
+            <th><br><a href="https://idleslayer.fandom.com/wiki/Random_Box#Random_Events" target="_blank">Event</a></th>
+            <th style="text-align: center"><br>Chance</th>
+            <th style="text-align: center">Average number of <br>Random Boxes until Event</th>
+        </tr>
+        </thead>
+        <tbody id="randomBoxResultsTable">
+        </tbody>
+    </table>
+</div>
 
-
-<!--<h1 id="randomBoxCalc">Random Box Bonus Odds</h1>-->
-<!--<p>For details on the bonuses, visit <a href="https://idleslayer.fandom.com/wiki/Random_Box">the wiki</a>.</p>-->
-<!--<div id="randomBoxOptionsArea"></div>-->
-<!--<table>-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--        <th>Name</th>-->
-<!--        <th>Chance</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody id="randomBoxResultsTable">-->
-<!--    </tbody>-->
-<!--</table>-->
-<!--<hr/>-->
-<!--<br>-->
 </body>
 </html>

@@ -148,6 +148,7 @@ function setup() {
 
 document.addEventListener("DOMContentLoaded", () => {
     create_table(unlocked_dimensions);
+    void get_random_box_odds();
     // setup_random_box_simulation();
     void setup();
     void get_armory();
@@ -204,6 +205,11 @@ for (var i = 0; i < coll.length; i++) {
     });
 }
 
+const random_box_options_area = document.getElementById("randomBoxOptionsArea");
+const random_box_results_table = document.getElementById("randomBoxResultsTable");
+const random_box_upgrades_area = document.getElementById("randomBoxSpawn");
+const random_box_time = document.getElementById("randomBoxTime");
+
 const dimension_options_area = document.getElementById("mapValueDimensions");
 const enemy_spawn_options_area = document.getElementById("mapValueEnemySpawnRateList");
 const giant_spawn_options_area = document.getElementById("mapValueGiantSpawnRateList");
@@ -221,8 +227,6 @@ const armory_levels = document.getElementById("mapValueArmoryLevels");
 const USP_allocation = document.getElementById("mapValueUSPAllocation");
 const stone_names = document.getElementById("mapValueStoneNames");
 const stone_levels = document.getElementById("mapValueStoneLevels");
-const random_box_options_area = document.getElementById("mapValueRandomBoxes");
-const random_box_time = document.getElementById("mapValueRandomBoxesTime");
 const active_results_table = document.getElementById("mapValuesResultsTableActive");
 const bow_results_table = document.getElementById("mapValuesResultsTableBow");
 const current_bow_souls = document.getElementById("mapValueCurrentBowSouls");
@@ -240,6 +244,7 @@ let unlocked_giant_soul_upgrades = [];
 let unlocked_rage_soul_upgrades = [];
 let unlocked_critical_upgrades = [];
 let unlocked_random_box_upgrades = [];
+let unlocked_random_box_options = [];
 let unlocked_armory = {};
 let unlocked_stones = {};
 let map_active_value_result_cells = {};
@@ -288,10 +293,13 @@ function upgrade_checkboxes(list) {
         critical_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_critical_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[7])) {
-        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_random_box_upgrades));
+        random_box_upgrades_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_random_box_upgrades));
     }
     for (const [key, upgrade] of Object.entries(list[8])) {
         dimension_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_dimensions));
+    }
+    for (const [key, upgrade] of Object.entries(list[9])) {
+        random_box_options_area.appendChild(create_checkbox(upgrade[0], upgrade[[upgrade.length - scientific]], unlocked_random_box_options));
     }
 }
 
@@ -312,6 +320,9 @@ function create_checkbox(name, cost, unlocked_array) {
         }
         if (unlocked_array === unlocked_random_box_upgrades) {
             void get_random_boxes();
+        }
+        if (unlocked_array === unlocked_random_box_options) {
+            void get_random_box_odds();
         }
         // console.log(unlocked_array);
     });
@@ -478,6 +489,22 @@ async function get_stones() {
     }).then(response => {
         stone_section(response[0], response[1]);
         USP_allocation.appendChild(create_usp_allocation(total_USP))
+        return true;
+    });
+}
+
+async function get_random_box_odds() {
+    body_data = JSON.stringify({
+        "RANDOM_BOX_OPTIONS": unlocked_random_box_options
+    })
+    const fetchPromise = fetch(endpoint + "calculateRandomBoxes", {
+        method: "POST",
+        body: body_data
+    });
+    fetchPromise.then(response => {
+        return response.json();
+    }).then(response => {
+        setup_random_box_simulation(response)
         return true;
     });
 }
@@ -699,4 +726,53 @@ function create_multiplier_text(element, text, stat) {
     container.id = text + "_remove"
     container.appendChild(textNode);
     return container;
+}
+
+function setup_random_box_simulation(list_of_events) {
+    Array.from(document.getElementsByClassName("random_box_table")).forEach((input) => {
+        input.remove()
+    })
+    const random_box_result_cells = {};
+    for (const [bonus, chance] of Object.entries(list_of_events)) {
+        const bonus_row = document.createElement("tr");
+        bonus_row.classList.add("random_box_table");
+
+        const bonus_cell = document.createElement("td");
+        const chance_cell = document.createElement("td");
+        const average_cell = document.createElement("td");
+        chance_cell.style.textAlign = "center"
+        average_cell.style.textAlign = "center"
+        bonus_cell.textContent = bonus;
+        random_box_result_cells[bonus] = chance_cell;
+        chance_cell.textContent = String((chance * 100).toFixed(2) + "%");
+        let text = ""
+        if (chance !== 0) {
+            text = String((1 / chance).toFixed(2));
+        }
+        average_cell.textContent = text
+        bonus_row.appendChild(bonus_cell);
+        bonus_row.appendChild(chance_cell);
+        bonus_row.appendChild(average_cell);
+        random_box_results_table.appendChild(bonus_row);
+        sort_random_box_table();
+    }
+}
+
+function sort_random_box_table() {
+    if (random_box_results_table === null) {
+        return;
+    }
+    const store = [];
+    for (let i = 0, len = random_box_results_table.rows.length; i < len; i++) {
+        const row = random_box_results_table.rows[i];
+        if (row.cells[1].textContent === null) {
+            continue;
+        }
+        const sort_value = parseFloat(row.cells[1].textContent);
+        store.push([sort_value, row]);
+    }
+    store.sort((a, b) => b[0] - a[0]);
+    for (const [_, row] of store) {
+        random_box_results_table.appendChild(row);
+    }
 }
