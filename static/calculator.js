@@ -139,6 +139,34 @@ const change_table_sort = (event) => {
     sort_table_inner(t_body, header_idx, new_dir);
 };
 
+const update_table_sort = (table) => {
+    //find header indicating sort
+    const headers = table.querySelectorAll("th");
+    let idx = 0;
+    let header_idx = -1;
+    let sort_dir = SortDirection.des;
+    for (const header of headers) {
+        if (header.nodeType === 1) {
+            if (header.classList.contains(sort_direction_to_string(SortDirection.des))) {
+                sort_dir = SortDirection.des;
+                header_idx = idx;
+                break;
+            }
+            if (header.classList.contains(sort_direction_to_string(SortDirection.asc))) {
+                sort_dir = SortDirection.asc;
+                header_idx = idx;
+                break;
+            }
+            idx++;
+        }
+    }
+    const t_body = table.querySelector("tbody");
+    if (t_body === null || header_idx === -1) {
+        return;
+    }
+    sort_table_inner(t_body, header_idx, sort_dir);
+};
+
 function setup() {
     void get_evolution_names();
     void get_giant_names();
@@ -147,9 +175,8 @@ function setup() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    create_table(unlocked_dimensions);
+    void create_table(unlocked_dimensions);
     void get_random_box_odds();
-    // setup_random_box_simulation();
     void setup();
     void get_armory();
     void get_stones();
@@ -188,7 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
             void setup();
             scientific = 1;
         }
-
     });
 });
 
@@ -344,6 +370,8 @@ function calculate_map_values_active(active_souls) {
         map_active_value_result_cells[key]["coins"].innerText = String((value["Coins"]).toFixed(2));
         map_active_value_result_cells[key]["souls"].innerText = String((value["Souls"]).toFixed(2));
     }
+    const active_table = (_a = document.querySelector("#mapValuesResultsTableActive")) === null || _a === void 0 ? void 0 : _a.closest("table");
+    update_table_sort(active_table);
 }
 
 function calculate_map_values_bow(bow_souls) {
@@ -351,6 +379,9 @@ function calculate_map_values_bow(bow_souls) {
         map_bow_value_result_cells[key]["coins"].innerText = String((value["Coins"]).toFixed(2));
         map_bow_value_result_cells[key]["souls"].innerText = String((value["Souls"]).toFixed(2));
     }
+    const bow_table = (_a = document.querySelector("#mapValuesResultsTableBow")) === null || _a === void 0 ? void 0 : _a.closest("table");
+    update_table_sort(bow_table);
+
 }
 
 function calculate_map_values_rage(rage_souls) {
@@ -358,6 +389,9 @@ function calculate_map_values_rage(rage_souls) {
         map_rage_value_result_cells[key]["coins"].innerText = String((value["Coins"]).toFixed(2));
         map_rage_value_result_cells[key]["souls"].innerText = String((value["Souls"]).toFixed(2));
     }
+    const rage_table = (_a = document.querySelector("#mapValuesResultsTableRage")) === null || _a === void 0 ? void 0 : _a.closest("table");
+    update_table_sort(rage_table);
+
 }
 
 const create_map_row = (table, map, type) => {
