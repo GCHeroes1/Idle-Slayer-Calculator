@@ -48,7 +48,7 @@ def get_armory_json():
             },
             "Kishar": {
                 "Main": ("Critical Souls", 5.5),
-                "Option": [("Excellent", 0), ("Giant Souls", 1.5)],
+                "Option": [("Excellent", 0), ("Giant Souls", 1.5), ("in-game Souls", 0.3)],
                 "Levels": list(range(0, 16))
             }
         },
@@ -88,6 +88,8 @@ def calculate_bonus(stat, level):
 def update_bonuses(variables, variable_to_update, multiplier):
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical, Electric, Fire, Dark, Enemies = variables
     if variable_to_update == "Souls":
+        Souls *= (multiplier / 100) + 1
+    elif variable_to_update == "in-game Souls":  # if you ever do an idle table, this needs to be its own variable
         Souls *= (multiplier / 100) + 1
     elif variable_to_update == "Bow Souls":
         Bow_Souls *= (multiplier / 100) + 1
@@ -180,11 +182,11 @@ if __name__ == '__main__':
             }
         }
     }
-    Example_Armory = {'Shield': {'Kishar': {'Option': []}},
+    Example_Armory = {'Shield': {'Kishar': {'Option': ['Excellent', 'in-game Souls']}},
                       'Armor': {'Adranos': {'Option': ['Excellent', 'Giant Souls', 'Souls'], 'Level': '17'}},
                       'Sword': {'Adranos': {'Option': ['Excellent', 'Electric'], 'Level': '16'}},
                       'Ring': {"Victor's Ring": {'Level': '10', 'Option': ['Excellent']}},
                       'Bow': {'Bat Long Bow': {}}}
     # print(json.dumps(get_armory_json(), indent=4))
     # get_armory_info()
-    print(calculate_armory_bonuses(Example2))
+    print(calculate_armory_bonuses(Example_Armory))

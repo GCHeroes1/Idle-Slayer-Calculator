@@ -223,17 +223,13 @@ def souls_stat_helper(current_coins, upgrades, unlocked_upgrades):
     return total, current_coins
 
 
-def get_soul_stats(current_coins, unlocked_boost, unlocked_bow, unlocked_giant, unlocked_rage, bow_souls, giant_souls,
-                   rage_souls):
+def get_soul_stats(current_coins, unlocked_boost, unlocked_bow, unlocked_giant, unlocked_rage):
     boost_upgrade_json, bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
     rage_souls_json = get_rage_json()
     boost_souls_stat, current_coins = souls_stat_helper(current_coins, boost_upgrade_json, unlocked_boost)
     bow_souls_stat, current_coins = souls_stat_helper(current_coins, bow_upgrade_json, unlocked_bow)
-    bow_souls_stat *= bow_souls
     giant_souls_stat, current_coins = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant)
-    giant_souls_stat *= giant_souls
     rage_souls_stat, current_coins = upgrade_stat_helper(current_coins, rage_souls_json, unlocked_rage)
-    rage_souls_stat += rage_souls
     if rage_souls_stat != 0:
         rage_souls_stat += 100
     return boost_souls_stat, bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
@@ -400,19 +396,25 @@ def calculate_stats():
 
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
         armory_selection)
-    Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls = calculate_stone_bonuses(stone_selection)
     player_speed = 4
     current_enemies, current_coins = get_enemy_stats(current_coins, get_enemies_json(), enemy_evolutions)
     current_giants, current_coins = get_giant_stats(current_coins, get_giants_json(), giant_evolutions)
     pattern_spawn, giant_freq, current_coins = get_upgrade_stats(current_coins, enemy_spawn, giant_spawn, Enemies)
     boost_souls_stat, bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = \
-        get_soul_stats(current_coins, boost_souls, bow_souls, giant_souls, rage_souls, Bow_Souls_ * Bow_Souls,
-                       Giant_Souls, Rage_Souls)
+        get_soul_stats(current_coins, boost_souls, bow_souls, giant_souls, rage_souls)
     critical_chance, critical_souls, current_coins = get_crit_stats(current_coins, critical_upgrades)
     average_patterns = calculate_average_pattern(current_coins, dimensions)
     Critical_Chance += critical_chance
-    Critical_Souls *= critical_souls * Critical_Souls_
+    bow_souls_stat *= Bow_Souls
+    Critical_Souls *= critical_souls
+    giant_souls_stat *= Giant_Souls
+
+    Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls = calculate_stone_bonuses(stone_selection)
     Souls *= Ingame_Souls * Souls_
+    bow_souls_stat *= Bow_Souls_
+    Critical_Souls *= Critical_Souls_
+    rage_souls_stat += Rage_Souls
+
     variables = Souls, Critical_Souls, Critical_Chance / 100, Electric, Fire, Dark
     base_gains, bow_gains, rage_gains = calculate_average_gains(average_patterns, current_enemies, current_giants,
                                                                 pattern_spawn, giant_freq, boost_souls_stat,

@@ -105,7 +105,7 @@ def calculate_distribution(distribution_cache, box_set):
         return distribution_cache[set_names]
 
     new_dist = Distribution()
-    # // 1. If set has only 1 element, calculate it.
+    # 1. If set has only 1 element, calculate it.
     if len(box_set) == 1:
         for key, chance in box_set.items():
             new_dist.dist[key] = chance

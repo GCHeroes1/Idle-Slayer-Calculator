@@ -631,7 +631,7 @@ function create_armory_options_dropdown(item, subtype, options) {
     for (const val of options) {
         var option = document.createElement("option");
         option.value = val;
-        option.text = val.charAt(0).toUpperCase() + val.slice(1);
+        option.text = val;
         select.appendChild(option);
     }
     var label = document.createElement("label");

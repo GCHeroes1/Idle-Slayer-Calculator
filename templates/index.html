@@ -101,12 +101,15 @@
         <label for="mapValueArmoryNames">Select current Armory items:</label>
         <ul id="mapValueArmoryNames" name="mapValueArmoryNames" style="padding-left: 50px"></ul>
         <ul id="mapValueArmoryList" name="mapValueArmoryList"></ul>
-        <label for="mapValueArmoryOptions">Select current Armory options and trait.
+        <label for="mapValueArmoryOptions">Select current Armory trait and options:
             <br>
-            <i>For PC, hold ctrl to multi-select or unselect options; if you change items, you need to re-select
-                options/levels.</i></label>
+            <i>For Desktop, hold ctrl to multi-select or unselect options; if you change items, you need to re-select
+                options despite visually retaining the selection.</i></label>
         <ul id="mapValueArmoryOptions" name="mapValueArmoryOptions"></ul>
-        <label for="mapValueArmoryLevels">Select current Armory levels:</label>
+        <label for="mapValueArmoryLevels">Select current Armory levels:
+            <br>
+            <i>For Desktop, if you change items, you need to re-select levels despite visually retaining the
+                selection.</i></label>
         <ul id="mapValueArmoryLevels" name="mapValueArmoryLevels"></ul>
     </div>
 
@@ -124,9 +127,10 @@
 <div style="text-align: center;">
     <button id="updateTables" style="width:100%"><b>UPDATE TABLES</b></button>
 </div>
-<h2>Active Play</h2>
-<p>This table shows you the base Coins/Souls per second for each Dimension. This assumes that you are slaying all
-    enemies. It also does not take into consideration any boosts to your Soul or Coin collection.</p>
+<h2>Sword</h2>
+<p>This table shows you the base Coins/Souls per second for each Dimension when using <b><u>Sword</u></b>. This assumes
+    that you are slaying <b>all</b> enemies (with <a href="https://idleslayer.fandom.com/wiki/Boost" target="_blank">Boost</a>
+    if checked). It also does not take into consideration any boosts to your Coin collection.</p>
 <button type="button" class="collapsible">View table</button>
 <div class="content">
     <table>
@@ -143,9 +147,10 @@
 </div>
 
 <h2>Bow</h2>
-<p>This table shows you the base Coins/Souls per second for each Dimension when using bow. This assumes that you are
-    slaying all enemies. It also does not take into consideration any boosts to your Coin collection. Giants are assumed
-    to be killed with Sword and instantly when encountered.</p>
+<p>This table shows you the base Coins/Souls per second for each Dimension when using <a
+        href="https://idleslayer.fandom.com/wiki/Bow#Using_the_Bow" target="_blank"><b><u>Bow</u></b></a>. This assumes
+    that you are slaying <b>all</b> enemies. It also does not take into consideration any boosts to your Coin
+    collection. Giants are assumed to be killed with <b>Sword</b> and <b>instantly</b> when encountered.</p>
 <p id="mapValueCurrentBowSouls" name="mapValueCurrentBowSouls"></p>
 <button type="button" class="collapsible">View table</button>
 <div class="content">
@@ -163,8 +168,9 @@
 </div>
 
 <h2>Rage Mode</h2>
-<p>This table shows the average Coins and Souls per second for each Dimension during Rage Mode. It also does not take
-    into consideration any boosts to your Coin collection.</p>
+<p>This table shows the average Coins and Souls per second for each Dimension during <a
+        href="https://idleslayer.fandom.com/wiki/Rage_Mode" target="_blank"><b><u>Rage Mode</u></b></a>. It also does
+    not take into consideration any boosts to your Coin collection.</p>
 <p id="mapValueCurrentRageSouls" name="mapValueCurrentRageSouls"></p>
 <button type="button" class="collapsible">View table</button>
 <div class="content">
@@ -181,6 +187,7 @@
     </table>
 </div>
 <br>
+<hr>
 <h1 id="randomBoxSpawnRate">Random Box Spawn Rate</h1>
 <label for="randomBoxSpawn">Select current <a href="https://idleslayer.fandom.com/wiki/Random_Box" target="_blank">Random
     Box</a> spawn upgrades:</label>
@@ -188,6 +195,7 @@
 <label id="randomBoxTime" name="randomBoxTime"></label>
 <br>
 <br>
+<hr>
 <h1 id="randomBoxCalc">Random Box Bonus Odds</h1>
 <label>Select <a href="https://idleslayer.fandom.com/wiki/Random_Box#Related_Purchases" target="_blank">Random Box</a>
     Event modifiers:</label>
@@ -206,6 +214,10 @@
         </tbody>
     </table>
 </div>
-
+<br>
+<hr>
+<p style="text-align:center"><i>Disclaimer: If you auto-translate the page, it is unlikely to function
+    correctly, in particular, the Armory section will not work.<br>
+    To report any other issues with the calculator, contact GCHeroes#1337 on Discord.</i></p>
 </body>
 </html>
