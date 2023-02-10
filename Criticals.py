@@ -49,9 +49,12 @@ def get_crit_json():
             }
 
     dict = add_standard_to_dict(dict)
+    with open('./data/get_crit.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
 if __name__ == '__main__':
     dict = get_crit_json()
-    print(json.dumps(dict, indent=4))
+
+    # print(json.dumps(dict, indent=4))

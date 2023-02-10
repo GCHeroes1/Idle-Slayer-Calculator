@@ -37,9 +37,12 @@ def get_dimension_json():
             }
     dict["Hot Desert"]["Cost"] = "5 SP, after UA"
     dict = add_standard_to_dict(dict)
+    with open('./data/get_dimension.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
 if __name__ == '__main__':
     dict = get_dimension_json()
-    print(json.dumps(dict, indent=4))
+
+    # print(json.dumps(dict, indent=4))

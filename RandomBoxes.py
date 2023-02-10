@@ -1,6 +1,7 @@
 from Conversion import add_standard_to_dict
 import random as random
 import json
+import copy
 
 
 def get_random_box_json():
@@ -19,11 +20,13 @@ def get_random_box_json():
         }
     }
     dict = add_standard_to_dict(dict)
+    with open('./data/get_random_box.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
-def get_random_box_event_odds():  # self could be obtained from the wiki, but its never updated, never changes
-    return {"Coins": 1,
+def get_random_box_event_odds_json():  # could be obtained from the wiki, but its never updated, never changes
+    dict = {"Coins": 1,
             "Frenzy": 0.3,
             "Equipment Bonus": 0.04,
             "OMG": 0.01,
@@ -34,9 +37,12 @@ def get_random_box_event_odds():  # self could be obtained from the wiki, but it
             "Horde": 0.25,
             "Souls Bonus Multiplier": 0.12
             }
+    with open('./data/get_random_box_event_odds.json', 'w') as fp:
+        json.dump(dict, fp)
+    return dict
 
 
-def get_random_box_extra_options():
+def get_random_box_extra_options_json():
     dict = {
         "Souls Bonus Multiplier": {
             "Cost": "5 SP",
@@ -55,6 +61,8 @@ def get_random_box_extra_options():
         }
     }
     dict = add_standard_to_dict(dict)
+    with open('./data/get_random_box_extra_options.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
@@ -76,7 +84,8 @@ class Distribution:
     def __init__(self):
         self.dist = {}
         self.empty = 1
-        self.random_box_bonuses = get_random_box_event_odds()
+        with open('./data/get_random_box_event_odds.json', 'r') as fp:
+            self.random_box_bonuses = json.load(fp)
         for key, box in self.random_box_bonuses.items():
             self.dist[key] = 0
 
@@ -136,18 +145,21 @@ def calculate_distribution(distribution_cache, box_set):
 
 
 def get_box_probabilities(selected_options):
-    current_events = get_random_box_event_odds()
-    extra_options = get_random_box_extra_options()
+    with open('./data/get_random_box_event_odds.json', 'r') as fp:
+        current_events = json.load(fp)
+    current_events_copy = copy.deepcopy(current_events)
+    with open('./data/get_random_box_extra_options.json', 'r') as fp:
+        extra_options = json.load(fp)
     current_events["Coins"] = 0.9
     current_events["Frenzy"] = 0
     current_events["Horde"] = 0
     for key, value in extra_options.items():
         if key not in selected_options:
             if key == "Less Coins More Fun":
-                current_events["Coins"] = get_random_box_event_odds()["Coins"]
+                current_events["Coins"] = current_events_copy["Coins"]
             elif key == "In a Bonus Stage":
-                current_events["Frenzy"] = get_random_box_event_odds()["Frenzy"]
-                current_events["Horde"] = get_random_box_event_odds()["Horde"]
+                current_events["Frenzy"] = current_events_copy["Frenzy"]
+                current_events["Horde"] = current_events_copy["Horde"]
             else:
                 current_events.pop(key)
     distribution = calculate_distribution({}, current_events)
@@ -156,13 +168,11 @@ def get_box_probabilities(selected_options):
 
 
 if __name__ == '__main__':
-    # print(get_random_box_json())
-    # print(get_random_box_extra_events())
+    dict = get_random_box_json()
+    dict = get_random_box_event_odds_json()
+    dict = get_random_box_extra_options_json()
+
     current = ["Souls Bonus Multiplier", "Dual Randomness", "Less Coins More Fun"]
 
-    print(get_box_probabilities(current))
-    dict = get_box_probabilities(current)
-    total = 0
-    for key, value in dict.items():
-        total += value
-    print(json.dumps(dict, indent=4))
+    # print(get_box_probabilities(current))
+    # print(json.dumps(dict, indent=4))

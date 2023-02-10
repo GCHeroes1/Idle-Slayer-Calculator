@@ -1,18 +1,9 @@
 import concurrent.futures
 
+import json
+import csv
 from Armory import calculate_armory_bonuses
-from Enemies import get_enemies_json
-from Giants import get_giants_json
-from Enemies import get_enemies_json
-from Giants import get_giants_json
-from Patterns import get_patterns_json
-from Upgrades import get_upgrades_json
-from Rage import get_rage_json
-from Armory import get_armory_info, calculate_armory_bonuses
-from Criticals import get_crit_json
-from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time
-from Dimensions import get_dimension_json
-from app import *
+from RandomBoxes import get_random_box_lower_time, get_random_box_upper_time
 from operator import itemgetter
 from time import time
 from concurrent import futures
@@ -20,7 +11,7 @@ from tqdm import tqdm
 
 
 def get_stones_of_time_json():
-    return {
+    dict = {
         "Activity": {
             "Coins from enemies": {
                 "Per USP": float(26),
@@ -94,6 +85,25 @@ def get_stones_of_time_json():
             "Levels": list(range(0, 30))
         }
     }
+    with open('./data/get_sot_info.json', 'w') as fp:
+        json.dump(dict, fp)
+    return dict
+
+
+def get_sot_info():
+    stones_of_time_json = get_stones_of_time_json()
+    stone_names = []
+    stone_levels = {}
+    for stone, stat in stones_of_time_json.items():
+        stone_names.append(stone)
+        stone_levels[stone] = stat["Levels"]
+    with open('./data/get_stone_names.csv', 'w', newline='') as fp:
+        writer = csv.writer(fp)
+        writer.writerow(stone_names)
+        fp.close()
+    with open('./data/get_stone_levels.json', 'w') as fp:
+        json.dump(stone_levels, fp)
+    return stone_names, stone_levels
 
 
 def calculate_bonus(stat, decrease, minimum, USP, current_bonus):
@@ -142,68 +152,58 @@ def calculate_stone_bonuses(USP_allocation):
     return variables
 
 
-def get_sot_info():
-    stones_of_time_json = get_stones_of_time_json()
-    stone_names = []
-    stone_levels = {}
-    for stone, stat in stones_of_time_json.items():
-        stone_names.append(stone)
-        stone_levels[stone] = stat["Levels"]
-    return stone_names, stone_levels
-
-
-def calculate_gains(stone_selection):
-    dimensions = ["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle", "Hot Desert", "Mystic Valley",
-                  "Factory", "Funky Space"]
-    enemy_spawn = ['Need For Kill', 'Enemy Invasion', 'Multa Hostibus', 'Bone Rib Whistle', "Sabrina's Perfume",
-                   'Enemy Nests', 'Bring Hell', 'Doomed', 'Reincarnation']
-    giant_spawn = ["Zeke's Disgrace", "The Rumbling", "Big Troubles"]
-    critical_upgrades = ['Critical Culling', 'Critical Practice', 'Critical Study', 'Critical Training',
-                         'Slash The Life', 'Hyper Critical', 'Critical Mushrooms', "That's a lot of damage",
-                         'Geode Beetle']
-    bow_souls = ['Soul Grabber', 'Augmented Soul Grabber', 'Enhanced Soul Grabber', 'Blessing of Apollo', 'Wind Waker',
-                 'Dark Projectiles']
-    giant_souls = ["Book of Agony", "Wander's Path"]
-    rage_souls = ['Outrage', 'Bad-Tempered', 'Internal Fury']
-    enemy_evolutions = ['Hornet', 'Black Hornet', 'Dark Hornet', 'Alpha Worm', 'Beta Worm', 'Gamma Worm', 'Delta Worm',
-                        'Red Jelly', 'Blue Jelly', 'Dark Ice Wraith', 'Electric Yeti', 'Venus Carniplant',
-                        'Dark Carniplant', 'Poison Mushroom', 'Blue Milk Mushroom', 'Fire Bat', 'Black Demon',
-                        'Corrupted Demon', 'Cursed Oak Tree', 'Cursed Willow Tree', 'Blue Wildfire',
-                        'Golden Soul Barrel', 'Poisonous Gas', 'Golden Cobra', 'Metal Scorpion']
-    giant_evolutions = ["Hills' Giant", "Jade Hills' Giant", 'Adult Yeti', 'Fairy Queen', 'Archdemon', 'Anubis Warrior']
-    current_coins = 5e63
-    armory_selection = {'Sword': {'Adranos': {'Option': [], 'Level': '14'}},
-                        'Armor': {'Kishar': {'Option': ['Enemies'], 'Level': '12'}},
-                        'Shield': {'Kishar': {'Option': ['Giant Souls'], 'Level': '14'}},
-                        'Ring': {"Victor's Ring": {'Option': ['Critical'], 'Level': '17'}},
-                        'Bow': {'Adranos': {'Option': ['Bow Souls'], 'Level': '12'}}}
-
-    Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
-        armory_selection)
-    Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls = calculate_stone_bonuses(stone_selection)
-    player_speed = 4
-    current_enemies, current_coins = get_enemy_stats(current_coins, get_enemies_json(), enemy_evolutions)
-    current_giants, current_coins = get_giant_stats(current_coins, get_giants_json(), giant_evolutions)
-    average_patterns = calculate_average_pattern(current_coins, dimensions)
-    pattern_spawn, giant_freq, current_coins = get_upgrade_stats(current_coins, enemy_spawn, giant_spawn, Enemies)
-    bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = get_soul_stats(current_coins, bow_souls,
-                                                                                      giant_souls, rage_souls,
-                                                                                      Bow_Souls_ * Bow_Souls,
-                                                                                      Giant_Souls, Rage_Souls)
-    critical_chance, critical_souls, current_coins = get_crit_stats(current_coins, critical_upgrades)
-    Critical_Chance += critical_chance
-    Critical_Souls *= critical_souls * Critical_Souls_
-    Souls *= Ingame_Souls * Souls_
-    variables = Souls, Critical_Souls, Critical_Chance / 100, Electric, Fire, Dark
-    base_gains, bow_gains, rage_gains = calculate_average_gains(average_patterns, current_enemies, current_giants,
-                                                                pattern_spawn, giant_freq, bow_souls_stat,
-                                                                rage_souls_stat, giant_souls_stat, player_speed,
-                                                                variables)
-    v = list(rage_gains.values())
-    d = [s["Souls"] for s in v]
-    k = list(rage_gains.keys())
-    test = k[d.index(max(d))]
-    return stone_selection, max(d), test
+# def calculate_gains(stone_selection):
+#     dimensions = ["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle", "Hot Desert", "Mystic Valley",
+#                   "Factory", "Funky Space"]
+#     enemy_spawn = ['Need For Kill', 'Enemy Invasion', 'Multa Hostibus', 'Bone Rib Whistle', "Sabrina's Perfume",
+#                    'Enemy Nests', 'Bring Hell', 'Doomed', 'Reincarnation']
+#     giant_spawn = ["Zeke's Disgrace", "The Rumbling", "Big Troubles"]
+#     critical_upgrades = ['Critical Culling', 'Critical Practice', 'Critical Study', 'Critical Training',
+#                          'Slash The Life', 'Hyper Critical', 'Critical Mushrooms', "That's a lot of damage",
+#                          'Geode Beetle']
+#     bow_souls = ['Soul Grabber', 'Augmented Soul Grabber', 'Enhanced Soul Grabber', 'Blessing of Apollo', 'Wind Waker',
+#                  'Dark Projectiles']
+#     giant_souls = ["Book of Agony", "Wander's Path"]
+#     rage_souls = ['Outrage', 'Bad-Tempered', 'Internal Fury']
+#     enemy_evolutions = ['Hornet', 'Black Hornet', 'Dark Hornet', 'Alpha Worm', 'Beta Worm', 'Gamma Worm', 'Delta Worm',
+#                         'Red Jelly', 'Blue Jelly', 'Dark Ice Wraith', 'Electric Yeti', 'Venus Carniplant',
+#                         'Dark Carniplant', 'Poison Mushroom', 'Blue Milk Mushroom', 'Fire Bat', 'Black Demon',
+#                         'Corrupted Demon', 'Cursed Oak Tree', 'Cursed Willow Tree', 'Blue Wildfire',
+#                         'Golden Soul Barrel', 'Poisonous Gas', 'Golden Cobra', 'Metal Scorpion']
+#     giant_evolutions = ["Hills' Giant", "Jade Hills' Giant", 'Adult Yeti', 'Fairy Queen', 'Archdemon', 'Anubis Warrior']
+#     current_coins = 5e63
+#     armory_selection = {'Sword': {'Adranos': {'Option': [], 'Level': '14'}},
+#                         'Armor': {'Kishar': {'Option': ['Enemies'], 'Level': '12'}},
+#                         'Shield': {'Kishar': {'Option': ['Giant Souls'], 'Level': '14'}},
+#                         'Ring': {"Victor's Ring": {'Option': ['Critical'], 'Level': '17'}},
+#                         'Bow': {'Adranos': {'Option': ['Bow Souls'], 'Level': '12'}}}
+#
+#     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
+#         armory_selection)
+#     Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls = calculate_stone_bonuses(stone_selection)
+#     player_speed = 4
+#     current_enemies, current_coins = get_enemy_stats(current_coins, get_enemies_json(), enemy_evolutions)
+#     current_giants, current_coins = get_giant_stats(current_coins, get_giants_json(), giant_evolutions)
+#     average_patterns = calculate_average_pattern(current_coins, dimensions)
+#     pattern_spawn, giant_freq, current_coins = get_upgrade_stats(current_coins, enemy_spawn, giant_spawn, Enemies)
+#     bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = get_soul_stats(current_coins, bow_souls,
+#                                                                                       giant_souls, rage_souls,
+#                                                                                       Bow_Souls_ * Bow_Souls,
+#                                                                                       Giant_Souls, Rage_Souls)
+#     critical_chance, critical_souls, current_coins = get_crit_stats(current_coins, critical_upgrades)
+#     Critical_Chance += critical_chance
+#     Critical_Souls *= critical_souls * Critical_Souls_
+#     Souls *= Ingame_Souls * Souls_
+#     variables = Souls, Critical_Souls, Critical_Chance / 100, Electric, Fire, Dark
+#     base_gains, bow_gains, rage_gains = calculate_average_gains(average_patterns, current_enemies, current_giants,
+#                                                                 pattern_spawn, giant_freq, bow_souls_stat,
+#                                                                 rage_souls_stat, giant_souls_stat, player_speed,
+#                                                                 variables)
+#     v = list(rage_gains.values())
+#     d = [s["Souls"] for s in v]
+#     k = list(rage_gains.keys())
+#     test = k[d.index(max(d))]
+#     return stone_selection, max(d), test
 
 
 def fetch_usp_values(current_usp):
@@ -223,22 +223,24 @@ def fetch_usp_values(current_usp):
     return values
 
 
-def optimise(USP):
-    USP_values = fetch_usp_values(USP)
-    new_values = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=64) as executor:
-        future_to_calc = {executor.submit(calculate_gains, USP_value): USP_value for USP_value in USP_values}
-        pbar = tqdm(total=len(future_to_calc))
-        for future in concurrent.futures.as_completed(future_to_calc):
-            new_values.append(future.result())
-            pbar.update(1)
-            pbar.refresh()
-    # print(new_values)
-    max_ = max(new_values, key=itemgetter(2))
-    print(max_)
+# def optimise(USP):
+#     USP_values = fetch_usp_values(USP)
+#     new_values = []
+#     with concurrent.futures.ThreadPoolExecutor(max_workers=64) as executor:
+#         future_to_calc = {executor.submit(calculate_gains, USP_value): USP_value for USP_value in USP_values}
+#         pbar = tqdm(total=len(future_to_calc))
+#         for future in concurrent.futures.as_completed(future_to_calc):
+#             new_values.append(future.result())
+#             pbar.update(1)
+#             pbar.refresh()
+#     # print(new_values)
+#     max_ = max(new_values, key=itemgetter(2))
+#     print(max_)
 
 
 if __name__ == '__main__':
+    dict = get_stones_of_time_json()
+    stone_names, stone_levels = get_sot_info()
     USP_allocation = {
         "Idle": "17",
         "Activity": "32",
@@ -248,4 +250,4 @@ if __name__ == '__main__':
     # print(calculate_stone_bonuses(USP_allocation))
     # print(get_sot_info())
     # optimise(101)
-    print(calculate_stats())
+    # print(calculate_stats())

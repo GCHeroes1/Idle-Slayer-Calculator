@@ -1,26 +1,25 @@
 import copy
 
 import flask
+import json
+import csv
 from flask import Flask, request, jsonify, render_template
+from flask_caching import Cache
 from flask_api import status
 from flask_cors import CORS, cross_origin
-from Enemies import get_enemies_json
-from Giants import get_giants_json
-from Patterns import get_patterns_json
-from Upgrades import get_upgrades_json
-from Rage import get_rage_json
-from Armory import get_armory_info, calculate_armory_bonuses
-from Criticals import get_crit_json
-from StonesOfTime import *
-from RandomBoxes import get_random_box_json, get_random_box_lower_time, get_random_box_upper_time, \
-    get_random_box_extra_options, get_box_probabilities
-from Dimensions import get_dimension_json
+from Armory import calculate_armory_bonuses
+from StonesOfTime import calculate_stone_bonuses
+from RandomBoxes import get_random_box_lower_time, get_random_box_upper_time, get_box_probabilities
+
+config = {
+    "DEBUG": True,  # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 
 app = Flask(__name__)
-
-# app.app_context().push()
-
-
+app.config.from_mapping(config)
+cache = Cache(app)
 CORS(app, support_credentials=True)
 
 
@@ -52,7 +51,8 @@ def get_enemy_helper(enemies):
 
 
 def get_enemy_evolutions():
-    enemies = get_enemies_json()
+    with open('./data/get_enemies.json', 'r') as fp:
+        enemies = json.load(fp)
     evolution_info = []
     for key, value in enemies.items():
         result = get_enemy_helper(value)
@@ -89,8 +89,10 @@ def get_enemy_stats(current_coins, evolutions, unlocked_enemies):
 
 
 def calculate_average_pattern(coins, unlocked_dimensions):
-    patterns_cost = get_upgrades_json()[3]
-    patterns = get_patterns_json()
+    with open('./data/get_dimension_patterns.json', 'r') as fp:
+        patterns = json.load(fp)
+    with open('./data/get_patterns_cost.json', 'r') as fp:
+        patterns_cost = json.load(fp)
     spawn_level = 0
     for pattern in patterns_cost.values():
         if pattern["Cost"] < coins:
@@ -126,7 +128,8 @@ def calculate_average_pattern(coins, unlocked_dimensions):
 
 
 def get_giant_evolutions():
-    giants = get_giants_json()
+    with open('./data/get_giants.json', 'r') as fp:
+        giants = json.load(fp)
     giant_info = []
     for key, value in giants.items():
         giant_info.append([key, value["Coins"], value["Souls"], value["Cost"], value["Standard Cost"]])
@@ -176,18 +179,38 @@ def upgrades_helper(json):
 
 
 def get_upgrade_names():
-    boost_upgrade_json, bow_upgrade_json, giant_soul_json, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
-    boost_soul_upgrades = upgrades_helper(boost_upgrade_json)
-    bow_soul_upgrades = upgrades_helper(bow_upgrade_json)
+    with open('./data/get_boost_souls.json', 'r') as fp:
+        boost_soul_json = json.load(fp)
+    with open('./data/get_bow_souls.json', 'r') as fp:
+        bow_soul_json = json.load(fp)
+    with open('./data/get_giant_souls.json', 'r') as fp:
+        giant_soul_json = json.load(fp)
+    with open('./data/get_enemy_spawn.json', 'r') as fp:
+        enemy_spawn_json = json.load(fp)
+    with open('./data/get_giant_spawn.json', 'r') as fp:
+        giant_spawn_json = json.load(fp)
+    with open('./data/get_rage_souls.json', 'r') as fp:
+        rage_soul_json = json.load(fp)
+    with open('./data/get_crit.json', 'r') as fp:
+        crit_json = json.load(fp)
+    with open('./data/get_random_box.json', 'r') as fp:
+        random_box_json = json.load(fp)
+    with open('./data/get_random_box_extra_options.json', 'r') as fp:
+        random_box_extra_options_json = json.load(fp)
+    with open('./data/get_dimension.json', 'r') as fp:
+        dimension_json = json.load(fp)
+    boost_soul_upgrades = upgrades_helper(boost_soul_json)
+    bow_soul_upgrades = upgrades_helper(bow_soul_json)
     giant_soul_upgrades = upgrades_helper(giant_soul_json)
-    spawn_upgrades = upgrades_helper(spawn_upgrade_json)
-    giant_upgrades = upgrades_helper(giant_upgrade_json)
-    rage_upgrades = upgrades_helper(get_rage_json())
-    critical_upgrades = upgrades_helper(get_crit_json())
-    random_box_upgrades = upgrades_helper(get_random_box_json())
-    random_box_options = upgrades_helper(get_random_box_extra_options())
-    dimension_unlocks = upgrades_helper(get_dimension_json())
-    return boost_soul_upgrades, bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, critical_upgrades, random_box_upgrades, dimension_unlocks, random_box_options
+    spawn_upgrades = upgrades_helper(enemy_spawn_json)
+    giant_upgrades = upgrades_helper(giant_spawn_json)
+    rage_upgrades = upgrades_helper(rage_soul_json)
+    critical_upgrades = upgrades_helper(crit_json)
+    random_box_upgrades = upgrades_helper(random_box_json)
+    random_box_options = upgrades_helper(random_box_extra_options_json)
+    dimension_unlocks = upgrades_helper(dimension_json)
+    return boost_soul_upgrades, bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, \
+           critical_upgrades, random_box_upgrades, dimension_unlocks, random_box_options
 
 
 def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
@@ -203,9 +226,12 @@ def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
 
 def get_upgrade_stats(current_coins, unlocked_spawn, unlocked_giant, Enemies):
     # get a list of the selected upgrades, need to check against their lists to see whats unlocked
-    _, _, _, _, spawn_upgrade_json, giant_upgrade_json = get_upgrades_json()
-    spawn_stat, current_coins = upgrade_stat_helper(current_coins, spawn_upgrade_json, unlocked_spawn)
-    giant_stat, current_coins = upgrade_stat_helper(current_coins, giant_upgrade_json, unlocked_giant)
+    with open('./data/get_enemy_spawn.json', 'r') as fp:
+        enemy_spawn_json = json.load(fp)
+    with open('./data/get_giant_spawn.json', 'r') as fp:
+        giant_spawn_json = json.load(fp)
+    spawn_stat, current_coins = upgrade_stat_helper(current_coins, enemy_spawn_json, unlocked_spawn)
+    giant_stat, current_coins = upgrade_stat_helper(current_coins, giant_spawn_json, unlocked_giant)
     spawn_stat += Enemies
     pattern_spawn = (60 / (spawn_stat / 100 + 1) + 90 / (spawn_stat / 100 + 1)) / 2
     giant_spawn = (250 / (giant_stat / 100 + 1) + 450 / (giant_stat / 100 + 1)) / 2
@@ -224,12 +250,18 @@ def souls_stat_helper(current_coins, upgrades, unlocked_upgrades):
 
 
 def get_soul_stats(current_coins, unlocked_boost, unlocked_bow, unlocked_giant, unlocked_rage):
-    boost_upgrade_json, bow_upgrade_json, giant_soul_json, _, _, _ = get_upgrades_json()
-    rage_souls_json = get_rage_json()
-    boost_souls_stat, current_coins = souls_stat_helper(current_coins, boost_upgrade_json, unlocked_boost)
-    bow_souls_stat, current_coins = souls_stat_helper(current_coins, bow_upgrade_json, unlocked_bow)
+    with open('./data/get_boost_souls.json', 'r') as fp:
+        boost_soul_json = json.load(fp)
+    with open('./data/get_bow_souls.json', 'r') as fp:
+        bow_soul_json = json.load(fp)
+    with open('./data/get_giant_souls.json', 'r') as fp:
+        giant_soul_json = json.load(fp)
+    with open('./data/get_rage_souls.json', 'r') as fp:
+        rage_soul_json = json.load(fp)
+    boost_souls_stat, current_coins = souls_stat_helper(current_coins, boost_soul_json, unlocked_boost)
+    bow_souls_stat, current_coins = souls_stat_helper(current_coins, bow_soul_json, unlocked_bow)
     giant_souls_stat, current_coins = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant)
-    rage_souls_stat, current_coins = upgrade_stat_helper(current_coins, rage_souls_json, unlocked_rage)
+    rage_souls_stat, current_coins = upgrade_stat_helper(current_coins, rage_soul_json, unlocked_rage)
     if rage_souls_stat != 0:
         rage_souls_stat += 100
     return boost_souls_stat, bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins
@@ -251,7 +283,8 @@ def crit_helper(current_coins, upgrades, unlocked_upgrades):
 
 
 def get_crit_stats(current_coins, critical_upgrades):
-    crit_json = get_crit_json()
+    with open('./data/get_crit.json', 'r') as fp:
+        crit_json = json.load(fp)
     critical_chance, critical_multiplier, current_coins = crit_helper(current_coins, crit_json, critical_upgrades)
     return critical_chance, critical_multiplier, current_coins
 
@@ -324,33 +357,57 @@ def calculate_average_gains(average_patterns, current_enemies, current_giants, p
 
 
 @app.route("/")
+@cache.cached(timeout=50)
 def index():
     return render_template("index.html")
 
 
 @app.route('/evolutionNames', methods=["GET"])
+@cache.cached(timeout=50)
 def evolution_names():
     return get_enemy_evolutions()
 
 
 @app.route('/giantNames', methods=["GET"])
+@cache.cached(timeout=50)
 def giant_names():
     return get_giant_evolutions()
 
 
 @app.route('/upgradeNames', methods=["GET"])
+@cache.cached(timeout=50)
 def upgrade_names():
     return list(get_upgrade_names())
 
 
 @app.route('/armory', methods=["GET"])
+@cache.cached(timeout=50)
 def armory():
-    return list(get_armory_info())
+    with open('./data/get_armory.json', 'r') as fp:
+        armory_json = json.load(fp)
+    with open('./data/get_armory_types.csv', 'r') as fp:
+        reader = csv.reader(fp)
+        for line in reader:
+            armory_types = line
+    with open('./data/get_armory_names.json', 'r') as fp:
+        armory_names_json = json.load(fp)
+    with open('./data/get_armory_options.json', 'r') as fp:
+        armory_options_json = json.load(fp)
+    with open('./data/get_armory_levels.json', 'r') as fp:
+        armory_levels_json = json.load(fp)
+    return [armory_json, armory_types, armory_names_json, armory_options_json, armory_levels_json]
 
 
 @app.route('/stones', methods=["GET"])
+@cache.cached(timeout=50)
 def stones():
-    return list(get_sot_info())
+    with open('./data/get_stone_levels.json', 'r') as fp:
+        stone_levels = json.load(fp)
+    with open('./data/get_stone_names.csv', 'r') as fp:
+        reader = csv.reader(fp)
+        for line in reader:
+            stone_names = line
+    return [stone_names, stone_levels]
 
 
 @app.route('/randomBoxes', methods=["POST"])
@@ -359,7 +416,9 @@ def random_boxes():
     random_box = []
     if "RANDOM_BOX" in body:
         random_box = body["RANDOM_BOX"]
-    random_box_chance, _ = upgrade_stat_helper(0, get_random_box_json(), random_box)
+    with open('./data/get_random_box.json', 'r') as fp:
+        random_box_json = json.load(fp)
+    random_box_chance, _ = upgrade_stat_helper(0, random_box_json, random_box)
     return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
 
@@ -393,12 +452,15 @@ def calculate_stats():
         armory_selection = eval(body["ARMORY_SELECTION"])
     if "STONE_SELECTION" in body:
         stone_selection = eval(body["STONE_SELECTION"])
-
+    with open('./data/get_enemies.json', 'r') as fp:
+        enemies = json.load(fp)
+    with open('./data/get_giants.json', 'r') as fp:
+        giants = json.load(fp)
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
         armory_selection)
     player_speed = 4
-    current_enemies, current_coins = get_enemy_stats(current_coins, get_enemies_json(), enemy_evolutions)
-    current_giants, current_coins = get_giant_stats(current_coins, get_giants_json(), giant_evolutions)
+    current_enemies, current_coins = get_enemy_stats(current_coins, enemies, enemy_evolutions)
+    current_giants, current_coins = get_giant_stats(current_coins, giants, giant_evolutions)
     pattern_spawn, giant_freq, current_coins = get_upgrade_stats(current_coins, enemy_spawn, giant_spawn, Enemies)
     boost_souls_stat, bow_souls_stat, giant_souls_stat, rage_souls_stat, current_coins = \
         get_soul_stats(current_coins, boost_souls, bow_souls, giant_souls, rage_souls)

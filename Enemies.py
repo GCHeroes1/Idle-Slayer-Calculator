@@ -82,9 +82,12 @@ def get_enemies_json():
         }
     dict = add_standard_to_dict(dict)
 
+    with open('./data/get_enemies.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
 if __name__ == '__main__':
     dict = get_enemies_json()
+
     # print(json.dumps(dict, indent=4))

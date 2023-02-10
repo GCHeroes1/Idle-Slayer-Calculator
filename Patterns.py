@@ -10,7 +10,7 @@ page = requests.get(URL)
 soup = BeautifulSoup(page.text, "html.parser")
 
 
-def get_patterns_json():
+def get_dimension_patterns_json():
     tb = soup.findAll("table")
     patterns = tb[3:]
     headers = ["Enemy"]
@@ -41,10 +41,13 @@ def get_patterns_json():
             if pattern["Enemy"] not in dict[map]:
                 dict[map][pattern["Enemy"]] = []
             dict[map][pattern["Enemy"]].append((int(pattern["Enemies"]), int(pattern["Level"])))
+
+    with open('./data/get_dimension_patterns.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
 if __name__ == '__main__':
-    dict = get_patterns_json()
+    dict = get_dimension_patterns_json()
 
-    print(json.dumps(dict, indent=4))
+    # print(json.dumps(dict, indent=4))

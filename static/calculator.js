@@ -174,6 +174,12 @@ function setup() {
     void get_random_boxes();
 }
 
+function update_tables() {
+    delete_table();
+    create_table(unlocked_dimensions);
+    void get_table_values();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     void create_table(unlocked_dimensions);
     void get_random_box_odds();
@@ -200,11 +206,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("uncollapseAll").addEventListener("click", () => {
         setAllCollapse(true);
     });
-    document.getElementById("updateTables").addEventListener("click", () => {
-        delete_table();
-        create_table(unlocked_dimensions);
-        void get_table_values();
-    });
+    // document.getElementById("updateTables").addEventListener("click", () => {
+    //     update_tables();
+    // });
     document.getElementById("toggleNotation").addEventListener("click", () => {
         setAllCheckboxes(false);
         delete_checkboxes();
@@ -215,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
             void setup();
             scientific = 1;
         }
+        update_tables();
     });
 });
 
@@ -346,9 +351,10 @@ function create_checkbox(name, cost, unlocked_array) {
         }
         if (unlocked_array === unlocked_random_box_upgrades) {
             void get_random_boxes();
-        }
-        if (unlocked_array === unlocked_random_box_options) {
+        } else if (unlocked_array === unlocked_random_box_options) {
             void get_random_box_odds();
+        } else {
+            update_tables();
         }
         // console.log(unlocked_array);
     });
@@ -577,6 +583,7 @@ function create_armory_dropdown(item, subtypes) {
         var text = e.options[e.selectedIndex].text;
         unlocked_armory[select.name] = {}
         unlocked_armory[select.name][text] = {};
+        update_tables();
         // void get_table_values();
     });
 
@@ -625,6 +632,7 @@ function create_armory_options_dropdown(item, subtype, options) {
             }
         }
         unlocked_armory[item][subtype]["Option"] = result;
+        update_tables();
         // void get_table_values();
     });
 
@@ -664,6 +672,7 @@ function create_armory_levels(item, subtype, levels) {
     select.addEventListener('change', function () {
         var e = document.getElementById(select.id)
         unlocked_armory[item][select.name]["Level"] = e.options[e.selectedIndex].text.slice(1);
+        update_tables();
         // void get_table_values();
     });
 
@@ -713,6 +722,7 @@ function create_stone_levels(stone, levels) {
         }
         USP_allocation.appendChild(create_usp_allocation(total_USP));
         // console.log(unlocked_stones)
+        update_tables();
         // void get_table_values();
     });
 

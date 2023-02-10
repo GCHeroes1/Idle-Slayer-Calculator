@@ -1,10 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
-from Upgrades import get_giant_costs_json
 import pandas as pd
 import re
 import json
-
 from Conversion import add_standard_to_dict
 
 URL = "https://idleslayer.fandom.com/wiki/Giants"
@@ -70,14 +68,19 @@ def get_giants_json():
             "Souls": int(evolution["Soul Reward"]),
             "Cost": float(evolution["Unlock Cost"])
         }
-    giant_costs = get_giant_costs_json()
+
+    with open('./data/get_giant_cost.json', 'r') as fp:
+        giant_costs = json.load(fp)
     for key, item in giant_costs.items():
         dict[key]["Cost"] = item["Cost"]
 
     dict = add_standard_to_dict(dict)
+    with open('./data/get_giants.json', 'w') as fp:
+        json.dump(dict, fp)
     return dict
 
 
 if __name__ == '__main__':
     dict = get_giants_json()
-    print(json.dumps(dict, indent=4))
+
+    # print(json.dumps(dict, indent=4))

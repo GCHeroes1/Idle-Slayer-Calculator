@@ -61,6 +61,8 @@ def get_giant_costs_json():
         if "Giant Unlocks" in item.contents[0]:
             giantUnlock = generate_dataframe(table)
     giant_cost_dict = generate_costs_dict(giantUnlock)
+    with open('./data/get_giant_cost.json', 'w') as fp:
+        json.dump(giant_cost_dict, fp)
     return giant_cost_dict
 
 
@@ -132,6 +134,19 @@ def get_upgrades_json():
     pattern_dict = add_standard_to_dict(pattern_dict)
     spawn_dict = add_standard_to_dict(spawn_dict)
     giant_dict = add_standard_to_dict(giant_dict)
+
+    with open('./data/get_boost_souls.json', 'w') as fp:
+        json.dump(boost_souls_dict, fp)
+    with open('./data/get_bow_souls.json', 'w') as fp:
+        json.dump(bow_souls_dict, fp)
+    with open('./data/get_giant_souls.json', 'w') as fp:
+        json.dump(giant_souls_dict, fp)
+    with open('./data/get_patterns_cost.json', 'w') as fp:
+        json.dump(pattern_dict, fp)
+    with open('./data/get_enemy_spawn.json', 'w') as fp:
+        json.dump(spawn_dict, fp)
+    with open('./data/get_giant_spawn.json', 'w') as fp:
+        json.dump(giant_dict, fp)
     return boost_souls_dict, bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict
 
 
@@ -139,6 +154,6 @@ if __name__ == '__main__':
     boost_souls_dict, bow_souls_dict, giant_souls_dict, pattern_dict, spawn_dict, giant_dict = get_upgrades_json()
     giant_cost_dict = get_giant_costs_json()
 
-    print(json.dumps(bow_souls_dict, indent=4))
-    print(json.dumps(pattern_dict, indent=4))
-    print(json.dumps(spawn_dict, indent=4))
+    # print(json.dumps(bow_souls_dict, indent=4))
+    # print(json.dumps(pattern_dict, indent=4))
+    # print(json.dumps(spawn_dict, indent=4))

@@ -1,8 +1,10 @@
 import sys
+import json
+import csv
 
 
 def get_armory_json():
-    return {
+    dict = {
         "Sword": {
             "None": {},
             "Adranos": {
@@ -79,6 +81,44 @@ def get_armory_json():
             }
         }
     }
+    with open('./data/get_armory.json', 'w') as fp:
+        json.dump(dict, fp)
+    return dict
+
+
+def get_armory_info():
+    with open('./data/get_armory.json', 'r') as fp:
+        armory = json.load(fp)
+    armory_types = []
+    armory_names = {}
+    armory_options = {}
+    armory_levels = {}
+    for type, sub in armory.items():
+        armory_types.append(type)
+        armory_names[type] = []
+        armory_options[type] = {}
+        armory_levels[type] = {}
+        for subtype, stats in sub.items():
+            armory_names[type].append(subtype)
+            armory_options[type][subtype] = []
+            armory_levels[type][subtype] = []
+            if "Option" in stats:
+                for option in stats["Option"]:
+                    armory_options[type][subtype].append(option[0])
+            if "Levels" in stats:
+                for level in stats["Levels"]:
+                    armory_levels[type][subtype].append(level)
+    with open('./data/get_armory_types.csv', 'w', newline='') as fp:
+        writer = csv.writer(fp)
+        writer.writerow(armory_types)
+        fp.close()
+    with open('./data/get_armory_names.json', 'w') as fp:
+        json.dump(armory_names, fp)
+    with open('./data/get_armory_options.json', 'w') as fp:
+        json.dump(armory_options, fp)
+    with open('./data/get_armory_levels.json', 'w') as fp:
+        json.dump(armory_levels, fp)
+    return armory, armory_types, armory_names, armory_options, armory_levels
 
 
 def calculate_bonus(stat, level):
@@ -150,31 +190,10 @@ def calculate_armory_bonuses(armory_selection):
     return variables
 
 
-def get_armory_info():
-    armory = get_armory_json()
-    armory_types = []
-    armory_names = {}
-    armory_options = {}
-    armory_levels = {}
-    for type, sub in armory.items():
-        armory_types.append(type)
-        armory_names[type] = []
-        armory_options[type] = {}
-        armory_levels[type] = {}
-        for subtype, stats in sub.items():
-            armory_names[type].append(subtype)
-            armory_options[type][subtype] = []
-            armory_levels[type][subtype] = []
-            if "Option" in stats:
-                for option in stats["Option"]:
-                    armory_options[type][subtype].append(option[0])
-            if "Levels" in stats:
-                for level in stats["Levels"]:
-                    armory_levels[type][subtype].append(level)
-    return armory, armory_types, armory_names, armory_options, armory_levels
-
-
 if __name__ == '__main__':
+    dict = get_armory_json()
+    armory, armory_types, armory_names, armory_options, armory_levels = get_armory_info()
+
     Example2 = {
         "Shield": {
             "Boreas": {
@@ -183,10 +202,11 @@ if __name__ == '__main__':
         }
     }
     Example_Armory = {'Shield': {'Kishar': {'Option': ['Excellent', 'in-game Souls']}},
-                      'Armor': {'Adranos': {'Option': ['Excellent', 'Giant Souls', 'Souls'], 'Level': '17'}},
+                      'Armor': {'Adranos': {'Option': ['Excellent', 'Giant Souls', 'in-game Souls'], 'Level': '17'}},
                       'Sword': {'Adranos': {'Option': ['Excellent', 'Electric'], 'Level': '16'}},
                       'Ring': {"Victor's Ring": {'Level': '10', 'Option': ['Excellent']}},
                       'Bow': {'Bat Long Bow': {}}}
+
     # print(json.dumps(get_armory_json(), indent=4))
     # get_armory_info()
-    print(calculate_armory_bonuses(Example_Armory))
+    # print(calculate_armory_bonuses(Example_Armory))
