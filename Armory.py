@@ -23,7 +23,7 @@ def get_armory_json():
         "Armor": {
             "None": {},
             "Adranos": {
-                "Option": [("Excellent", 0), ("Giant Souls", 0.25), ("Souls", 0.7)],
+                "Option": [("Excellent", 0), ("Giant Souls", 0.25), ("in-game Souls", 0.7)],
                 "Levels": list(range(0, 16))
             },
             "Boreas": {

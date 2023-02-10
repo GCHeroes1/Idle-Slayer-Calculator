@@ -247,4 +247,5 @@ if __name__ == '__main__':
     }
     # print(calculate_stone_bonuses(USP_allocation))
     # print(get_sot_info())
-    optimise(101)
+    # optimise(101)
+    print(calculate_stats())
