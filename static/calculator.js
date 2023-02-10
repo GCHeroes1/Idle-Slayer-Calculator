@@ -195,9 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // handle clicks on check/uncheck all
     document.getElementById("checkAll").addEventListener("click", () => {
         setAllCheckboxes(true);
+        update_tables();
     });
     document.getElementById("unCheckAll").addEventListener("click", () => {
         setAllCheckboxes(false);
+        update_tables();
     });
     // handle clicks on collapse/uncollapse all
     document.getElementById("collapseAll").addEventListener("click", () => {
