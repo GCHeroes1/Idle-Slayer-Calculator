@@ -195,11 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // handle clicks on check/uncheck all
     document.getElementById("checkAll").addEventListener("click", () => {
         setAllCheckboxes(true);
-        update_tables();
+        setTimeout(update_tables(), 1000);
     });
     document.getElementById("unCheckAll").addEventListener("click", () => {
         setAllCheckboxes(false);
-        update_tables();
+        setTimeout(update_tables(), 1000);
     });
     // handle clicks on collapse/uncollapse all
     document.getElementById("collapseAll").addEventListener("click", () => {
@@ -822,3 +822,5 @@ function sort_random_box_table() {
         random_box_results_table.appendChild(row);
     }
 }
+
+setTimeout(update_tables, 1000);
