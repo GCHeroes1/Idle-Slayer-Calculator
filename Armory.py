@@ -88,7 +88,7 @@ def get_armory_json():
 
 def get_armory_info():
     with open('./data/get_armory.json', 'r') as fp:
-        armory = json.load(fp)
+        armory = json.loads(fp.read())
     armory_types = []
     armory_names = {}
     armory_options = {}

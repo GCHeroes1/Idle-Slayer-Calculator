@@ -85,7 +85,7 @@ class Distribution:
         self.dist = {}
         self.empty = 1
         with open('./data/get_random_box_event_odds.json', 'r') as fp:
-            self.random_box_bonuses = json.load(fp)
+            self.random_box_bonuses = json.loads(fp.read())
         for key, box in self.random_box_bonuses.items():
             self.dist[key] = 0
 
@@ -146,10 +146,10 @@ def calculate_distribution(distribution_cache, box_set):
 
 def get_box_probabilities(selected_options):
     with open('./data/get_random_box_event_odds.json', 'r') as fp:
-        current_events = json.load(fp)
+        current_events = json.loads(fp.read())
     current_events_copy = copy.deepcopy(current_events)
     with open('./data/get_random_box_extra_options.json', 'r') as fp:
-        extra_options = json.load(fp)
+        extra_options = json.loads(fp.read())
     current_events["Coins"] = 0.9
     current_events["Frenzy"] = 0
     current_events["Horde"] = 0

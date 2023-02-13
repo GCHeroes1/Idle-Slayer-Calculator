@@ -43,9 +43,9 @@ def get_giants_json():
 
     for j in evolutions.find_all("tr")[1:]:
         row_data = j.find_all("td")
-        cost = row_data[6].contents[0]
+        cost = row_data[7].contents[0]
         row = [re.sub(r'\(.*\)', '', re.sub(r'\[.*\]', '', i.text.replace("\n", ""))) for i in row_data]
-        row[6] = cost
+        row[7] = cost
         length = len(evolutions_data)
         evolutions_data.loc[length] = row
 
@@ -70,10 +70,11 @@ def get_giants_json():
         }
 
     with open('./data/get_giant_cost.json', 'r') as fp:
-        giant_costs = json.load(fp)
+        giant_costs = json.loads(fp.read())
     for key, item in giant_costs.items():
         dict[key]["Cost"] = item["Cost"]
-
+    # dict["Giant Gorilla"] = {"Dimension": "Jungle", "Coins": 128, "Souls": 230, "Evolutions": {}, "Cost": "1e64"}
+    # dict["Hills' Giant"]["Evolutions"]["Jade Hills' Giant"]["Souls"] = 240
     dict = add_standard_to_dict(dict)
     with open('./data/get_giants.json', 'w') as fp:
         json.dump(dict, fp)

@@ -52,7 +52,7 @@ def get_enemy_helper(enemies):
 
 def get_enemy_evolutions():
     with open('./data/get_enemies.json', 'r') as fp:
-        enemies = json.load(fp)
+        enemies = json.loads(fp.read())
     evolution_info = []
     for key, value in enemies.items():
         result = get_enemy_helper(value)
@@ -90,9 +90,9 @@ def get_enemy_stats(current_coins, evolutions, unlocked_enemies):
 
 def calculate_average_pattern(coins, unlocked_dimensions):
     with open('./data/get_dimension_patterns.json', 'r') as fp:
-        patterns = json.load(fp)
+        patterns = json.loads(fp.read())
     with open('./data/get_patterns_cost.json', 'r') as fp:
-        patterns_cost = json.load(fp)
+        patterns_cost = json.loads(fp.read())
     spawn_level = 0
     for pattern in patterns_cost.values():
         if pattern["Cost"] < coins:
@@ -129,7 +129,7 @@ def calculate_average_pattern(coins, unlocked_dimensions):
 
 def get_giant_evolutions():
     with open('./data/get_giants.json', 'r') as fp:
-        giants = json.load(fp)
+        giants = json.loads(fp.read())
     giant_info = []
     for key, value in giants.items():
         giant_info.append([key, value["Coins"], value["Souls"], value["Cost"], value["Standard Cost"]])
@@ -180,25 +180,25 @@ def upgrades_helper(json):
 
 def get_upgrade_names():
     with open('./data/get_boost_souls.json', 'r') as fp:
-        boost_soul_json = json.load(fp)
+        boost_soul_json = json.loads(fp.read())
     with open('./data/get_bow_souls.json', 'r') as fp:
-        bow_soul_json = json.load(fp)
+        bow_soul_json = json.loads(fp.read())
     with open('./data/get_giant_souls.json', 'r') as fp:
-        giant_soul_json = json.load(fp)
+        giant_soul_json = json.loads(fp.read())
     with open('./data/get_enemy_spawn.json', 'r') as fp:
-        enemy_spawn_json = json.load(fp)
+        enemy_spawn_json = json.loads(fp.read())
     with open('./data/get_giant_spawn.json', 'r') as fp:
-        giant_spawn_json = json.load(fp)
+        giant_spawn_json = json.loads(fp.read())
     with open('./data/get_rage_souls.json', 'r') as fp:
-        rage_soul_json = json.load(fp)
+        rage_soul_json = json.loads(fp.read())
     with open('./data/get_crit.json', 'r') as fp:
-        crit_json = json.load(fp)
+        crit_json = json.loads(fp.read())
     with open('./data/get_random_box.json', 'r') as fp:
-        random_box_json = json.load(fp)
+        random_box_json = json.loads(fp.read())
     with open('./data/get_random_box_extra_options.json', 'r') as fp:
-        random_box_extra_options_json = json.load(fp)
+        random_box_extra_options_json = json.loads(fp.read())
     with open('./data/get_dimension.json', 'r') as fp:
-        dimension_json = json.load(fp)
+        dimension_json = json.loads(fp.read())
     boost_soul_upgrades = upgrades_helper(boost_soul_json)
     bow_soul_upgrades = upgrades_helper(bow_soul_json)
     giant_soul_upgrades = upgrades_helper(giant_soul_json)
@@ -227,9 +227,9 @@ def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
 def get_upgrade_stats(current_coins, unlocked_spawn, unlocked_giant, Enemies):
     # get a list of the selected upgrades, need to check against their lists to see whats unlocked
     with open('./data/get_enemy_spawn.json', 'r') as fp:
-        enemy_spawn_json = json.load(fp)
+        enemy_spawn_json = json.loads(fp.read())
     with open('./data/get_giant_spawn.json', 'r') as fp:
-        giant_spawn_json = json.load(fp)
+        giant_spawn_json = json.loads(fp.read())
     spawn_stat, current_coins = upgrade_stat_helper(current_coins, enemy_spawn_json, unlocked_spawn)
     giant_stat, current_coins = upgrade_stat_helper(current_coins, giant_spawn_json, unlocked_giant)
     spawn_stat += Enemies
@@ -251,13 +251,13 @@ def souls_stat_helper(current_coins, upgrades, unlocked_upgrades):
 
 def get_soul_stats(current_coins, unlocked_boost, unlocked_bow, unlocked_giant, unlocked_rage):
     with open('./data/get_boost_souls.json', 'r') as fp:
-        boost_soul_json = json.load(fp)
+        boost_soul_json = json.loads(fp.read())
     with open('./data/get_bow_souls.json', 'r') as fp:
-        bow_soul_json = json.load(fp)
+        bow_soul_json = json.loads(fp.read())
     with open('./data/get_giant_souls.json', 'r') as fp:
-        giant_soul_json = json.load(fp)
+        giant_soul_json = json.loads(fp.read())
     with open('./data/get_rage_souls.json', 'r') as fp:
-        rage_soul_json = json.load(fp)
+        rage_soul_json = json.loads(fp.read())
     boost_souls_stat, current_coins = souls_stat_helper(current_coins, boost_soul_json, unlocked_boost)
     bow_souls_stat, current_coins = souls_stat_helper(current_coins, bow_soul_json, unlocked_bow)
     giant_souls_stat, current_coins = souls_stat_helper(current_coins, giant_soul_json, unlocked_giant)
@@ -284,7 +284,7 @@ def crit_helper(current_coins, upgrades, unlocked_upgrades):
 
 def get_crit_stats(current_coins, critical_upgrades):
     with open('./data/get_crit.json', 'r') as fp:
-        crit_json = json.load(fp)
+        crit_json = json.loads(fp.read())
     critical_chance, critical_multiplier, current_coins = crit_helper(current_coins, crit_json, critical_upgrades)
     return critical_chance, critical_multiplier, current_coins
 
@@ -384,17 +384,17 @@ def upgrade_names():
 @cache.cached(timeout=50)
 def armory():
     with open('./data/get_armory.json', 'r') as fp:
-        armory_json = json.load(fp)
+        armory_json = json.loads(fp.read())
     with open('./data/get_armory_types.csv', 'r') as fp:
         reader = csv.reader(fp)
         for line in reader:
             armory_types = line
     with open('./data/get_armory_names.json', 'r') as fp:
-        armory_names_json = json.load(fp)
+        armory_names_json = json.loads(fp.read())
     with open('./data/get_armory_options.json', 'r') as fp:
-        armory_options_json = json.load(fp)
+        armory_options_json = json.loads(fp.read())
     with open('./data/get_armory_levels.json', 'r') as fp:
-        armory_levels_json = json.load(fp)
+        armory_levels_json = json.loads(fp.read())
     return [armory_json, armory_types, armory_names_json, armory_options_json, armory_levels_json]
 
 
@@ -402,7 +402,7 @@ def armory():
 @cache.cached(timeout=50)
 def stones():
     with open('./data/get_stone_levels.json', 'r') as fp:
-        stone_levels = json.load(fp)
+        stone_levels = json.loads(fp.read())
     with open('./data/get_stone_names.csv', 'r') as fp:
         reader = csv.reader(fp)
         for line in reader:
@@ -417,7 +417,7 @@ def random_boxes():
     if "RANDOM_BOX" in body:
         random_box = body["RANDOM_BOX"]
     with open('./data/get_random_box.json', 'r') as fp:
-        random_box_json = json.load(fp)
+        random_box_json = json.loads(fp.read())
     random_box_chance, _ = upgrade_stat_helper(0, random_box_json, random_box)
     return [get_random_box_lower_time(random_box_chance), get_random_box_upper_time(random_box_chance)]
 
@@ -453,9 +453,9 @@ def calculate_stats():
     if "STONE_SELECTION" in body:
         stone_selection = eval(body["STONE_SELECTION"])
     with open('./data/get_enemies.json', 'r') as fp:
-        enemies = json.load(fp)
+        enemies = json.loads(fp.read())
     with open('./data/get_giants.json', 'r') as fp:
-        giants = json.load(fp)
+        giants = json.loads(fp.read())
     Souls, Bow_Souls, Giant_Souls, Critical_Souls, Critical_Chance, Electric, Fire, Dark, Enemies = calculate_armory_bonuses(
         armory_selection)
     player_speed = 4
@@ -554,4 +554,3 @@ if __name__ == '__main__':
     #                                                                pattern_spawn, giant_freq, bow_souls_stat,
     #                                                                rage_souls_stat, giant_souls_stat, player_speed,
     #                                                                variables)
-    print("test")
