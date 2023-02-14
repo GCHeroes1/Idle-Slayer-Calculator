@@ -332,6 +332,7 @@ def calculate_average_gains(average_patterns, current_enemies, current_giants, p
                 giant_soul_reward = giant_souls_crit
         enemy_coin_reward, enemy_soul_reward = 0, 0
         for enemy, spawn in dimension_average.items():
+            # probably need to make this whole thing into a function so you can work out bow and rage seperately
             enemy_type = current_enemies[enemy]["Type"]
             type_multiplier = calc_type_multiplier(Electric, Fire, Dark, enemy_type)
             enemy_souls_multiplier = Souls * type_multiplier

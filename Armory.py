@@ -81,8 +81,8 @@ def get_armory_json():
             }
         }
     }
-    with open('./data/get_armory.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_armory.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 
@@ -112,12 +112,12 @@ def get_armory_info():
         writer = csv.writer(fp)
         writer.writerow(armory_types)
         fp.close()
-    with open('./data/get_armory_names.json', 'w') as fp:
-        json.dump(armory_names, fp)
-    with open('./data/get_armory_options.json', 'w') as fp:
-        json.dump(armory_options, fp)
-    with open('./data/get_armory_levels.json', 'w') as fp:
-        json.dump(armory_levels, fp)
+    with open('./data/get_armory_names.json', 'w', encoding='utf8') as fp:
+        json.dump(armory_names, fp, ensure_ascii=False)
+    with open('./data/get_armory_options.json', 'w', encoding='utf8') as fp:
+        json.dump(armory_options, fp, ensure_ascii=False)
+    with open('./data/get_armory_levels.json', 'w', encoding='utf8') as fp:
+        json.dump(armory_levels, fp, ensure_ascii=False)
     return armory, armory_types, armory_names, armory_options, armory_levels
 
 

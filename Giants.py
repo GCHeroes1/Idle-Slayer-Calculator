@@ -76,8 +76,8 @@ def get_giants_json():
     # dict["Giant Gorilla"] = {"Dimension": "Jungle", "Coins": 128, "Souls": 230, "Evolutions": {}, "Cost": "1e64"}
     # dict["Hills' Giant"]["Evolutions"]["Jade Hills' Giant"]["Souls"] = 240
     dict = add_standard_to_dict(dict)
-    with open('./data/get_giants.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_giants.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 

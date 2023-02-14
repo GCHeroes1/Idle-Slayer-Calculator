@@ -49,8 +49,8 @@ def get_crit_json():
             }
 
     dict = add_standard_to_dict(dict)
-    with open('./data/get_crit.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_crit.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 

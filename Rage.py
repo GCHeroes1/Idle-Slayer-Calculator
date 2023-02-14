@@ -44,8 +44,8 @@ def get_rage_json():
         }
     dict["Bad-Tempered"]["Cost"] = "50 B SP"
     dict = add_standard_to_dict(dict)
-    with open('./data/get_rage_souls.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_rage_souls.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 

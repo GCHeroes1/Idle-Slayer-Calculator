@@ -86,8 +86,8 @@ def get_stones_of_time_json():
             "Levels": list(range(0, 101))
         }
     }
-    with open('./data/get_sot_info.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_sot_info.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 
@@ -102,8 +102,8 @@ def get_sot_info():
         writer = csv.writer(fp)
         writer.writerow(stone_names)
         fp.close()
-    with open('./data/get_stone_levels.json', 'w') as fp:
-        json.dump(stone_levels, fp)
+    with open('./data/get_stone_levels.json', 'w', encoding='utf8') as fp:
+        json.dump(stone_levels, fp, ensure_ascii=False)
     return stone_names, stone_levels
 
 

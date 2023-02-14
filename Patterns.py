@@ -42,8 +42,8 @@ def get_dimension_patterns_json():
                 dict[map][pattern["Enemy"]] = []
             dict[map][pattern["Enemy"]].append((int(pattern["Enemies"]), int(pattern["Level"])))
 
-    with open('./data/get_dimension_patterns.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_dimension_patterns.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 

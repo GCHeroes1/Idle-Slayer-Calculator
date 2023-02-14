@@ -20,8 +20,8 @@ def get_random_box_json():
         }
     }
     dict = add_standard_to_dict(dict)
-    with open('./data/get_random_box.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_random_box.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 
@@ -37,8 +37,8 @@ def get_random_box_event_odds_json():  # could be obtained from the wiki, but it
             "Horde": 0.25,
             "Souls Bonus Multiplier": 0.12
             }
-    with open('./data/get_random_box_event_odds.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_random_box_event_odds.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 
@@ -61,8 +61,8 @@ def get_random_box_extra_options_json():
         }
     }
     dict = add_standard_to_dict(dict)
-    with open('./data/get_random_box_extra_options.json', 'w') as fp:
-        json.dump(dict, fp)
+    with open('./data/get_random_box_extra_options.json', 'w', encoding='utf8') as fp:
+        json.dump(dict, fp, ensure_ascii=False)
     return dict
 
 
