@@ -195,11 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // handle clicks on check/uncheck all
     document.getElementById("checkAll").addEventListener("click", () => {
         setAllCheckboxes(true);
-        setTimeout(update_tables(), 2000);
+        setTimeout(update_tables(), 2500);
     });
     document.getElementById("unCheckAll").addEventListener("click", () => {
         setAllCheckboxes(false);
-        setTimeout(update_tables(), 2000);
+        setTimeout(update_tables(), 2500);
     });
     // handle clicks on collapse/uncollapse all
     document.getElementById("collapseAll").addEventListener("click", () => {
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
             void setup();
             scientific = 1;
         }
-        update_tables();
+        setTimeout(update_tables(), 2500);
     });
 });
 
