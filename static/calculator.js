@@ -284,7 +284,7 @@ let map_active_value_result_cells = {};
 const map_bow_value_result_cells = {};
 const map_rage_value_result_cells = {};
 
-let scientific = 2;
+let scientific = 1;
 let total_USP = 0;
 
 function enemy_checkboxes(list) {

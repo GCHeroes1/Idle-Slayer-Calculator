@@ -100,30 +100,34 @@ def calculate_average_pattern(coins, unlocked_dimensions):
 
     current_patterns = copy.deepcopy(patterns)
     for dimension, dimension_pattern in patterns.items():
-        for enemy, spawn in dimension_pattern.items():
-            spawn_ = spawn.copy()
-            spawn__ = []
-            for pattern in spawn:
-                if pattern[1] > spawn_level:
-                    spawn_.remove(pattern)
-                else:
-                    spawn__.append(pattern[0])
-            if len(spawn__) == 0:
-                spawn__.append(0)
-            current_patterns[dimension][enemy] = spawn__
+        if dimension not in unlocked_dimensions:
+            del current_patterns[dimension]
+        else:
+            for level, pattern in dimension_pattern.items():
+                if int(level) > spawn_level:
+                    del (current_patterns[dimension][level])
 
     average_patterns = {}
+    totals = {}
     for dimension in unlocked_dimensions:
         average_patterns[dimension] = {}
-        totals = []
-        total = 0
-        for enemy, spawn in current_patterns[dimension].items():
-            totals.append((enemy, sum(spawn)))
-            total += len(spawn)
-        for enemy, sum_enemies in totals:
-            average_patterns[dimension][enemy] = {
-                "Average": sum_enemies / total
-            }
+        totals[dimension] = {}
+        for level, patterns in current_patterns[dimension].items():
+            for pattern in patterns:
+                if totals[dimension].get("Pattern Count") is None:
+                    totals[dimension]["Pattern Count"] = 0
+                if len(current_patterns[dimension][level][0]) != 0:
+                    totals[dimension]["Pattern Count"] += 1
+                for enemy in pattern:
+                    if totals[dimension].get(enemy) is None:
+                        totals[dimension][enemy] = 0
+                    totals[dimension][enemy] += 1
+    for dimension, info in totals.items():
+        for enemy, count in info.items():
+            if enemy != "Pattern Count":
+                average_patterns[dimension][enemy] = {
+                    "Average": count / totals[dimension]["Pattern Count"]
+                }
     return average_patterns
 
 
@@ -210,7 +214,7 @@ def get_upgrade_names():
     random_box_options = upgrades_helper(random_box_extra_options_json)
     dimension_unlocks = upgrades_helper(dimension_json)
     return boost_soul_upgrades, bow_soul_upgrades, giant_soul_upgrades, rage_upgrades, spawn_upgrades, giant_upgrades, \
-           critical_upgrades, random_box_upgrades, dimension_unlocks, random_box_options
+        critical_upgrades, random_box_upgrades, dimension_unlocks, random_box_options
 
 
 def upgrade_stat_helper(current_coins, upgrades, unlocked_upgrades):
@@ -427,7 +431,7 @@ def random_boxes():
 def calculate_stats():
     current_coins = 0
     dimensions, enemy_spawn, giant_spawn, critical_upgrades, boost_souls, bow_souls, giant_souls, rage_souls, \
-    enemy_evolutions, giant_evolutions, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], [], []
+        enemy_evolutions, giant_evolutions, armory_selection, stone_selection = [], [], [], [], [], [], [], [], [], [], [], []
     body = request.get_json(force=True)
     if "DIMENSIONS" in body:
         dimensions = body["DIMENSIONS"]
@@ -472,7 +476,8 @@ def calculate_stats():
     Critical_Souls *= critical_souls
     giant_souls_stat *= Giant_Souls
 
-    Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls = calculate_stone_bonuses(stone_selection)
+    Ingame_Souls, Bow_Souls_, Critical_Souls_, Souls_, Rage_Souls, Rage_Duration = calculate_stone_bonuses(
+        stone_selection)
     Souls *= Ingame_Souls * Souls_
     bow_souls_stat *= Bow_Souls_
     Critical_Souls *= Critical_Souls_

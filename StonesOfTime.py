@@ -128,7 +128,7 @@ def get_stat_multiplier(USP, target_stat):
 
 
 def update_bonuses(variables, stone, level):
-    Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls = variables
+    Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls, Rage_Duration = variables
     if stone == "Activity":
         Ingame_Souls *= get_stat_multiplier(level, "in-game Souls") / 100 + 1
         Bow_Souls *= get_stat_multiplier(level, "Bow Souls") / 100 + 1
@@ -138,15 +138,16 @@ def update_bonuses(variables, stone, level):
         Souls *= get_stat_multiplier(level, "Souls") / 100 + 1
     elif stone == "Rage":
         Rage_Souls += get_stat_multiplier(level, "Rage Souls")
+        Rage_Duration *= get_stat_multiplier(level, "Rage Duration") / 100 + 1
     else:
         print("something went wrong with " + stone)
-    variables = Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls
+    variables = Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls, Rage_Duration
     return variables
 
 
 def calculate_stone_bonuses(USP_allocation):
-    Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls = 1, 1, 1, 1, 0
-    variables = Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls
+    Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls, Rage_Duration = 1, 1, 1, 1, 0, 1
+    variables = Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls, Rage_Duration
 
     for stone, level in USP_allocation.items():
         variables = update_bonuses(variables, stone, int(level))
@@ -184,7 +185,7 @@ def calculate_gains(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked
 
     rage_duration = 1
     if "Rage" in stone_selection:
-        rage_duration = 0.5 * get_stat_multiplier(int(stone_selection["Rage"]), "Rage Duration") / 100 + 1
+        rage_duration = get_stat_multiplier(int(stone_selection["Rage"]), "Rage Duration") / 100 + 1
 
     percentage_bow = 1 - percentage_rage
     best_souls = 0
@@ -210,7 +211,7 @@ def calculate_gains(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked
 
 
 def process_usp(value):
-    bound = 20
+    bound = 10
     if value - bound < 0:
         return 0, value + bound
     return value - bound, value + bound
@@ -240,7 +241,7 @@ def fetch_usp_values(current_usp_allocation):
         # rage_min, rage_max = int(current_usp_allocation["Rage"]), int(current_usp_allocation["Rage"])
         rage_min, rage_max = process_usp(int(current_usp_allocation["Rage"]))
     values = []
-    step = 2
+    step = 1
     for active in range(active_min, active_max + 1, step):
         for idle in range(idle_min, idle_max + 1, step):
             for hope in range(hope_min, hope_max + 1, step):
@@ -280,29 +281,57 @@ def optimise(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_
     print(max_)
 
 
+def generate_USP_activity_table(USP, crit_chance=0.32, critical_souls=1, rage_percentage=1, duration=True):
+    stones = ["Activity", "Idle", "Hope", "Rage"]
+    Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls, Rage_Duration = 1, 1, 1, 1, 0, 1
+    variables = Ingame_Souls, Bow_Souls, Critical_Souls, Souls, Rage_Souls, Rage_Duration
+    effective_multipliers = {}
+    for stone in stones:
+        effective_multipliers[stone] = {}
+        for level in range(USP + 1):
+            effective_multipliers[stone][level] = {"Bow": 1, "Rage": 1, "Critical Souls": 1}
+            if stone == "Activity":
+                Ingame_Souls = get_stat_multiplier(level, "in-game Souls") / 100 + 1
+                Bow_Souls = get_stat_multiplier(level, "Bow Souls") / 100 + 1
+                effective_multipliers[stone][level]["Bow"] *= Ingame_Souls * Bow_Souls
+                effective_multipliers[stone][level]["Rage"] *= Ingame_Souls
+            elif stone == "Idle":
+                Critical_Souls = get_stat_multiplier(level, "Critical Souls") / 100 + 1
+                Souls_ = (1 - crit_chance) + (crit_chance * critical_souls * Critical_Souls)
+                print(Souls_)
+                effective_multipliers[stone][level]["Critical Souls"] *= Critical_Souls
+            elif stone == "Hope":
+                Souls = get_stat_multiplier(level, "Souls") / 100 + 1
+                effective_multipliers[stone][level]["Bow"] *= Souls
+                effective_multipliers[stone][level]["Rage"] *= Souls
+            elif stone == "Rage":
+                Rage_Souls = get_stat_multiplier(level, "Rage Souls")
+                Rage_Duration = get_stat_multiplier(level, "Rage Duration") / 100 + 1
+                effective_multipliers[stone][level]["Rage"] *= Rage_Souls
+                if duration:
+                    effective_multipliers[stone][level]["Rage"] *= Rage_Duration
+            # print(str(level) + " " + str(variables))
+    print("test")
+
+
 if __name__ == '__main__':
     dict = get_stones_of_time_json()
     stone_names, stone_levels = get_sot_info()
-    USP_allocation = {
-        "Idle": "17",
-        "Activity": "32",
-        "Hope": "33",
-        "Rage": "19"
-    }
+    USP_allocation = {"Idle": "12", "Activity": "30", "Hope": "29", "Rage": "30"}
     # USP_allocation = {'Idle': '17', 'Activity': '32', 'Hope': '33', 'Rage': '19'}
     # USP_allocation = {'Idle': 6, 'Activity': 30, 'Hope': 31, 'Rage': 34}
-    unlocked_dimensions = ["Hills", "Frozen Fields", "Jungle", "Modern City", "Haunted Castle", "Hot Desert",
-                           "Mystic Valley", "Factory", "Funky Space"]
+    unlocked_dimensions = ['Hills', 'Frozen Fields', 'Jungle', 'Modern City', 'Haunted Castle', 'Hot Desert',
+                           'Mystic Valley', 'Factory', 'Funky Space']
     unlocked_enemy_spawn_upgrades = ['Need For Kill', 'Enemy Invasion', 'Multa Hostibus', 'Bone Rib Whistle',
-                                     "Sabrina's Perfume",
-                                     'Enemy Nests', 'Bring Hell', 'Doomed', 'Reincarnation']
+                                     "Sabrina's Perfume", 'Enemy Nests', 'Legendary Leaf', 'Bring Hell', 'Doomed',
+                                     'Reincarnation']
     unlocked_giant_spawn_upgrades = ["Zeke's Disgrace", "The Rumbling", "Big Troubles"]
     unlocked_critical_upgrades = ['Critical Culling', 'Critical Practice', 'Critical Study', 'Critical Training',
                                   'Slash The Life', 'Hyper Critical', 'Critical Mushrooms', "That's a lot of damage",
-                                  'Geode Beetle']
-    unlocked_boost_soul_upgrades = ["Boost Kill"]
-    unlocked_bow_soul_upgrades = ['Soul Grabber', 'Augmented Soul Grabber', 'Enhanced Soul Grabber',
-                                  'Blessing of Apollo', 'Wind Waker', 'Dark Projectiles']
+                                  'Geode Beetle', 'Necromantic Necklace']
+    unlocked_boost_soul_upgrades = ['Boost Kill', 'Augmented Boost Kill']
+    unlocked_bow_soul_upgrades = ['Deathdraw', 'Soul Grabber', 'Augmented Soul Grabber', 'Soul Harvest',
+                                  'Enhanced Soul Grabber', 'Blessing of Apollo', 'Wind Waker', 'Dark Projectiles']
     unlocked_giant_soul_upgrades = ["Book of Agony", "Wander's Path"]
     unlocked_rage_soul_upgrades = ['Outrage', 'Bad-Tempered', 'Internal Fury']
     unlocked_enemies = ['Hornet', 'Black Hornet', 'Dark Hornet', 'Alpha Worm', 'Beta Worm', 'Gamma Worm', 'Delta Worm',
@@ -310,25 +339,39 @@ if __name__ == '__main__':
                         'Dark Carniplant', 'Poison Mushroom', 'Blue Milk Mushroom', 'Fire Bat', 'Black Demon',
                         'Corrupted Demon', 'Cursed Oak Tree', 'Cursed Willow Tree', 'Blue Wildfire',
                         'Golden Soul Barrel', 'Poisonous Gas', 'Golden Cobra', 'Metal Scorpion']
-    unlocked_giants = ["Hills' Giant", "Jade Hills' Giant", 'Adult Yeti', 'Fairy Queen', 'Archdemon', 'Anubis Warrior']
-    unlocked_armory = {'Sword': {'Adranos': {'Option': [], 'Level': '14'}},
-                       'Armor': {'Kishar': {'Option': ['Enemies'], 'Level': '12'}},
+    unlocked_giants = ["Hills' Giant", "Jade Hills' Giant", 'Adult Yeti', 'Fairy Queen', 'Archdemon', 'Anubis Warrior',
+                       'Giant Gorilla']
+    unlocked_armory = {'Sword': {'Adranos': {'Option': ['Excellent'], 'Level': '14'}},
+                       'Armor': {'Adranos': {'Option': ['Giant Souls', 'in-game Souls'], 'Level': '12'}},
                        'Shield': {'Kishar': {'Option': ['Giant Souls'], 'Level': '14'}},
-                       'Ring': {"Victor's Ring": {'Option': ['Critical'], 'Level': '17'}}}
+                       'Ring': {"Victor's Ring": {'Option': ['Excellent', 'Critical'], 'Level': '17'}},
+                       'Bow': {'Bat Long Bow': {}}}
     # 'Bow': {'Adranos': {'Option': ['Bow Souls'], 'Level': '12'}}}
 
     # print(fetch_usp_values(current_usp_allocation=USP_allocation))
-    print(calculate_gains(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_spawn_upgrades,
-                          unlocked_critical_upgrades, unlocked_boost_soul_upgrades, unlocked_bow_soul_upgrades,
-                          unlocked_giant_soul_upgrades, unlocked_rage_soul_upgrades, unlocked_enemies,
-                          unlocked_giants, unlocked_armory, USP_allocation, percentage_rage=0.1))
+    # USP_allocation = {"Idle": "12", "Activity": "30", "Hope": "29", "Rage": "30"}
+    # print(calculate_gains(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_spawn_upgrades,
+    #                       unlocked_critical_upgrades, unlocked_boost_soul_upgrades, unlocked_bow_soul_upgrades,
+    #                       unlocked_giant_soul_upgrades, unlocked_rage_soul_upgrades, unlocked_enemies,
+    #                       unlocked_giants, unlocked_armory, USP_allocation, percentage_rage=1))
+    # USP_allocation = {'Idle': 6, 'Activity': 30, 'Hope': 29, 'Rage': 36}
+    # print(calculate_gains(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_spawn_upgrades,
+    #                       unlocked_critical_upgrades, unlocked_boost_soul_upgrades, unlocked_bow_soul_upgrades,
+    #                       unlocked_giant_soul_upgrades, unlocked_rage_soul_upgrades, unlocked_enemies,
+    #                       unlocked_giants, unlocked_armory, USP_allocation, percentage_rage=1))
+    USP_allocation = {"Idle": "12", "Activity": "32", "Hope": "34", "Rage": "19"}
+    # calculate_gains(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_spawn_upgrades,
+    #                 unlocked_critical_upgrades, unlocked_boost_soul_upgrades, unlocked_bow_soul_upgrades,
+    #                 unlocked_giant_soul_upgrades, unlocked_rage_soul_upgrades, unlocked_enemies,
+    #                 unlocked_giants, unlocked_armory, USP_allocation, percentage_rage=1)
+    # optimise(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_spawn_upgrades,
+    #          unlocked_critical_upgrades, unlocked_boost_soul_upgrades, unlocked_bow_soul_upgrades,
+    #          unlocked_giant_soul_upgrades, unlocked_rage_soul_upgrades, unlocked_enemies,
+    #          unlocked_giants, unlocked_armory, USP_allocation, percentage_rage=1)
 
-    optimise(unlocked_dimensions, unlocked_enemy_spawn_upgrades, unlocked_giant_spawn_upgrades,
-             unlocked_critical_upgrades, unlocked_boost_soul_upgrades, unlocked_bow_soul_upgrades,
-             unlocked_giant_soul_upgrades, unlocked_rage_soul_upgrades, unlocked_enemies,
-             unlocked_giants, unlocked_armory, USP_allocation, percentage_rage=1)
+    generate_USP_activity_table(10, 1)
 
-    print("test")
+    # print("test")
     # print(calculate_stone_bonuses(USP_allocation))
     # print(get_sot_info())
     # optimise(101)
