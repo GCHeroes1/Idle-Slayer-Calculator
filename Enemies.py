@@ -58,7 +58,7 @@ def get_enemies_json():
         length = len(evolutions_data)
         evolutions_data.loc[length] = row
 
-    evolutions_data.drop(evolutions_data.index[21:23], inplace=True)
+    evolutions_data.drop(evolutions_data.index[22:25], inplace=True)
 
     evolutions_data.drop("Image", inplace=True, axis=1)
     evolutions_data.drop("How To Obtain", inplace=True, axis=1)
